@@ -1,0 +1,1460 @@
+*{
+    margin:0;
+    padding:0;
+    
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:#07111F;
+    color:white;
+}
+/* ==========================================================
+   MGMS - MAIN STYLE
+   Version : 1.0
+========================================================== */
+
+:root{
+
+    --primary:#38B000;
+    --primary-dark:#2D8A00;
+
+    --secondary:#2E7D32;
+
+    --white:#FFFFFF;
+
+    --bg:#F4F8FB;
+
+    --text:#27374D;
+
+    --text-light:#7A8CA5;
+
+    --border:#E7EEF6;
+
+    --glass:rgba(255,255,255,.72);
+
+    --shadow:
+        0 12px 35px rgba(0,0,0,.08);
+
+    --radius:18px;
+
+}
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    font-family:"Poppins",sans-serif;
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    overflow-x:hidden;
+
+}
+
+/* ==========================================================
+        MAIN CONTENT
+========================================================== */
+
+.main-content{
+
+    width:100%;
+
+    padding:15px 20px;
+    padding-top: 100px;
+}
+
+/* ==========================================================
+        TOP NAVBAR
+========================================================== */
+
+
+.top-navbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    
+    z-index: 1030;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
+
+.navbar-container{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:25px;
+
+    padding:12px 8px;
+
+    background:rgba(255,255,255,.78);
+
+    backdrop-filter:blur(20px);
+
+    border-radius:24px;
+
+    border:1px solid rgba(255,255,255,.6);
+
+    box-shadow:0 10px 35px rgba(0,0,0,.08);
+
+}
+/* ==========================================================
+        LOGO
+========================================================== */
+
+.logo-section{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.logo-icon{
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:18px;
+
+    background:linear-gradient(
+        135deg,
+        #46C11B,
+        #7BE23A
+    );
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:white;
+
+    font-size:22px;
+
+    box-shadow:
+
+        0 10px 25px rgba(56,176,0,.35);
+
+}
+
+.logo-section h3{
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:700;
+
+}
+
+.logo-section span{
+
+    display:block;
+
+    font-size:12px;
+
+    color:var(--text-light);
+
+}
+
+/* ==========================================================
+        MENU
+========================================================== */
+
+.main-menu{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex:1;
+
+    gap:5px;
+
+    white-space:nowrap;
+
+}
+.main-menu a{
+
+    text-decoration:none;
+
+    color:var(--text);
+
+    font-size:15px;
+
+    font-weight:500;
+
+    padding:8px 10px;
+
+    border-radius:12px;
+
+    transition:.30s;
+
+}
+
+.main-menu a:hover{
+
+    background:#EEF7EA;
+
+    color:var(--primary);
+
+}
+
+.main-menu .active{
+
+    background:var(--primary);
+
+    color:white;
+
+}
+/* ==========================================================
+        NAVBAR RIGHT
+========================================================== */
+
+.navbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:5px;
+
+    margin-right:30px;
+
+}
+/* ==========================================================
+        SEARCH
+========================================================== */
+
+.search-box{
+
+    width:200px;
+
+    height:35px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:0 18px;
+
+    background:white;
+
+    border:1px solid var(--border);
+
+    border-radius:15px;
+
+    transition:.30s;
+
+}
+
+.search-box:hover{
+
+    box-shadow:0 10px 20px rgba(0,0,0,.05);
+
+}
+
+.search-box:focus-within{
+
+    border-color:var(--primary);
+
+    box-shadow:
+        0 0 0 4px rgba(56,176,0,.10);
+
+}
+
+.search-box i{
+
+    color:var(--text-light);
+
+    font-size:17px;
+
+}
+
+.search-box input{
+
+    flex:1;
+
+    border:none;
+
+    outline:none;
+
+    background:none;
+
+    font-size:14px;
+
+    color:var(--text);
+
+}
+
+.search-box input::placeholder{
+
+    color:#9BA9BB;
+
+}
+
+/* ==========================================================
+        DATE & TIME
+========================================================== */
+
+.datetime-box{
+
+    min-width:165px;
+
+    text-align:center;
+
+    padding:2px;
+
+    border-radius:15px;
+
+    background:rgb(238, 238, 241);
+
+    border:1px solid var(--border);
+
+}
+
+#liveDate{
+
+    font-size:12px;
+
+    color:var(--text-light);
+
+}
+
+#liveTime{
+
+    font-size:15px;
+
+    font-weight:700;
+
+    color:var(--primary);
+
+    margin-top:2px;
+
+}
+
+/* ==========================================================
+        ICON BUTTON
+========================================================== */
+
+.nav-icon{
+
+    width:48px;
+
+    height:48px;
+
+    border:none;
+
+    background:white;
+
+    border-radius:15px;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    transition:.30s;
+
+    border:1px solid var(--border);
+
+}
+
+.nav-icon i{
+
+    font-size:18px;
+
+    color:var(--text);
+
+}
+
+.nav-icon:hover{
+
+    background:var(--primary);
+
+    transform:translateY(-2px);
+
+}
+
+.nav-icon:hover i{
+
+    color:white;
+
+}
+
+/* ==========================================================
+        USER
+========================================================== */
+
+.user-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:8px 14px;
+
+    height:30px;
+
+    border-radius:16px;
+
+}
+
+.user-box:hover{
+
+    box-shadow:0 10px 20px rgba(0,0,0,.05);
+
+}
+
+/* ==========================================
+                Navbar Avatar
+========================================== */
+
+.avatar{
+
+    width:36px;
+    height:36px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    background:#173B68;
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:600;
+
+    overflow:hidden;
+
+}
+
+.avatar img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+}
+/* ==========================================================
+        FOOTER
+========================================================== */
+
+.app-footer{
+
+    margin-top:35px;
+
+    padding:18px 25px;
+
+    background:var(--glass);
+
+    backdrop-filter:blur(18px);
+
+    -webkit-backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.55);
+
+    border-radius:18px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:var(--shadow);
+
+}
+
+.footer-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+}
+
+.footer-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.footer-title{
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:var(--text);
+
+}
+
+.footer-value{
+
+    font-size:13px;
+
+    color:var(--text-light);
+
+}
+
+/* ==========================================================
+        GLASS CARD
+========================================================== */
+
+.glass-card{
+
+    background:var(--glass);
+
+    backdrop-filter:blur(18px);
+
+    -webkit-backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.55);
+
+    border-radius:20px;
+
+    box-shadow:var(--shadow);
+
+}
+
+/* ==========================================================
+        SECTION TITLE
+========================================================== */
+
+.section-title{
+
+    font-size:24px;
+
+    font-weight:700;
+
+    color:var(--text);
+
+    margin-bottom:25px;
+
+}
+
+/* ==========================================================
+        UTILITIES
+========================================================== */
+
+.shadow-hover{
+
+    transition:.30s;
+
+}
+
+.shadow-hover:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+
+        0 18px 35px rgba(0,0,0,.10);
+
+}
+
+.text-success{
+
+    color:var(--primary);
+
+}
+
+.text-muted{
+
+    color:var(--text-light);
+
+}
+
+.radius{
+
+    border-radius:20px;
+
+}
+
+/* ==========================================================
+        SCROLLBAR
+========================================================== */
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#eef2f6;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#b8c6d8;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:var(--primary);
+
+}
+
+/* ==========================================================
+        RESPONSIVE
+========================================================== */
+
+
+
+@media(max-width:1100px){
+
+    .main-menu{
+
+        width:100%;
+
+        justify-content:center;
+
+        flex-wrap:wrap;
+
+        gap:10px;
+
+    }
+
+    .navbar-right{
+
+        width:100%;
+
+        justify-content:center;
+
+        flex-wrap:wrap;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .main-content{
+
+        padding:20px;
+
+    }
+
+    .search-box{
+
+        width:100%;
+
+    }
+
+    .datetime-box{
+
+        width:100%;
+
+    }
+
+    .user-box{
+
+        width:100%;
+
+        justify-content:center;
+
+    }
+
+    .footer-right{
+
+        flex-direction:column;
+
+        gap:8px;
+
+        align-items:flex-end;
+
+    }
+
+    .app-footer{
+
+        flex-direction:column;
+
+        gap:15px;
+
+        align-items:flex-start;
+
+    }
+
+}
+
+@media(max-width:576px){
+
+    .logo-section span{
+
+        display:none;
+
+    }
+
+    .logo-section h3{
+
+        font-size:20px;
+
+    }
+
+    .main-menu{
+
+        display:grid;
+
+        grid-template-columns:repeat(2,1fr);
+
+        width:100%;
+
+    }
+
+}
+/* ===========================
+        MORE MENU
+=========================== */
+
+.more-menu{
+
+    position:relative;
+
+}
+
+.more-btn{
+
+    background:none;
+
+    border:none;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    font-size:15px;
+
+    font-weight:500;
+
+    color:var(--text);
+
+    cursor:pointer;
+
+    padding:10px 14px;
+
+    border-radius:12px;
+
+    transition:.3s;
+
+}
+
+.more-btn:hover{
+
+    background:#EEF7EA;
+
+    color:var(--primary);
+
+}
+
+.more-dropdown{
+
+    position:absolute;
+
+    top:90%;
+
+    left:0;
+
+    width:180px;
+
+    background:white;
+
+    border-radius:16px;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+
+    border:1px solid var(--border);
+
+    display:none;
+
+    overflow:hidden;
+
+    z-index:999;
+
+}
+
+.more-dropdown a{
+
+    display:block;
+
+    padding:14px 18px;
+
+    color:var(--text);
+
+    text-decoration:none;
+
+    transition:.25s;
+
+}
+
+.more-dropdown a:hover{
+
+    background:#EEF7EA;
+
+    color:var(--primary);
+
+}
+
+.more-menu:hover .more-dropdown{
+
+    display:block;
+
+}
+/* ==========================
+        USER MENU
+========================== */
+
+.user-menu{
+
+    position:relative;
+
+}
+
+.user-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    background:none;
+
+    border:none;
+
+    cursor:pointer;
+
+    padding:6px 10px;
+
+    border-radius:14px;
+
+    transition:.3s;
+
+}
+
+.user-btn:hover{
+
+    background:#EEF7EA;
+
+}
+
+.user-btn span{
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:var(--text);
+
+}
+
+.user-btn i{
+
+    font-size:13px;
+
+    color:#7A8CA5;
+
+}
+
+.user-dropdown{
+
+    position:absolute;
+
+    top:90%;
+
+    right:0;
+
+    width:190px;
+
+    background:white;
+
+    border-radius:18px;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+
+    border:1px solid var(--border);
+
+    overflow:hidden;
+
+    display:none;
+
+    z-index:999;
+
+}
+
+.user-dropdown a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:14px 18px;
+
+    text-decoration:none;
+
+    color:var(--text);
+
+    transition:.25s;
+
+}
+
+.user-dropdown a:hover{
+
+    background:#EEF7EA;
+
+    color:var(--primary);
+
+}
+
+.user-dropdown hr{
+
+    margin:0;
+
+    border:none;
+
+    border-top:1px solid #ECECEC;
+
+}
+
+.user-menu:hover .user-dropdown{
+
+    display:block;
+
+}
+
+.logout{
+
+    color:#dc3545 !important;
+
+}
+/* ==========================
+        CHARTS
+========================== */
+
+.chart-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:24px;
+}
+
+.chart-card{
+
+    background:#fff;
+
+    border-radius:24px;
+
+    padding:20px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    height:420px;
+
+    overflow:hidden;
+
+    box-shadow:0 13px 35px rgba(0,0,0,.06);
+
+}
+
+.chart-header{
+
+    flex-shrink:0;
+
+}
+
+.chart-body{
+
+    flex:1;
+
+    position:relative;
+
+    min-height:0;
+
+}
+
+.chart-body canvas{
+
+    width:100% !important;
+
+    height:100% !important;
+
+}
+.user-name{
+
+    max-width:120px;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    font-weight:600;
+
+}
+
+.avatar{
+
+    width:38px;
+
+    height:38px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#173B68;
+
+    color:#fff;
+
+    font-weight:700;
+
+    overflow:hidden;
+
+    object-fit:cover;
+
+}
+
+.avatar img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+/* ==========================================
+   DARK MODE
+========================================== */
+
+body.dark-theme{
+
+    background:#0f172a;
+    color:#e5e7eb;
+
+}
+
+body.dark-theme .top-navbar{
+
+    background:#1e293b;
+    border-bottom:1px solid #334155;
+
+}
+
+body.dark-theme .equipment-section{
+
+    background:#1e293b;
+    border:1px solid #334155;
+    box-shadow:none;
+
+}
+
+body.dark-theme .page-header h2,
+body.dark-theme .section-header h3{
+
+    color:#ffffff;
+
+}
+
+body.dark-theme p,
+body.dark-theme label{
+
+    color:#cbd5e1;
+
+}
+
+body.dark-theme .form-control,
+body.dark-theme .form-select{
+
+    background:#0f172a;
+    color:#ffffff;
+    border:1px solid #334155;
+
+}
+
+body.dark-theme .form-control:focus,
+body.dark-theme .form-select:focus{
+
+    background:#111827;
+    color:#fff;
+    border-color:#22c55e;
+    box-shadow:0 0 0 .2rem rgba(34,197,94,.15);
+
+}
+
+body.dark-theme .dropdown-menu,
+body.dark-theme .more-dropdown,
+body.dark-theme .user-dropdown{
+
+    background:#1e293b;
+    border:1px solid #334155;
+
+}
+
+body.dark-theme .dropdown-item{
+
+    color:#e2e8f0;
+
+}
+
+body.dark-theme .dropdown-item:hover{
+
+    background:#334155;
+
+}
+
+body.dark-theme .search-box{
+
+    background:#111827;
+    border:1px solid #334155;
+
+}
+
+body.dark-theme .search-box input{
+
+    color:#fff;
+
+}
+
+body.dark-theme .datetime-box{
+
+    background:#1e293b;
+
+}/* ======================================================
+   DARK MODE
+====================================================== */
+
+body.dark-theme{
+
+    background:#0f172a !important;
+
+    color:#f1f5f9;
+
+}
+
+/* Navbar */
+
+body.dark-theme .top-navbar{
+
+    background:#1e293b !important;
+
+    border-bottom:1px solid #334155;
+
+}
+
+/* جميع الكروت */
+
+body.dark-theme .equipment-section{
+
+    background:#1e293b !important;
+
+    border:1px solid #334155;
+
+    box-shadow:none;
+
+}
+
+/* العناوين */
+
+body.dark-theme h1,
+body.dark-theme h2,
+body.dark-theme h3,
+body.dark-theme h4{
+
+    color:#ffffff;
+
+}
+
+/* النصوص */
+
+body.dark-theme p,
+body.dark-theme span,
+body.dark-theme label{
+
+    color:#cbd5e1;
+
+}
+
+/* Inputs */
+
+body.dark-theme .form-control,
+body.dark-theme .form-select{
+
+    background:#0f172a;
+
+    color:#ffffff;
+
+    border:1px solid #334155;
+
+}
+
+body.dark-theme .form-control:focus,
+body.dark-theme .form-select:focus{
+
+    background:#111827;
+
+    color:#fff;
+
+    border-color:#22c55e;
+
+    box-shadow:0 0 0 .2rem rgba(34,197,94,.15);
+
+}
+
+/* Search */
+
+body.dark-theme .search-box{
+
+    background:#0f172a;
+
+    border:1px solid #334155;
+
+}
+
+body.dark-theme .search-box input{
+
+    color:#fff;
+
+}
+
+/* الوقت */
+
+body.dark-theme .datetime-box{
+
+    background:#1e293b;
+
+}
+
+/* Dropdown */
+
+body.dark-theme .more-dropdown,
+body.dark-theme .user-dropdown{
+
+    background:#1e293b;
+
+    border:1px solid #334155;
+
+}
+
+body.dark-theme .dropdown-item{
+
+    color:#f1f5f9;
+
+}
+
+body.dark-theme .dropdown-item:hover{
+
+    background:#334155;
+
+}
+
+/* الجداول */
+
+body.dark-theme table{
+
+    color:#fff;
+
+}
+
+body.dark-theme thead{
+
+    background:#111827;
+
+}
+
+body.dark-theme tbody tr{
+
+    background:#1e293b;
+
+}
+.dark-theme{
+
+    background:#0f172a;
+    color:#f8fafc;
+
+}
+
+.dark-theme .top-navbar{
+
+    background:#1e293b;
+
+}
+
+.dark-theme .equipment-section{
+
+    background:#1e293b;
+    color:white;
+
+}
+
+.dark-theme .table{
+
+    color:white;
+
+}
+.search-box{
+    position:relative;
+    width:300px;
+}
+
+.search-input{
+    width:100%;
+    height:42px;
+    padding:0 15px 0 40px;
+    border:1px solid #d9dee7;
+    border-radius:12px;
+    background:#fff;
+    outline:none;
+}
+
+.search-input:focus{
+    border-color:#1bb51f;
+    box-shadow:0 0 0 3px rgba(27,181,31,.12);
+}
+
+.search-icon{
+    position:absolute;
+    left:15px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#888;
+}
+
+.search-results{
+
+    display:none;
+
+    position:absolute;
+
+    top:48px;
+
+    left:0;
+
+    width:100%;
+
+    background:white;
+
+    border-radius:12px;
+
+    border:1px solid #ddd;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+
+    max-height:450px;
+
+    overflow:auto;
+
+    z-index:99999;
+
+}
+
+.search-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:12px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.search-item:hover{
+
+    background:#f5f7fa;
+
+}
+
+.search-type{
+
+    font-size:11px;
+
+    color:#1bb51f;
+
+    font-weight:bold;
+
+}
+
+.search-title{
+
+    font-weight:600;
+
+}
+
+.search-sub{
+
+    font-size:12px;
+
+    color:#777;
+
+}

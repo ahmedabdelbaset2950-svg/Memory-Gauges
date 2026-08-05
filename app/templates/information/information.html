@@ -1,0 +1,494 @@
+{% extends "base.html" %}
+
+{% block title %}Information{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/information.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="information-page">
+
+    <!-- ================= Sidebar ================= -->
+
+    <aside class="information-sidebar">
+
+        <div class="sidebar-title">
+            <i class="bi bi-archive-fill"></i>
+            Information Archive
+        </div>
+
+        {% if archive %}
+
+            {% for archive_year, year_months in archive.items() %}
+
+            <div class="year-group">
+
+                <button class="year-btn" type="button">
+    <i class="bi bi-caret-right-fill"></i>
+    {{ archive_year }}
+</button>
+
+                <div class="months">
+
+                    {% for item in year_months %}
+
+                    <a href="{{ url_for('information.index',
+                                        year=item.year,
+                                        month=item.month) }}"
+                       class="{% if item.year == year and item.month == month %}active{% endif %}">
+
+                        {{ item.month_name }}
+
+                        {% if item.status == "Closed" %}
+                            🔒
+                        {% else %}
+                            🟢
+                        {% endif %}
+
+                    </a>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-archive">
+                No archived months yet
+            </div>
+
+        {% endif %}
+
+    </aside>
+
+    <!-- ================= Main ================= -->
+
+    <section class="information-content">
+
+        <div class="information-header">
+
+            <div>
+                <h2>Information - {{ month_name }} {{ year }}</h2>
+                <p>Gauge Deployment &amp; Well Records</p>
+            </div>
+
+            <div class="information-actions">
+                {% if current_user.role == "admin" %}
+
+                <button id="addEntryBtn" class="btn btn-add">
+                    <i class="bi bi-plus-lg"></i>
+                    New Entry
+                </button>
+                {% endif %}
+
+                {% if current_user.role == "admin" %}
+
+    {% if not is_closed %}
+
+                <button id="closeMonthBtn" class="btn btn-close">
+                    <i class="bi bi-lock-fill"></i>
+                    Close Month
+                </button>
+
+                {% else %}
+
+                <div class="archived-badge">
+                    <i class="bi bi-archive-fill"></i>
+                    Archived Month — you can still edit or fix entries
+                </div>
+                {% endif %}
+
+                {% endif %}
+                {% if current_user.role == "admin" %}
+                <button id="importExcelBtn" class="btn btn-import">
+    <i class="bi bi-upload"></i>
+    Import Excel
+</button>
+{% endif %}
+
+<input
+    type="file"
+    id="importExcelFile"
+    accept=".xlsx,.xls"
+    hidden>
+                
+            
+                <button id="exportExcelBtn" class="btn btn-export">
+                    <i class="bi bi-file-earmark-excel"></i>
+                    Export Excel
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- ================= Search ================= -->
+
+        <form class="search-bar" method="GET"
+              action="{{ url_for('information.index') }}">
+
+            <input type="hidden" name="year" value="{{ year }}">
+            <input type="hidden" name="month" value="{{ month }}">
+
+            <div class="search-box grow">
+                <i class="bi bi-search"></i>
+                <input
+                    type="text"
+                    name="search"
+                    id="searchInput"
+                    value="{{ search }}"
+                    placeholder="Search by well number or gauge serial number...">
+            </div>
+
+        </form>
+
+        <!-- ================= Table ================= -->
+
+        <div class="information-table-wrapper">
+
+            <table class="information-table">
+
+                <thead>
+                    <tr>
+                        <th class="no-col">No</th>
+                        <th>Gauge S/N (Used)</th>
+                        <th>Position</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Days</th>
+                        <th>Well No</th>
+                        <th>Changed To</th>
+                        <th>Survey</th>
+                        <th>Rig Name</th>
+                        <th>B.Carrier S/N</th>
+                        <th>Battery S/N</th>
+                        <th>Engineer</th>
+                        <th>Total Hours</th>
+                        <th>Total Samples</th>
+                        <th>Data</th>
+                        <th>Comment</th>
+                        {% if current_user.role == "admin" %}
+<th></th>
+{% endif %}
+                    </tr>
+                </thead>
+
+                <tbody id="infoTableBody">
+
+                    {% for row in rows %}
+
+                    <tr
+    class="info-row
+           {% if row.is_group_start %}job-start{% endif %}
+           job-group-{{ row.display_group_no % 4 }}"
+    data-row-id="{{ row.id }}">
+
+                        <td class="no-col">
+                            {% if row.is_group_start %}
+
+                                {% if row.well_number and row.from_date %}
+                                <a href="{{ url_for('jobs.index', year=row.from_date.year, month=row.from_date.month, well=row.well_number) }}"
+   class="no-link job-badge"
+   title="View in Jobs">
+    {{ row.display_group_no }}
+
+                                {% else %}
+                                    {{ row.display_group_no }}
+                                {% endif %}
+
+                                {% if is_global_search %}
+                                <div class="group-month-tag">
+                                    {{ row.month_name_display[:3] }} {{ row.year }}
+                                </div>
+                                {% endif %}
+
+                            {% endif %}
+                        </td>
+
+                        <td class="editable" data-field="gauge_serial">{{ row.gauge_serial }}</td>
+                        <td class="editable" data-field="position">{{ row.position or "" }}</td>
+                        <td class="editable" data-field="from_date" data-type="date"
+                            data-raw="{{ row.from_date.isoformat() if row.from_date else '' }}">
+                            {{ row.from_date.strftime("%d %b, %Y") if row.from_date else "" }}
+                        </td>
+                        <td class="editable" data-field="to_date" data-type="date"
+                            data-raw="{{ row.to_date.isoformat() if row.to_date else '' }}">
+                            {{ row.to_date.strftime("%d %b, %Y") if row.to_date else "" }}
+                        </td>
+                        <td class="editable" data-field="days" data-type="number">{{ row.days }}</td>
+                        <td class="editable well-cell" data-field="well_number">
+                            <a href="#" class="well-link">{{ row.well_number }}</a>
+                        </td>
+                        <td class="editable" data-field="changed_to">{{ row.changed_to or "" }}</td>
+                        <td class="editable" data-field="survey">{{ row.survey or "" }}</td>
+                        <td class="editable" data-field="rig_name">{{ row.rig_name or "" }}</td>
+                        <td class="editable" data-field="bundle_carrier_sn">{{ row.bundle_carrier_sn or "" }}</td>
+                        <td class="editable" data-field="battery_sn">{{ row.battery_sn or "" }}</td>
+                        <td class="editable" data-field="engineer">{{ row.engineer or "" }}</td>
+                        <td class="editable" data-field="total_hours" data-type="number">{{ row.total_hours }}</td>
+                        <td class="editable" data-field="total_samples" data-type="number">{{ row.total_samples or 0 }}</td>
+
+                        <td class="attachment-cell">
+                            <input type="file" class="attachment-input" hidden accept=".xlsx,.xls,.csv">
+                            {% if row.attachment_filename %}
+                            <a href="{{ url_for('information.download_attachment', row_id=row.id) }}"
+                               class="attach-btn has-file" title="{{ row.attachment_original_name }}">
+                                <i class="bi bi-file-earmark-excel"></i>
+                            </a>
+                            <button type="button" class="attach-btn replace-attach-btn" title="Replace file">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </button>
+                            {% else %}
+                            <button type="button" class="attach-btn">
+                                <i class="bi bi-paperclip"></i>
+                            </button>
+                            {% endif %}
+                        </td>
+
+                        <td class="editable" data-field="comment">{{ row.comment or "" }}</td>
+
+                        {% if current_user.role == "admin" %}
+
+<td class="row-actions">
+
+    <button class="edit-row-btn" title="Edit row">
+        <i class="bi bi-pencil"></i>
+    </button>
+
+    <button class="del-row-btn" title="Delete row">
+        <i class="bi bi-trash"></i>
+    </button>
+
+</td>
+
+{% endif %}
+
+                    </tr>
+
+                    {% endfor %}
+
+                    {% if not rows %}
+                    <tr>
+                        <td colspan="17" class="empty-table">
+                            No entries yet for this month.
+                        </td>
+                    </tr>
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+{% if current_user.role == "admin" %}
+
+<!-- ================= Add Entry Modal ================= -->
+
+<div class="mgms-modal-overlay" id="addEntryModal" style="display:none;">
+
+    <div class="mgms-modal-box">
+
+        <div class="mgms-modal-header">
+            <h3><i class="bi bi-plus-circle-fill"></i> New Information Entry</h3>
+            <button type="button" class="mgms-modal-close" id="closeAddEntryModal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="mgms-modal-body">
+
+            <div class="shared-fields">
+
+                <div class="field">
+                    <label>Bundle Type</label>
+                    <select id="bundleTypeSelect">
+    <option value="single">Single (No Bundle) - 2 Gauges</option>
+    <option value="dual">Dual - 2 Gauges</option>
+    <option value="quad">Quad - 4 Gauges</option>
+</select>
+                </div>
+
+                <div class="field">
+                    <label>Well No</label>
+                    <input type="text" id="sharedWellNumber" placeholder="e.g. 112-159">
+                </div>
+
+                <div class="field">
+                    <label>From</label>
+                    <input type="date" id="sharedFromDate">
+                </div>
+
+                <div class="field">
+                    <label>To</label>
+                    <input type="date" id="sharedToDate">
+                </div>
+
+                <div class="field">
+                    <label>Survey</label>
+                    <input type="text" id="sharedSurvey" placeholder="Static Survey / TCB Test...">
+                </div>
+
+                
+
+                <div class="field">
+                    <label>Rig Name</label>
+                    <input type="text" id="sharedRigName">
+                </div>
+
+                <div class="field">
+                    <label>Bundle Carrier S/N</label>
+                    <input type="text" id="sharedBundleCarrier" placeholder="Absent if none">
+                </div>
+
+                              
+
+            </div>
+
+            <div class="gauge-rows-divider">
+                <i class="bi bi-cpu"></i> Gauges in this job
+            </div>
+
+            <div id="gaugeRowsContainer"></div>
+
+        </div>
+
+        <div class="mgms-modal-footer">
+            <button type="button" class="cancel-btn" id="cancelAddEntry">Cancel</button>
+            <button type="button" class="save-btn" id="saveAddEntry">Save Entry</button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ================= Edit Row Modal ================= -->
+
+<div class="mgms-modal-overlay" id="editRowModal" style="display:none;">
+
+    <div class="mgms-modal-box">
+
+        <div class="mgms-modal-header">
+            <h3><i class="bi bi-pencil-square"></i> Edit Entry</h3>
+            <button type="button" class="mgms-modal-close" id="closeEditRowModal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="mgms-modal-body">
+
+            <div class="shared-fields">
+
+                <div class="field">
+                    <label>Gauge S/N (Used)</label>
+                    <input type="text" id="editGaugeSerial">
+                </div>
+                <div class="field">
+    <label>Position</label>
+
+    <select id="editPosition">
+
+        <option value="Tandem">Tandem</option>
+        <option value="Internal">Internal</option>
+        <option value="External">External</option>
+
+    </select>
+</div>
+                
+                <div class="field">
+                    <label>Changed To</label>
+                    <input type="text" id="editChangedTo">
+                </div>
+
+                <div class="field">
+                    <label>Well No</label>
+                    <input type="text" id="editWellNumber">
+                </div>
+
+                <div class="field">
+                    <label>From</label>
+                    <input type="date" id="editFromDate">
+                </div>
+
+                <div class="field">
+                    <label>To</label>
+                    <input type="date" id="editToDate">
+                </div>
+
+                <div class="field">
+                    <label>Survey</label>
+                    <input type="text" id="editSurvey">
+                </div>
+
+               
+
+                <div class="field">
+                    <label>Rig Name</label>
+                    <input type="text" id="editRigName">
+                </div>
+
+                <div class="field">
+                    <label>Bundle Carrier S/N</label>
+                    <input type="text" id="editBundleCarrier">
+                </div>
+
+                <div class="field">
+                    <label>Battery S/N</label>
+                    <input type="text" id="editBatterySn">
+                </div>
+
+                <div class="field">
+                    <label>Engineer</label>
+                    <input type="text" id="editEngineer">
+                </div>
+
+                <div class="field">
+                    <label>Total Hours</label>
+                    <input type="number" step="0.01" id="editTotalHours">
+                </div>
+
+                <div class="field">
+                    <label>Total Samples</label>
+                    <input type="number" step="1" min="0" id="editTotalSamples">
+                </div>
+
+                <div class="field full">
+                    <label>Comment</label>
+                    <input type="text" id="editComment">
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="mgms-modal-footer">
+            <button type="button" class="cancel-btn" id="cancelEditRow">Cancel</button>
+            <button type="button" class="save-btn" id="saveEditRow">Save Changes</button>
+        </div>
+
+    </div>
+
+</div>
+{% endif %}
+{% endblock %}
+
+{% block js %}
+
+<script>
+window.informationYear = {{ year }};
+window.informationMonth = {{ month }};
+</script>
+
+<script src="{{ url_for('static', filename='js/information.js') }}"></script>
+
+{% endblock %}

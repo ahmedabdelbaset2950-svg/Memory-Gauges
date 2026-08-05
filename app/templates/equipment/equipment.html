@@ -1,0 +1,743 @@
+{% extends "base.html" %}
+
+{% block title %}
+Equipment
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/equipment.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="equipment-page">
+
+    <!-- ==========================================
+                    MINI DASHBOARD
+    =========================================== -->
+
+    <div class="equipment-cards">
+
+        <div class="equipment-card">
+
+            <div class="card-icon">
+                <i class="bi bi-cpu"></i>
+            </div>
+
+            <div class="card-info">
+
+                <span>Memory Gauges</span>
+
+                <h3>{{ memory_gauges|length }}</h3>
+
+                <small>Installed & Ready Gauges</small>
+
+            </div>
+
+        </div>
+
+        <div class="equipment-card">
+
+            <div class="card-icon">
+                <i class="bi bi-link-45deg"></i>
+            </div>
+
+            <div class="card-info">
+
+                <span>Bundle Carriers</span>
+
+                <h3>{{ bundle_carriers|length }}</h3>
+
+                <small>Available Bundle Carriers</small>
+
+            </div>
+
+        </div>
+
+        <div class="equipment-card">
+
+            <div class="card-icon">
+                <i class="bi bi-battery-half"></i>
+            </div>
+
+            <div class="card-info">
+
+                <span>Total Batteries</span>
+
+                <h3>{{ batteries|length }}</h3>
+
+                <small>Installed & Spare Batteries</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==========================================
+                    MEMORY GAUGES
+    =========================================== -->
+
+    <section class="equipment-section">
+
+        <div class="section-header">
+
+            <h3>
+
+                <i class="bi bi-cpu"></i>
+
+                Memory Gauges
+
+            </h3>
+
+            <div class="section-actions">
+
+                <div class="table-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="text"
+                        placeholder="Search Memory Gauge">
+
+                </div>
+
+                {% if current_user.role == "admin" %}
+
+<button
+    class="green-btn"
+    data-bs-toggle="modal"
+    data-bs-target="#gaugeModal">
+
+    <i class="bi bi-plus"></i>
+
+    New Gauge
+
+</button>
+
+{% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table equipment-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Serial Number</th>
+                        <th>Company</th>
+                        <th>Gauge Type</th>
+                        <th>Bundle Compatibility</th>
+                        <th>Calibration</th>
+                        <th>Battery</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% if memory_gauges %}
+
+                    {% for gauge in memory_gauges %}
+
+                    <tr>
+
+                        <td>{{ gauge.serial_number }}</td>
+
+                        <td>{{ gauge.company }}</td>
+
+                        <td>{{ gauge.gauge_type }}</td>
+
+                        <td>
+
+                            <div class="bundle-tags">
+
+                                {% if gauge.supports_dual %}
+                                <span class="tag dual">
+                                    Dual : {{ gauge.dual_type }}
+                                </span>
+                                {% endif %}
+
+                                {% if gauge.supports_quad %}
+                                <span class="tag quad">
+                                    Quad : {{ gauge.quad_type }}
+                                </span>
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                        <td>{{ gauge.calibration_date or "-" }}</td>
+
+                        <td>{{ gauge.battery_serial or "-" }}</td>
+
+                        <td>
+
+                            <span class="status">
+
+                                {{ gauge.status }}
+
+                            </span>
+
+                        </td>
+
+                        <td>{{ gauge.notes or "-" }}</td>
+
+                        <td>
+
+    {% if current_user.role == "admin" %}
+
+    <div class="table-actions">
+
+        <button
+            class="action-btn edit edit-gauge-btn"
+
+            data-id="{{ gauge.id }}"
+            data-serial="{{ gauge.serial_number }}"
+            data-company="{{ gauge.company }}"
+            data-type="{{ gauge.gauge_type }}"
+            data-battery="{{ gauge.battery_serial }}"
+            data-calibration="{{ gauge.calibration_date }}"
+            data-status="{{ gauge.status }}"
+            data-notes="{{ gauge.notes }}"
+
+            data-dual="{{ gauge.supports_dual }}"
+            data-dualtype="{{ gauge.dual_type }}"
+
+            data-quad="{{ gauge.supports_quad }}"
+            data-quadtype="{{ gauge.quad_type }}"
+
+            data-bs-toggle="modal"
+            data-bs-target="#gaugeModal">
+
+            <i class="bi bi-pencil"></i>
+
+        </button>
+
+        <form
+            method="POST"
+            class="delete-form"
+            action="{{ url_for('equipment.remove_memory_gauge', gauge_id=gauge.id) }}"
+            style="display:inline;">
+
+            {{ gauge_form.hidden_tag() }}
+
+            <button
+                type="button"
+                class="action-btn delete"
+                data-name="{{ gauge.serial_number }}">
+
+                <i class="bi bi-trash"></i>
+
+            </button>
+
+        </form>
+
+    </div>
+
+    {% else %}
+
+    <span class="text-muted">
+        View Only
+    </span>
+
+    {% endif %}
+
+</td>
+                    </tr>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <tr>
+
+                        <td colspan="9">
+
+                            <div class="empty-table">
+
+                                <i class="bi bi-cpu"></i>
+
+                                <h4>No Memory Gauges Found</h4>
+
+                                <p>
+
+                                    Click "New Gauge" to add your first Memory Gauge.
+
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endif %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+    <!-- ==========================================
+                BUNDLE CARRIERS
+=========================================== -->
+
+<section class="equipment-section">
+
+    <div class="section-header">
+
+        <h3>
+
+            <i class="bi bi-link-45deg"></i>
+
+            Bundle Carriers
+
+        </h3>
+
+        <div class="section-actions">
+
+            <div class="table-search">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    placeholder="Search Bundle Carrier">
+
+            </div>
+
+            {% if current_user.role == "admin" %}
+
+<button
+    class="green-btn"
+    data-bs-toggle="modal"
+    data-bs-target="#bundleModal">
+
+    <i class="bi bi-plus"></i>
+
+    New Bundle
+
+</button>
+
+{% endif %}
+        </div>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table equipment-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Serial Number</th>
+                    <th>Company</th>
+                    <th>Type</th>
+                    <th>Position</th>
+                    <th>Pressure Test</th>
+                    <th>Current Location</th>
+                    <th>Allen Key</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% if bundle_carriers %}
+
+                {% for bundle in bundle_carriers %}
+
+                <tr>
+
+                    <td>{{ bundle.serial_number }}</td>
+
+                    <td>{{ bundle.company }}</td>
+
+                    <td>
+
+                        <span class="tag {% if bundle.type == 'Internal' %}internal{% else %}external{% endif %}">
+
+                            {{ bundle.type }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span class="tag {% if bundle.position == 'Dual' %}dual{% else %}quad{% endif %}">
+
+                            {{ bundle.position }}
+
+                        </span>
+
+                    </td>
+                    <td>{{ bundle.pressure_test_date or "-" }}</td>
+                    <td>{{ bundle.current_location or "-" }}</td>
+
+                    <td>{{ bundle.allen_key or "-" }}</td>
+
+                    <td>{{ bundle.notes or "-" }}</td>
+
+                   <td>
+
+{% if current_user.role == "admin" %}
+
+<div class="table-actions">
+
+    <button
+        class="action-btn edit edit-bundle-btn"
+
+        data-id="{{ bundle.id }}"
+        data-serial="{{ bundle.serial_number }}"
+        data-company="{{ bundle.company }}"
+        data-type="{{ bundle.type }}"
+        data-position="{{ bundle.position }}"
+        data-pressure="{{ bundle.pressure_test_date }}"
+        data-location="{{ bundle.current_location }}"
+        data-allen="{{ bundle.allen_key }}"
+        data-notes="{{ bundle.notes }}"
+
+        data-bs-toggle="modal"
+        data-bs-target="#bundleModal">
+
+        <i class="bi bi-pencil"></i>
+
+    </button>
+
+    <form method="POST"
+          class="delete-form"
+          action="{{ url_for('equipment.remove_bundle_carrier', bundle_id=bundle.id) }}"
+          style="display:inline;">
+
+        {{ bundle_form.hidden_tag() }}
+
+        <button
+            type="button"
+            class="action-btn delete"
+            data-name="{{ bundle.serial_number }}">
+
+            <i class="bi bi-trash"></i>
+
+        </button>
+
+    </form>
+
+</div>
+
+{% else %}
+
+<span class="text-muted">View Only</span>
+
+{% endif %}
+
+</td>
+
+                </tr>
+
+                {% endfor %}
+
+            {% else %}
+
+                <tr>
+
+                    <td colspan="9">
+
+                        <div class="empty-table">
+
+                            <i class="bi bi-link-45deg"></i>
+
+                            <h4>No Bundle Carriers Found</h4>
+
+                            <p>
+
+                                Click "New Bundle" to add your first Bundle Carrier.
+
+                            </p>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            {% endif %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+</section>
+
+<!-- ==========================================
+                    BATTERIES
+=========================================== -->
+<section class="equipment-section">
+    <div class="section-header">
+        <h3><i class="bi bi-battery-half"></i> Batteries</h3>
+        <div class="section-actions">
+            <div class="table-search">
+                <i class="bi bi-search"></i>
+                <input type="text" placeholder="Search Battery">
+            </div>
+            {% if current_user.role == "admin" %}
+
+<button
+    class="green-btn"
+    data-bs-toggle="modal"
+    data-bs-target="#batteryModal">
+
+    <i class="bi bi-plus"></i>
+
+    New Battery
+
+</button>
+
+{% endif %}
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table equipment-table">
+            <thead>
+                <tr>
+                    <th>Serial Number</th>
+                    <th>Compatible Gauge Type</th>
+                    <th>Capacity</th>
+                    <th>Unit</th>
+                    <th>Previous Consumption</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+
+{% if batteries %}
+
+    {% for battery in batteries %}
+
+    <tr>
+
+        <td>{{ battery.serial_number }}</td>
+
+        <td>{{ battery.compatible_gauge_type }}</td>
+
+        <td>{{ "%g"|format(battery.capacity) }}</td>
+
+        <td>
+            <span class="tag battery-unit">
+                {{ battery.capacity_unit }}
+            </span>
+        </td>
+
+        <td>
+            {{ "%g"|format(battery.previous_consumption or 0) }}
+            {{ battery.capacity_unit }}
+        </td>
+
+        <td>
+            <span class="status {{ battery.status|lower|replace(' ', '') }}">
+                {{ battery.status }}
+            </span>
+        </td>
+
+        <td>
+            {{ battery.notes or "-" }}
+        </td>
+
+        <td>
+
+            {% if current_user.role == "admin" %}
+
+            <div class="table-actions">
+
+                <button
+                    class="action-btn edit edit-battery-btn"
+
+                    data-id="{{ battery.id }}"
+                    data-serial="{{ battery.serial_number }}"
+                    data-gauge-type="{{ battery.compatible_gauge_type }}"
+                    data-capacity="{{ battery.capacity }}"
+                    data-unit="{{ battery.capacity_unit }}"
+                    data-previous-consumption="{{ battery.previous_consumption or 0 }}"
+                    data-status="{{ battery.status }}"
+                    data-notes="{{ battery.notes or '' }}"
+
+                    data-bs-toggle="modal"
+                    data-bs-target="#batteryModal">
+
+                    <i class="bi bi-pencil"></i>
+
+                </button>
+
+                <form
+                    method="POST"
+                    class="delete-form"
+                    action="{{ url_for('equipment.remove_battery', battery_id=battery.id) }}"
+                    style="display:inline;">
+
+                    {{ battery_form.hidden_tag() }}
+
+                    <button
+                        type="button"
+                        class="action-btn delete"
+                        data-name="{{ battery.serial_number }}">
+
+                        <i class="bi bi-trash"></i>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+            {% else %}
+
+            <span class="text-muted">
+                View Only
+            </span>
+
+            {% endif %}
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+{% else %}
+
+<tr>
+
+    <td colspan="8">
+
+        <div class="empty-table">
+
+            <i class="bi bi-battery-half"></i>
+
+            <h4>No Batteries Found</h4>
+
+            <p>Click "New Battery" to add your first Battery.</p>
+
+        </div>
+
+    </td>
+
+</tr>
+
+{% endif %}
+
+</tbody>
+        </table>
+    </div>
+</section>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade"
+     id="deleteModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    <i class="bi bi-trash text-danger me-2"></i>
+                    Delete Record
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body text-center">
+
+                <h5 id="deleteTitle" class="mb-3">
+                    Are you sure?
+                </h5>
+
+                <p class="text-muted mb-0">
+                    This action cannot be undone.
+                </p>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    id="confirmDeleteBtn"
+                    type="button"
+                    class="btn btn-danger">
+
+                    <i class="bi bi-trash-fill me-2"></i>
+
+                    Delete
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% if current_user.role == "admin" %}
+
+{% include "equipment/modals/gauge_modal.html" %}
+{% include "equipment/modals/bundle_modal.html" %}
+{% include "equipment/modals/battery_modal.html" %}
+
+{% endif %}
+{% endblock %}
+
+{% block js %}
+
+<script src="{{ url_for('static', filename='js/equipment.js') }}"></script>
+
+{% if open_type %}
+<script>
+    window.openEquipment = "{{ open_type }}";
+</script>
+
+{% endif %}
+
+
+{% endblock %}

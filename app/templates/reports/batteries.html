@@ -1,0 +1,486 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Battery Analysis | MGMS
+{% endblock %}
+
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/reports.css') }}">
+{% endblock %}
+
+
+{% block content %}
+
+<section class="reports-page">
+
+    <!-- HEADER -->
+
+    <div class="report-head">
+
+        <div>
+
+            <span class="eyebrow">
+                REPORTS / BATTERIES
+            </span>
+
+            <h1>Battery Analysis</h1>
+
+            <p>
+                Battery utilization calculated from actual
+                Information records.
+            </p>
+
+        </div>
+
+        {% include 'reports/_filters.html' %}
+
+    </div>
+
+
+    {% include 'reports/_nav.html' %}
+
+
+    <!-- BATTERIES -->
+
+    <div class="battery-analysis-grid">
+
+        {% for item in batteries %}
+
+        <div class="battery-analysis-card">
+
+            <!-- TOP -->
+
+            <div class="battery-card-head">
+
+                <div>
+
+                    <span class="battery-label">
+                        BATTERY SERIAL
+                    </span>
+
+                    <h3>
+                        {{ item.battery.serial_number }}
+                    </h3>
+
+                </div>
+
+
+                <span class="battery-unit-badge">
+                    {{ item.unit or '—' }}
+                </span>
+
+            </div>
+
+
+            <!-- STATS -->
+
+            <div class="battery-stats">
+
+                <div>
+                    <span>Used Hours</span>
+                    <strong>{{ item.hours }}</strong>
+                </div>
+
+                <div>
+                    <span>Readings</span>
+                    <strong>
+                        {{ "{:,}".format(item.samples) }}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Jobs</span>
+                    <strong>{{ item.jobs_count }}</strong>
+                </div>
+
+                <div>
+                    <span>Gauges</span>
+                    <strong>{{ item.gauges_count }}</strong>
+                </div>
+
+            </div>
+
+
+            <!-- CONSUMPTION -->
+
+<div class="battery-consumption">
+
+    <span>BATTERY UTILIZATION</span>
+
+
+    <!-- ==========================================
+            CAPACITY / CONSUMPTION DETAILS
+    =========================================== -->
+
+    <div class="battery-capacity-grid">
+
+        <!-- Capacity -->
+
+        <div>
+
+            <small>Capacity</small>
+
+            <strong>
+                {{ item.capacity }}
+            </strong>
+
+            <b>{{ item.unit }}</b>
+
+        </div>
+
+
+        <!-- Previous Consumption -->
+
+        <div>
+
+            <small>Previous</small>
+
+            <strong>
+                {{ item.previous_consumption }}
+            </strong>
+
+            <b>{{ item.unit }}</b>
+
+        </div>
+
+
+        <!-- MGMS Consumption -->
+
+        <div>
+
+            <small>MGMS Used</small>
+
+            <strong>
+
+                {% if item.mgms_consumption is not none %}
+
+                    {{ item.mgms_consumption }}
+
+                {% else %}
+
+                    —
+
+                {% endif %}
+
+            </strong>
+
+            <b>{{ item.unit }}</b>
+
+        </div>
+
+
+        <!-- Total Consumed -->
+
+        <div>
+
+            <small>Total Consumed</small>
+
+            <strong>
+
+                {% if item.total_consumed is not none %}
+
+                    {{ item.total_consumed }}
+
+                {% else %}
+
+                    —
+
+                {% endif %}
+
+            </strong>
+
+            <b>{{ item.unit }}</b>
+
+        </div>
+
+
+        <!-- Remaining -->
+
+        <div>
+
+            <small>Remaining</small>
+
+            <strong>
+
+                {% if item.remaining is not none %}
+
+                    {{ item.remaining }}
+
+                {% else %}
+
+                    —
+
+                {% endif %}
+
+            </strong>
+
+            <b>{{ item.unit }}</b>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+                    PERCENTAGES
+    =========================================== -->
+
+    {% if item.remaining_percent is not none %}
+
+    <div class="battery-percentage-row">
+
+        <div>
+
+            <span>Used</span>
+
+            <strong>
+                {{ item.used_percent }}%
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>Remaining</span>
+
+            <strong>
+                {{ item.remaining_percent }}%
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+                    PROGRESS BAR
+    =========================================== -->
+
+    <div class="battery-progress">
+
+        <div
+            class="battery-progress-fill"
+            style="width: {{ item.remaining_percent }}%;">
+        </div>
+
+    </div>
+
+
+    <div class="battery-progress-caption">
+
+        <span>
+            {{ item.used_percent }}% Used
+        </span>
+
+        <span>
+            {{ item.remaining_percent }}% Remaining
+        </span>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ==========================================
+                    FORMULA
+    =========================================== -->
+
+    <small class="battery-formula">
+
+        Previous + MGMS Used = Total Consumed
+
+        {% if item.formula %}
+            <br>
+            MGMS: {{ item.formula }}
+        {% endif %}
+
+    </small>
+
+</div>
+
+            <!-- GAUGES -->
+
+            <div class="battery-gauges">
+
+                <span>Used With</span>
+
+                <div>
+
+                    {% for gauge in item.gauges %}
+
+                        <span class="gauge-chip">
+                            {{ gauge }}
+                        </span>
+
+                    {% else %}
+
+                        <span class="muted">
+                            No recorded usage
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <!-- HISTORY BUTTON -->
+
+            <button
+                type="button"
+                class="battery-history-btn"
+                onclick="toggleBatteryHistory(
+                    'battery-history-{{ loop.index }}',
+                    this
+                )"
+            >
+                View Usage History
+            </button>
+
+
+            <!-- HISTORY -->
+
+            <div
+                id="battery-history-{{ loop.index }}"
+                class="battery-history"
+                style="display:none;"
+            >
+
+                <div class="battery-history-scroll">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Well</th>
+                                <th>Gauge</th>
+                                <th>Hours</th>
+                                <th>Readings</th>
+                                <th>Days</th>
+                                <th>Survey</th>
+                                <th>Rig</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        {% for h in item.history %}
+
+                            <tr>
+
+                                <td>
+                                    {% if h.from_date %}
+                                        {{ h.from_date.strftime('%d %b %Y') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {% if h.to_date %}
+                                        {{ h.to_date.strftime('%d %b %Y') }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    {{ h.well_number or '-' }}
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        {{ h.gauge_serial or '-' }}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    {{ h.hours }}
+                                </td>
+
+                                <td>
+                                    {{ "{:,}".format(h.samples) }}
+                                </td>
+
+                                <td>
+                                    {{ h.days }}
+                                </td>
+
+                                <td>
+                                    {{ h.survey or '-' }}
+                                </td>
+
+                                <td>
+                                    {{ h.rig_name or '-' }}
+                                </td>
+
+                            </tr>
+
+                        {% else %}
+
+                            <tr>
+                                <td colspan="9" class="empty">
+                                    No usage recorded for this period.
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="panel empty">
+            No batteries found.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<script>
+
+function toggleBatteryHistory(id, button){
+
+    const box = document.getElementById(id);
+
+    if(box.style.display === "none"){
+
+        box.style.display = "block";
+        button.textContent = "Hide Usage History";
+        button.classList.add("active");
+
+    }else{
+
+        box.style.display = "none";
+        button.textContent = "View Usage History";
+        button.classList.remove("active");
+
+    }
+
+}
+
+</script>
+
+{% endblock %}

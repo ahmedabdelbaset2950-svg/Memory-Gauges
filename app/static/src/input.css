@@ -1,0 +1,68 @@
+@import "tailwindcss";
+:root{
+    --primary:#2563EB;
+    --primary-dark:#1D4ED8;
+    --navy:#0F2D52;
+    --bg:#F4F7FC;
+    --card:#FFFFFF;
+    --text:#1E293B;
+    --border:#E2E8F0;
+}
+.input-field{
+
+    width:100%;
+
+    height:56px;
+
+    border:none;
+
+    outline:none;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.55);
+
+    padding-left:55px;
+
+    padding-right:55px;
+
+    font-size:15px;
+
+    transition:.35s;
+
+    color:#35535a;
+
+}
+
+.input-field:focus{
+
+    background:white;
+
+    box-shadow:
+
+        0 0 0 4px rgba(91,225,85,.18);
+
+}
+.input-box{
+
+    position:relative;
+
+}
+
+.input-box i{
+
+    color:#4c7465;
+
+}
+
+.input-box i:first-child{
+
+    left:18px;
+
+}
+
+#togglePassword{
+
+    right:18px;
+
+}

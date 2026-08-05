@@ -1,0 +1,124 @@
+<div class="modal fade"
+     id="bundleModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered"
+     style="max-width:760px;">
+
+        <div class="modal-content bundle-modal">
+
+    <!-- Header -->
+    <div class="modal-header">
+
+        <h4 class="modal-title" id="bundleModalTitle">
+            Add New Bundle Carrier
+        </h4>
+  
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal">
+        </button>
+
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+
+        <form id="bundleForm"
+              method="POST"
+              action="{{ url_for('equipment.add_bundle_carrier') }}"
+              data-add-url="{{ url_for('equipment.add_bundle_carrier') }}"
+              data-edit-url="{{ url_for('equipment.edit_bundle_carrier', bundle_id=0) }}">
+
+            {{ bundle_form.hidden_tag() }}
+
+            <input
+                type="hidden"
+                id="editingBundleId"
+                value="">
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    {{ bundle_form.serial_number.label(class="form-label") }}
+                    {{ bundle_form.serial_number(class="form-control") }}
+                </div>
+
+                <div class="col-md-6">
+                    {{ bundle_form.company.label(class="form-label") }}
+                    {{ bundle_form.company(class="form-control") }}
+                </div>
+
+                <div class="col-md-6">
+                    {{ bundle_form.type.label(class="form-label") }}
+                    {{ bundle_form.type(class="form-select") }}
+                </div>
+
+                <div class="col-md-6">
+    {{ bundle_form.position.label(class="form-label") }}
+    {{ bundle_form.position(class="form-select") }}
+</div>
+
+<div class="col-md-6">
+    {{ bundle_form.pressure_test_date.label(class="form-label") }}
+    {{ bundle_form.pressure_test_date(class="form-control") }}
+</div>
+
+<div class="col-md-6">
+    {{ bundle_form.current_location.label(class="form-label") }}
+    {{ bundle_form.current_location(class="form-control") }}
+</div>
+
+                <div class="col-md-6">
+                    {{ bundle_form.allen_key.label(class="form-label") }}
+                    {{ bundle_form.allen_key(class="form-control") }}
+                </div>
+
+                <div class="col-12">
+                    {{ bundle_form.notes.label(class="form-label") }}
+                    {{ bundle_form.notes(class="form-control", rows="3") }}
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal">
+
+            Cancel
+
+        </button>
+
+        <button
+            type="submit"
+            id="bundleSubmitBtn"
+            form="bundleForm"
+            class="btn btn-success">
+
+            <i class="bi bi-check-circle-fill me-2"></i>
+
+            Save Bundle Carrier
+
+        </button>
+
+    </div>
+
+</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

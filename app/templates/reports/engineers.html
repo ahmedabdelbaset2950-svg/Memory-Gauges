@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Engineers Analytics | MGMS
+{% endblock %}
+
+
+{% block css %}
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/reports.css') }}">
+
+{% endblock %}
+
+
+{% block content %}
+
+<section class="reports-page">
+
+    <!-- HEADER -->
+
+    <div class="report-head">
+
+        <div>
+
+            <span class="eyebrow">
+                REPORTS / ANALYTICS
+            </span>
+
+            <h1>
+                Engineers Analytics
+            </h1>
+
+            <p>
+                Engineer activity and performance based on Information records for
+                {{ year }}
+
+                {% if month %}
+                    / {{ months[month-1] }}
+                {% endif %}
+            </p>
+
+        </div>
+
+        {% include 'reports/_filters.html' %}
+
+    </div>
+
+
+    {% include 'reports/_nav.html' %}
+
+
+    <!-- =================================================
+         KPI
+    ================================================== -->
+
+    <div class="analytics-kpi-grid">
+
+        <div class="analytics-kpi">
+            <span>Total Engineers</span>
+            <strong>{{ total_engineers }}</strong>
+            <small>Active this period</small>
+        </div>
+
+        <div class="analytics-kpi">
+            <span>Total Jobs</span>
+            <strong>{{ total_jobs }}</strong>
+            <small>Handled by all engineers</small>
+        </div>
+
+        <div class="analytics-kpi">
+            <span>Total Hours</span>
+            <strong>{{ total_hours }}</strong>
+            <small>Recorded gauge hours</small>
+        </div>
+
+        <div class="analytics-kpi">
+            <span>Avg Hours / Engineer</span>
+            <strong>{{ avg_hours_per_engineer }}</strong>
+            <small>Workload balance</small>
+        </div>
+
+        <div class="analytics-kpi">
+            <span>Busiest Engineer</span>
+            <strong>{{ busiest_engineer.name if busiest_engineer else '—' }}</strong>
+            <small>
+                {% if busiest_engineer %}
+                    {{ busiest_engineer.hours }} hrs recorded
+                {% else %}
+                    No data yet
+                {% endif %}
+            </small>
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         CHART
+    ================================================== -->
+
+    <div class="analytics-grid two">
+
+        <div class="panel">
+
+            <div class="chart-head">
+
+                <div>
+                    <span class="chart-eyebrow">
+                        WORKLOAD
+                    </span>
+
+                    <h3>
+                        Top Engineers by Hours
+                    </h3>
+                </div>
+
+            </div>
+
+            <div class="chart-box chart-large">
+                <canvas id="engineerHoursChart"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         TABLE
+    ================================================== -->
+
+    <div class="panel table-panel analytics-table-panel">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Engineer</th>
+                    <th>Jobs</th>
+                    <th>Working Days</th>
+                    <th>Total Hours</th>
+                    <th>Avg Hours / Job</th>
+                    <th>Wells</th>
+                    <th>Gauges Used</th>
+                    <th>Changes</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for e in engineers %}
+
+                <tr>
+                    <td><strong>{{ e.name }}</strong></td>
+                    <td>{{ e.jobs }}</td>
+                    <td>{{ e.days }}</td>
+                    <td>{{ e.hours }}</td>
+                    <td>{{ e.avg_hours_per_job }}</td>
+                    <td>{{ e.wells }}</td>
+                    <td>{{ e.gauges }}</td>
+                    <td>{{ e.changes }}</td>
+                </tr>
+
+            {% else %}
+
+                <tr>
+                    <td colspan="8" class="empty">
+                        No engineer data recorded for this period.
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+Chart.defaults.font.family =
+    "'Inter', 'Segoe UI', sans-serif";
+
+Chart.defaults.color = "#64748b";
+
+new Chart(
+    document.getElementById("engineerHoursChart"),
+    {
+        type: "bar",
+
+        data: {
+            labels: {{ top_labels | tojson }},
+            datasets: [
+                {
+                    label: "Hours",
+                    data: {{ top_values | tojson }},
+                    borderRadius: 6
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: "y",
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: { beginAtZero: true }
+            }
+        }
+    }
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block title %}Maintenance | MGMS{% endblock %}
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/reports.css') }}">
+{% endblock %}
+{% block content %}
+<section class="reports-page"><div class="report-head"><div>
+    <span class="eyebrow">REPORTS</span><h1>Maintenance</h1><p>Maintenance history for Gauges, Bundle Carriers and Batteries.</p>
+</div><button class="primary-btn" data-bs-toggle="modal" data-bs-target="#maintenanceModal">
+    <i class="bi bi-plus-lg"></i> Add Maintenance</button>
+    <a class="export-btn" href="{{ url_for('reports.export_report', kind='maintenance') }}">
+        <i class="bi bi-file-earmark-excel"></i> Export Excel</a>
+    </div>{% include 'reports/_nav.html' %}<div class="panel table-panel"><table>
+        <thead><tr><th>Date</th><th>Equipment</th><th>Serial</th><th>Problem</th>
+            <th>Action</th><th>Status</th><th>Return</th>
+<th class="text-center">Actions</th></tr></thead>
+<tbody>{% for r in records %}<tr><td>{{ r.maintenance_date }}</td>
+    <td>{{ r.equipment_type }}</td><td><b>{{ r.serial_number }}</b></td>
+    <td>{{ r.problem }}</td><td>{{ r.action_taken or '—' }}</td>
+    <td>{{ r.status }}</td><td>{{ r.return_date or '—' }}</td>
+
+<td class="text-center">
+
+    <button
+        class="btn btn-sm btn-outline-primary edit-maintenance"
+        data-id="{{ r.id }}"
+        data-equipment="{{ r.equipment_type }}"
+        data-serial="{{ r.serial_number }}"
+        data-date="{{ r.maintenance_date }}"
+        data-status="{{ r.status }}"
+        data-problem="{{ r.problem }}"
+        data-action="{{ r.action_taken or '' }}"
+        data-return="{{ r.return_date or '' }}"
+        data-notes="{{ r.notes or '' }}">
+
+        <i class="bi bi-pencil-square"></i>
+
+    </button>
+
+    <form method="POST"
+          action="{{ url_for('reports.delete_maintenance', maintenance_id=r.id) }}"
+          class="d-inline"
+          onsubmit="return confirm('Delete this maintenance record?')">
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        
+        <button
+    type="button"
+    class="btn btn-sm btn-outline-danger delete-maintenance">
+
+            <i class="bi bi-trash"></i>
+
+        </button>
+
+    </form>
+
+</td></tr>{% else %}<tr><td colspan="8" class="empty">No maintenance records yet.</td>
+</tr>{% endfor %}</tbody></table></div>
+</section>
+<div class="modal fade" id="maintenanceModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered">
+    <form id="maintenanceForm" class="modal-content" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="maintenance_id" id="maintenance_id">
+        <div class="modal-header"><h5 class="modal-title" id="maintenanceModalTitle">
+    Add Maintenance Record
+</h5>
+            <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div><div class="modal-body form-grid"><label>Equipment Type<select id="equipment_type" name="equipment_type" required><option>Gauge</option>
+            <option>Bundle Carrier</option><option>Battery</option></select>
+        </label><label>Serial Number<input id="serial_number" name="serial_number" required></label>
+        <label>Maintenance Date<input id="maintenance_date" type="date" name="maintenance_date" required>
+</label>
+        <label>Status<select id="status" name="status"><option>Maintenance</option>
+            <option>Completed</option>
+            <option>Retired</option></select>
+        </label><label class="full">Problem<textarea id="problem" name="problem" required></textarea></textarea></label>
+        <label class="full">Action Taken<textarea id="action_taken" name="action_taken"></textarea></label>
+        <label>Return Date<input id="return_date" type="date" name="return_date"></label>
+        <label>Notes<input id="notes" name="notes"></label></div>
+        <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+            <button class="btn btn-success">Save</button></div>
+        </form></div></div>
+
+<script>
+
+document.querySelectorAll(".edit-maintenance").forEach(btn => {
+
+    btn.addEventListener("click", function () {
+
+        document.getElementById("maintenanceModalTitle").textContent =
+            "Edit Maintenance Record";
+
+        document.getElementById("maintenance_id").value = this.dataset.id;
+
+        document.getElementById("equipment_type").value = this.dataset.equipment;
+        document.getElementById("serial_number").value = this.dataset.serial;
+        document.getElementById("maintenance_date").value = this.dataset.date;
+        document.getElementById("status").value = this.dataset.status;
+        document.getElementById("problem").value = this.dataset.problem;
+        document.getElementById("action_taken").value = this.dataset.action;
+        document.getElementById("return_date").value = this.dataset.return;
+        document.getElementById("notes").value = this.dataset.notes;
+
+        new bootstrap.Modal(document.getElementById("maintenanceModal")).show();
+
+    });
+
+});
+
+</script>
+<script>
+
+document.querySelectorAll(".delete-maintenance").forEach(btn => {
+
+    btn.addEventListener("click", function (e) {
+
+        e.preventDefault();
+
+        const form = this.closest("form");
+
+        Swal.fire({
+
+            title: "Delete Record?",
+            text: "This maintenance record will be permanently deleted.",
+            icon: "warning",
+
+            showCancelButton: true,
+
+            confirmButtonColor: "#dc3545",
+            cancelButtonColor: "#6c757d",
+
+            confirmButtonText: "Yes, Delete",
+            cancelButtonText: "Cancel",
+
+            reverseButtons: true
+
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                form.submit();
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,617 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-wrapper">
+
+    <!-- ===========================
+            Statistics Cards
+    ============================ -->
+
+    <section class="cards-grid">
+
+        <!-- Total Equipment -->
+
+        <div class="stat-card shadow-hover">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+
+                    <i class="bi bi-box-seam"></i>
+
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+
+                {{ total_equipment|default(0) }}
+
+            </div>
+
+            <div class="stat-title">
+
+                Total Equipment
+
+            </div>
+
+            <div class="stat-sub">
+
+                All registered equipment
+
+            </div>
+
+        </div>
+
+        <!-- Memory Gauges -->
+
+        <div class="stat-card shadow-hover">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+
+                    <i class="bi bi-cpu"></i>
+
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+
+                {{ total_gauges|default(0) }}
+
+            </div>
+
+            <div class="stat-title">
+
+                Memory Gauges
+
+            </div>
+
+            <div class="stat-sub">
+
+                Ready & Installed Gauges
+
+            </div>
+
+        </div>
+
+        <!-- Band Carriers -->
+
+        <div class="stat-card shadow-hover">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+
+                    <i class="bi bi-link-45deg"></i>
+
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+
+                {{ total_band|default(0) }}
+
+            </div>
+
+            <div class="stat-title">
+
+                Band Carriers
+
+            </div>
+
+            <div class="stat-sub">
+
+                Available Band Carriers
+
+            </div>
+
+        </div>
+
+        <!-- Batteries -->
+
+        <div class="stat-card shadow-hover">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+
+                    <i class="bi bi-battery-full"></i>
+
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+
+                {{ total_batteries|default(0) }}
+
+            </div>
+
+            <div class="stat-title">
+
+                Total Batteries
+
+            </div>
+
+            <div class="stat-sub">
+
+                Installed & Spare Batteries
+
+            </div>
+
+        </div>
+
+        <!-- Jobs -->
+
+        <div class="stat-card shadow-hover">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+
+                    <i class="bi bi-briefcase"></i>
+
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+
+                {{ annual_jobs|default(0) }}
+
+            </div>
+
+            <div class="stat-title">
+
+                Jobs {{ current_year }}
+
+            </div>
+
+            <div class="stat-sub">
+
+                {{ monthly_jobs|default(0) }} Jobs This Month
+
+            </div>
+
+        </div>
+
+    </section>
+        <!-- ===========================
+            Charts
+    ============================ -->
+
+    <section class="chart-grid">
+
+        <!-- Gauge Usage - Year -->
+
+        <div class="chart-card">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h4 class="chart-title">
+
+                        Gauge Used (Year)
+
+                    </h4>
+
+                    <span class="chart-subtitle">
+
+                        Most used gauges during the selected year
+
+                    </span>
+
+                </div>
+
+                <select id="yearFilter" class="chart-filter">
+
+    {% for year in years %}
+        <option value="{{ year }}"
+            {% if year == selected_year %}selected{% endif %}>
+            {{ year }}
+        </option>
+    {% endfor %}
+
+</select>
+
+            </div>
+
+            <div class="chart-body">
+    <canvas id="gaugeYearChart"></canvas>
+</div>
+
+        </div>
+
+        <!-- Gauge Usage - Month -->
+
+        <div class="chart-card">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h4 class="chart-title">
+
+                        Gauge Used (Month)
+
+                    </h4>
+
+                    <span class="chart-subtitle">
+
+                        Most used gauges during the selected month
+
+                    </span>
+
+                </div>
+
+                <select id="monthFilter" class="chart-filter">
+
+    {% for month in months %}
+        <option value="{{ month }}"
+            {% if month == selected_month %}selected{% endif %}>
+            {{ month_names[month] }}
+        </option>
+    {% endfor %}
+
+</select>
+
+            </div>
+
+           <div class="chart-body">
+    <canvas id="gaugeMonthChart"></canvas>
+</div>
+
+        </div>
+
+    </section>
+
+    <!-- ===========================
+            Ticket Statistics
+            (based on how much each gauge worked per Job records)
+    ============================ -->
+
+    <section class="chart-grid">
+
+    <!-- Changed Gauge - Year -->
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+
+            <div>
+
+                <h4 class="chart-title">
+                    Changed Gauge (Year)
+                </h4>
+
+                <span class="chart-subtitle">
+                    Most replacement gauges during the selected year
+                </span>
+
+            </div>
+
+            <select id="yearFilter2" class="chart-filter">
+
+    {% for year in years %}
+        <option value="{{ year }}"
+            {% if year == selected_year %}selected{% endif %}>
+            {{ year }}
+        </option>
+    {% endfor %}
+
+</select>
+
+        </div>
+
+        <div class="chart-body">
+
+            <canvas id="changedGaugeYearChart"></canvas>
+
+        </div>
+
+    </div>
+
+    <!-- Changed Gauge - Month -->
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+
+            <div>
+
+                <h4 class="chart-title">
+                    Changed Gauge (Month)
+                </h4>
+
+                <span class="chart-subtitle">
+                    Most replacement gauges during the selected month
+                </span>
+
+            </div>
+
+            <select id="monthFilter2" class="chart-filter">
+
+    {% for month in months %}
+        <option value="{{ month }}"
+            {% if month == selected_month %}selected{% endif %}>
+            {{ month_names[month] }}
+        </option>
+    {% endfor %}
+
+</select>
+
+        </div>
+
+        <div class="chart-body">
+
+            <canvas id="changedGaugeMonthChart"></canvas>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+        <!-- ===========================
+            Bottom Section
+    ============================ -->
+
+    <section class="dashboard-bottom">
+
+        <!-- ===========================
+                Quick Actions
+        ============================ -->
+
+        <div class="panel">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h4 class="chart-title">
+
+                        Quick Actions
+
+                    </h4>
+
+                    <span class="chart-subtitle">
+
+                        Frequently used shortcuts
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="action-card"
+     data-bs-toggle="modal"
+     data-bs-target="#addEquipmentModal"
+     style="cursor:pointer;">
+
+    <div class="action-icon green">
+        <i class="bi bi-plus-circle"></i>
+    </div>
+
+    <div class="action-content">
+        <h5>Add Equipment</h5>
+        <p>Add new Memory Gauge or Band Carrier</p>
+    </div>
+
+</div>
+
+<a href="{{ url_for('jobs.index') }}" class="action-card">
+
+    <div class="action-icon blue">
+        <i class="bi bi-briefcase"></i>
+    </div>
+
+    <div class="action-content">
+        <h5>New Job</h5>
+        <p>Create a new job ticket</p>
+    </div>
+
+</a>
+
+<a href="{{ url_for('information.index') }}" class="action-card">
+
+    <div class="action-icon orange">
+        <i class="bi bi-file-earmark-text"></i>
+    </div>
+
+    <div class="action-content">
+        <h5>Information</h5>
+        <p>View job information</p>
+    </div>
+
+</a>
+
+<a href="{{ url_for('reports.index') }}" class="action-card">
+
+    <div class="action-icon purple">
+        <i class="bi bi-bar-chart"></i>
+    </div>
+
+    <div class="action-content">
+        <h5>Reports</h5>
+        <p>Generate reports</p>
+    </div>
+
+</a>
+</div> 
+        <!-- ===========================
+            Upcoming Calibrations
+        ============================ -->
+
+        <div class="panel">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h4 class="chart-title">
+
+                        Upcoming Calibrations
+
+                    </h4>
+
+                    <span class="chart-subtitle">
+
+                        Next equipment due for calibration
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <table class="calibration-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Serial</th>
+
+                        <th>Equipment</th>
+
+                        <th>Due Date</th>
+
+                        <th>Days Left</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in upcoming_calibrations %}
+                    <tr>
+
+                        <td>{{ item.serial }}</td>
+
+                        <td>{{ item.type }}</td>
+
+                        <td>{{ item.due_date.strftime("%d %b %Y") }}</td>
+
+                        <td>
+                            {% if item.days_left < 0 %}
+                            <span class="badge bg-danger">Overdue</span>
+                            {% elif item.days_left <= 7 %}
+                            <span class="badge bg-warning">{{ item.days_left }} Days</span>
+                            {% else %}
+                            <span class="badge bg-success">{{ item.days_left }} Days</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No calibration dates recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+<!-- ==========================================
+            ADD EQUIPMENT MODAL
+========================================== -->
+
+<div class="modal fade"
+     id="addEquipmentModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h4 class="modal-title">
+                    Add Equipment
+                </h4>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="d-grid gap-3">
+
+                    <a href="/equipment?open=gauge"
+                       class="btn btn-outline-primary btn-lg">
+
+                        <i class="bi bi-cpu me-2"></i>
+
+                        Memory Gauge
+
+                    </a>
+
+                    <a href="/equipment?open=bundle"
+                       class="btn btn-outline-success btn-lg">
+
+                        <i class="bi bi-link-45deg me-2"></i>
+
+                        Bundle Carrier
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    window.MGMS_DASHBOARD_DATA = {
+
+    gaugeUsedYear: {{ gauge_used_year|tojson }},
+    gaugeUsedMonth: {{ gauge_used_month|tojson }},
+
+    changedGaugeYear: {{ changed_gauge_year|tojson }},
+    changedGaugeMonth: {{ changed_gauge_month|tojson }}
+
+};
+</script>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+{% endblock %}

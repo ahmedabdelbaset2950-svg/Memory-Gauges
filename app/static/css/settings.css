@@ -1,0 +1,167 @@
+/* ======================================================
+   Settings
+====================================================== */
+
+.settings-page{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:24px;
+
+}
+
+/* ==========================================
+                Header
+========================================== */
+
+.page-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.page-header h2{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:#173B68;
+
+    margin:0;
+
+}
+
+.page-header p{
+
+    color:#6b7280;
+
+    margin-top:6px;
+
+}
+
+/* ==========================================
+                Cards
+========================================== */
+
+.equipment-section{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:24px;
+
+    border:1px solid #e5e7eb;
+
+    box-shadow:0 8px 18px rgba(0,0,0,.04);
+
+}
+
+/* ==========================================
+                Logo
+========================================== */
+
+.company-logo-preview{
+
+    width:180px;
+
+    height:180px;
+
+    object-fit:contain;
+
+    border-radius:18px;
+
+    border:1px solid #e5e7eb;
+
+    background:#fff;
+
+    padding:16px;
+
+}
+
+.logo-placeholder{
+
+    width:180px;
+
+    height:180px;
+
+    margin:auto;
+
+    border-radius:18px;
+
+    border:2px dashed #d1d5db;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#f8fafc;
+
+}
+
+.logo-placeholder i{
+
+    font-size:72px;
+
+    color:#9ca3af;
+
+}
+
+/* ==========================================
+                Inputs
+========================================== */
+
+.form-control,
+.form-select{
+
+    border-radius:12px;
+
+    min-height:46px;
+
+}
+
+/* ==========================================
+                Button
+========================================== */
+
+.green-btn{
+
+    margin-top:10px;
+
+}
+
+/* ==========================================
+                Responsive
+========================================== */
+
+@media(max-width:992px){
+
+    .page-header{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:10px;
+
+    }
+
+    .company-logo-preview,
+    .logo-placeholder{
+
+        width:140px;
+
+        height:140px;
+
+    }
+
+}

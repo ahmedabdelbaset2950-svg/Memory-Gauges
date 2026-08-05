@@ -1,0 +1,9 @@
+<div class="report-tabs">
+  <a class="{{ 'active' if request.endpoint == 'reports.dashboard' else '' }}" href="{{ url_for('reports.dashboard') }}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+  <a class="{{ 'active' if request.endpoint == 'reports.actual_gauges' else '' }}" href="{{ url_for('reports.actual_gauges') }}"><i class="bi bi-speedometer2"></i> Actual Gauges</a>
+  <a class="{{ 'active' if request.endpoint == 'reports.batteries' else '' }}" href="{{ url_for('reports.batteries') }}"><i class="bi bi-battery-charging"></i> Batteries</a>
+  <a class="{{ 'active' if request.endpoint == 'reports.maintenance' else '' }}" href="{{ url_for('reports.maintenance') }}"><i class="bi bi-tools"></i> Maintenance</a>
+  <a class="{{ 'active' if request.endpoint == 'reports.performance' else '' }}" href="{{ url_for('reports.performance') }}"><i class="bi bi-graph-up-arrow"></i> Equipment Performance</a>
+  <a class="{{ 'active' if request.endpoint == 'reports.job_history' else '' }}" href="{{ url_for('reports.job_history') }}"><i class="bi bi-clock-history"></i> Job History</a>
+  <a class="{{ 'active' if request.endpoint == 'reports.engineers' else '' }}" href="{{ url_for('reports.engineers') }}"><i class="bi bi-person-badge"></i> Engineers</a>
+</div>

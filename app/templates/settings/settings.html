@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}
+Settings
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/settings.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="settings-page">
+
+    <!-- ==========================================
+                    HEADER
+    =========================================== -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h2>
+
+                <i class="bi bi-gear-fill"></i>
+
+                Settings
+
+            </h2>
+
+            <p>
+
+                Configure your MGMS application.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- ==========================================
+                    SETTINGS
+    =========================================== -->
+
+    <form
+        method="POST"
+        enctype="multipart/form-data">
+
+        {{ form.hidden_tag() }}
+
+       {{ form.hidden_tag() }}
+
+<div class="row g-4">
+
+    <!-- Company Information -->
+    <div class="col-lg-8">
+
+        <div class="equipment-section">
+
+            <div class="section-header">
+                <h3>
+                    <i class="bi bi-building"></i>
+                    Company Information
+                </h3>
+            </div>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    {{ form.company_name.label(class="form-label") }}
+                    {{ form.company_name(class="form-control") }}
+                </div>
+
+                <div class="col-md-6">
+                    {{ form.company_email.label(class="form-label") }}
+                    {{ form.company_email(class="form-control") }}
+                </div>
+
+                <div class="col-md-6">
+                    {{ form.company_phone.label(class="form-label") }}
+                    {{ form.company_phone(class="form-control") }}
+                </div>
+
+                <div class="col-md-6">
+                    {{ form.company_address.label(class="form-label") }}
+                    {{ form.company_address(class="form-control") }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Company Logo -->
+    <div class="col-lg-4">
+
+        <div class="equipment-section h-100">
+
+            <div class="section-header">
+                <h3>
+                    <i class="bi bi-image"></i>
+                    Company Logo
+                </h3>
+            </div>
+
+            <div class="text-center mb-3">
+
+                {% if settings.company_logo != "default_logo.png" %}
+
+                    <img
+                        src="{{ url_for('static', filename='uploads/company/' ~ settings.company_logo) }}"
+                        class="company-logo-preview">
+
+                {% else %}
+
+                    <div class="logo-placeholder">
+                        <i class="bi bi-building"></i>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            {{ form.company_logo(class="form-control") }}
+
+            <hr>
+
+            <button type="submit" class="green-btn w-100">
+
+                <i class="bi bi-floppy"></i>
+
+                Save Settings
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- System -->
+    <div class="col-12">
+
+        <div class="equipment-section">
+
+            <div class="section-header">
+
+                <h3>
+
+                    <i class="bi bi-sliders"></i>
+
+                    System
+
+                </h3>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    {{ form.theme.label(class="form-label") }}
+
+                    {{ form.theme(class="form-select") }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+    </form>
+
+</div>
+
+{% endblock %}

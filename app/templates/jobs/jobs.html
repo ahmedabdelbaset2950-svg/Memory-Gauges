@@ -1,0 +1,529 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/jobs.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="jobs-page">
+
+    <!-- ================= Sidebar ================= -->
+
+    <aside class="jobs-sidebar">
+
+        <div class="sidebar-title">
+            <i class="bi bi-archive-fill"></i>
+            Jobs Archive
+        </div>
+
+        {% if archive %}
+
+            {% for archive_year, year_months in archive.items() %}
+
+            <div class="year-group">
+
+                <button class="year-btn" type="button">
+    <i class="bi bi-caret-down-fill"></i>
+    {{ archive_year }}
+</button>
+
+                <div class="months">
+
+                    {% for item in year_months %}
+
+                    <a href="{{ url_for('jobs.index',
+                                        year=item.year,
+                                        month=item.month) }}"
+                       class="{% if item.year == year and item.month == month %}active{% endif %}">
+
+                        {{ item.month_name }}
+
+                        {% if item.status == "Closed" %}
+                            🔒
+                        {% else %}
+                            🟢
+                        {% endif %}
+
+                    </a>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-archive">
+
+                No archived months yet
+
+            </div>
+
+        {% endif %}
+
+    </aside>
+
+    <!-- ================= Main ================= -->
+
+    <section class="jobs-content">
+        <!-- ================= Header ================= -->
+
+
+<div class="jobs-header">
+
+    <div>
+
+        <h2 class="jobs-title">
+            Jobs - {{ month_name }} {{ year }}
+        </h2>
+
+        <p class="jobs-subtitle">
+            Memory Gauge Jobs Management
+        </p>
+
+    </div>
+
+    <div class="jobs-actions">
+
+        {% if current_user.role == "admin" %}
+
+    {% if not is_closed %}
+
+    <button
+        id="closeMonthBtn"
+        class="btn btn-warning">
+
+        <i class="bi bi-lock-fill me-1"></i>
+        Close Month
+
+    </button>
+
+    {% else %}
+
+    <div class="archived-badge">
+
+        <i class="bi bi-archive-fill"></i>
+
+        Archived Month — you can still edit or fix entries
+
+    </div>
+
+    {% endif %}
+
+{% endif %}
+
+        {% if current_user.role == "admin" %}
+
+<button
+    class="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#importJobsModal">
+
+    <i class="bi bi-upload me-1"></i>
+
+    Import Jobs
+
+</button>
+
+{% endif %}
+        <button
+            id="exportExcelBtn"
+            class="btn btn-success">
+
+            <i class="bi bi-file-earmark-excel me-1"></i>
+
+            Export Excel
+
+        </button>
+
+    </div>
+
+</div>
+        <!-- ================= Table ================= -->
+
+        <div class="jobs-table-wrapper">
+
+            <table class="jobs-table">
+
+                <thead>
+
+                    <!-- Worked Days -->
+
+                    <tr class="worked-days-row">
+
+                        <th class="sticky-col date-col">
+                            Worked Days
+                        </th>
+                        <th></th>
+                                            {% for gauge in gauges %}
+
+                    <th id="worked-gauge-{{ gauge.id }}">
+
+                        {% if gauge.worked_days >= 20 %}
+                            <span class="badge bg-success">
+                                {{ gauge.worked_days }} Days
+                            </span>
+
+                        {% elif gauge.worked_days >= 10 %}
+                            <span class="badge bg-warning text-dark">
+                                {{ gauge.worked_days }} Days
+                            </span>
+
+                        {% elif gauge.worked_days > 0 %}
+                            <span class="badge bg-danger">
+                                {{ gauge.worked_days }} Days
+                            </span>
+
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                Idle
+                            </span>
+
+                        {% endif %}
+
+                    </th>
+
+                    {% endfor %}
+
+                    {% for bundle in bundles %}
+
+                    <th id="worked-bundle-{{ bundle.id }}">
+
+                        {% if bundle.worked_days >= 20 %}
+                            <span class="badge bg-success">
+                                {{ bundle.worked_days }} Days
+                            </span>
+
+                        {% elif bundle.worked_days >= 10 %}
+                            <span class="badge bg-warning text-dark">
+                                {{ bundle.worked_days }} Days
+                            </span>
+
+                        {% elif bundle.worked_days > 0 %}
+                            <span class="badge bg-danger">
+                                {{ bundle.worked_days }} Days
+                            </span>
+
+                        {% else %}
+                            <span class="badge bg-secondary">
+                                Idle
+                            </span>
+
+                        {% endif %}
+
+                    </th>
+
+                    {% endfor %}
+
+                    <th></th>
+
+                </tr>
+
+                <!-- Header -->
+
+                <tr>
+
+                    <th class="sticky-col date-col">
+
+                        Date
+
+                    </th>
+
+                    <th class="day-name-col">
+
+                        Day
+
+                    </th>
+
+                    {% for gauge in gauges %}
+
+                    <th>
+
+                        {{ gauge.serial_number }}
+
+                    </th>
+
+                    {% endfor %}
+
+                    {% for bundle in bundles %}
+
+                    <th>
+
+                        {{ bundle.serial_number }}
+
+                    </th>
+
+                    {% endfor %}
+
+                    {% if current_user.role == "admin" %}
+
+<th class="add-column-header">
+
+    <div class="dropdown">
+
+        <button
+            class="add-column-btn"
+            data-bs-toggle="dropdown">
+
+            <i class="bi bi-plus-lg"></i>
+
+        </button>
+
+        <ul class="dropdown-menu">
+
+            <li>
+
+                <a class="dropdown-item"
+                   href="{{ url_for('equipment.equipment', open='memory-gauge') }}">
+
+                    <i class="bi bi-cpu me-2"></i>
+
+                    New Memory Gauge
+
+                </a>
+
+            </li>
+
+            <li>
+
+                <a class="dropdown-item"
+                   href="{{ url_for('equipment.equipment', open='bundle-carrier') }}">
+
+                    <i class="bi bi-link-45deg me-2"></i>
+
+                    New Bundle Carrier
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </div>
+
+</th>
+
+{% else %}
+
+<th></th>
+
+{% endif %}
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+        
+
+{% for item in month_days %}
+{% set day = item.day %}
+
+<tr>
+
+    <!-- ================= Date ================= -->
+
+    <td class="sticky-col date-col">
+
+        {{ "%02d"|format(day) }}
+        {{ month_name }},
+        {{ year }}
+
+    </td>
+
+    <td class="day-name-col">
+        {{ item.weekday }}
+    </td>
+
+    <!-- ================= Memory Gauges ================= -->
+
+    {% for gauge in gauges %}
+
+    <td
+    class="{% if current_user.role == 'admin' %}job-cell{% else %}job-cell-disabled{% endif %}"
+    data-day="{{ day }}"
+    data-month="{{ month }}"
+    data-year="{{ year }}"
+    data-equipment-type="gauge"
+    data-equipment-id="{{ gauge.id }}">
+
+{% set job = jobs_map.get((day, "gauge", gauge.id)) %}
+
+{% if job %}
+<span class="job-link" data-job-id="{{ job.id }}">
+    {{ job.well_number }}
+    <a href="{{ url_for('information.index', search=job.well_number) }}"
+       class="job-info-link" title="View in Information" onclick="event.stopPropagation();">
+        <i class="bi bi-box-arrow-up-right"></i>
+    </a>
+</span>
+{% endif %}
+
+</td>
+
+    {% endfor %}
+
+    <!-- ================= Bundle Carriers ================= -->
+
+    {% for bundle in bundles %}
+
+    <td
+    class="{% if current_user.role == 'admin' %}job-cell{% else %}job-cell-disabled{% endif %}"
+    data-day="{{ day }}"
+    data-day="{{ day }}"
+    data-month="{{ month }}"
+    data-year="{{ year }}"
+    data-equipment-type="bundle"
+    data-equipment-id="{{ bundle.id }}">
+
+{% set job = jobs_map.get((day, "bundle", bundle.id)) %}
+
+{% if job %}
+<span class="job-link" data-job-id="{{ job.id }}">
+    {{ job.well_number }}
+    <a href="{{ url_for('information.index', search=job.well_number) }}"
+       class="job-info-link" title="View in Information" onclick="event.stopPropagation();">
+        <i class="bi bi-box-arrow-up-right"></i>
+    </a>
+</span>
+{% endif %}
+
+</td>
+
+    {% endfor %}
+
+    <!-- آخر عمود -->
+
+    <td class="add-column-cell"></td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+</div>
+<!-- ================= Import Jobs Modal ================= -->
+{% if current_user.role == "admin" %}
+<div class="modal fade"
+     id="importJobsModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i class="bi bi-upload me-2"></i>
+
+                    Import Jobs
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <form id="importJobsForm"
+                  enctype="multipart/form-data">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Select Excel File
+
+                        </label>
+
+                        <input
+                            type="file"
+                            class="form-control"
+                            id="jobsExcelFile"
+                            name="excel_file"
+                            accept=".xlsx,.xls">
+
+                    </div>
+
+                    <div id="jobsPreview"></div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Close
+
+                    </button>
+                    <button
+        id="confirmImportBtn"
+        type="button"
+        class="btn btn-success"
+        style="display:none;">
+
+        <i class="bi bi-database-fill-check me-1"></i>
+
+        Import to Database
+
+    </button>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        Upload
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+{% endif %}
+{% endblock %}
+
+{% block js %}
+<script>
+    window.currentYear = {{ year }};
+    window.currentMonth = {{ month }};
+</script>
+<script>
+window.isClosedMonth = {{ 'true' if is_closed else 'false' }};
+</script>
+
+<script src="{{ url_for('static', filename='js/jobs.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,544 @@
+/* ==========================================================
+                        JOBS PAGE (v2 — redesigned)
+========================================================== */
+
+.jobs-page{
+    display:flex;
+    gap:18px;
+    height:calc(100vh - 95px);
+}
+
+/* ==========================================================
+                        SIDEBAR
+========================================================== */
+
+.jobs-sidebar{
+    width:180px;
+    background:#c5e2e6;
+    color:#0c67cf;
+    border:1px solid #E7ECF2;
+    border-radius:12px;
+    padding:18px;
+    overflow-y:auto;
+    flex-shrink:0;
+}
+
+.sidebar-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:14px;
+    font-weight:700;
+    color:#1E2A38;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin-bottom:16px;
+    padding-bottom:12px;
+    border-bottom:1px solid #EEF2F7;
+}
+
+.sidebar-title i{
+    color:#38B000;
+    font-size:15px;
+}
+
+.year-group{
+    margin-bottom:6px;
+    border-radius:8px;
+    overflow:hidden;
+}
+
+.year-btn{
+    width:100%;
+    background:none;
+    border:none;
+    color:#33404D;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:9px 8px;
+    font-size:14.5px;
+    font-weight:700;
+    cursor:pointer;
+    border-radius:7px;
+    transition:background .15s;
+}
+
+.year-btn:hover{
+    background:#F7F9FB;
+}
+
+.year-btn i{
+    font-size:10px;
+    color:#f9fbfd;
+    transition:transform .2s ease;
+}
+
+.year-btn.collapsed i{
+    transform:rotate(-90deg);
+}
+
+.months{
+    display:flex;
+    flex-direction:column;
+    margin-left:16px;
+    margin-top:4px;
+    gap:2px;
+    overflow:hidden;
+    max-height:1000px;
+    transition:max-height .28s ease, opacity .2s ease, margin .2s ease;
+    opacity:1;
+}
+
+.months.collapsed{
+    max-height:0;
+    opacity:0;
+    margin-top:0;
+    margin-bottom:0;
+}
+
+.months a{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    color:#2510e2;
+    text-decoration:none;
+    font-size:13.5px;
+    font-weight:500;
+    padding:8px 10px;
+    border-radius:7px;
+    transition:background .15s, color .15s;
+}
+
+.months a:hover{
+    background:#F7F9FB;
+    color:#1E2A38;
+}
+
+.months .active{
+    background:#1b44cc;
+    color:#2F9600;
+    font-weight:700;
+}
+
+.empty-archive{
+    color:#8A98A6;
+    font-size:13px;
+    padding:6px 2px;
+}
+
+/* ==========================================================
+                        CONTENT
+========================================================== */
+
+.jobs-content{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+}
+
+.jobs-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+}
+
+.jobs-header h2{
+    font-size:24px;
+    font-weight:700;
+    color:#1E2A38;
+    margin-bottom:2px;
+}
+
+.jobs-header p{
+    color:#0a1314;
+    font-size:13.5px;
+}
+
+/* action buttons row (Close Month / Export Excel) */
+
+.jobs-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.jobs-actions .btn,
+#closeMonthBtn,
+#exportExcelBtn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 18px;
+    border-radius:8px;
+    font-size:13.5px;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+    transition:filter .15s, box-shadow .15s;
+}
+
+#closeMonthBtn{
+    background:#E28A00;
+    color:#fff;
+}
+
+#closeMonthBtn:hover{
+    filter:brightness(0.94);
+}
+
+#exportExcelBtn{
+    background:#38B000;
+    color:#fff;
+}
+
+#exportExcelBtn:hover{
+    filter:brightness(0.94);
+}
+
+/* ==========================================================
+                        TABLE
+========================================================== */
+
+.jobs-table-wrapper{
+    flex:1;
+    overflow:auto;
+    background:#edf1f3;
+    border-radius:12px;
+    border:1px solid #f2e7e700;
+}
+
+.jobs-table{
+    border-collapse:collapse;
+    min-width:max-content;
+    width:100%;
+}
+
+.jobs-table thead th{
+    position:sticky;
+    top:0;
+    background:#1E2A38;
+    color:#fff;
+    z-index:20;
+}
+
+.jobs-table th,
+.jobs-table td{
+    border:1px solid #136ad4;
+    min-width:130px;
+    height:44px;
+    text-align:center;
+    white-space:nowrap;
+}
+
+.jobs-table th{
+    padding:11px;
+    font-size:13.5px;
+    font-weight:600;
+}
+
+.jobs-table td{
+    cursor:pointer;
+    transition:background .15s;
+    font-size:13.5px;
+    color:#4d3333;
+}
+
+.jobs-table tbody tr:hover{
+    background:#fcfaf9;
+}
+
+.worked-days-row th{
+    background:#f9fafa !important;
+    color:#33404D !important;
+    font-size:12.5px;
+}
+
+/* ==========================================================
+                    FIXED COLUMNS
+========================================================== */
+
+.date-col{
+    width:130px;
+    min-width:130px;
+    left:0;
+    position:sticky;
+    background:#fff;
+    z-index:15;
+    font-weight:500;
+}
+
+thead .date-col{
+    background:#1E2A38;
+    color:#fff;
+    z-index:30;
+}
+
+.sticky-col{
+    position:sticky;
+    background:#fff;
+    z-index:10;
+}
+
+thead .sticky-col{
+    background:#1E2A38;
+    color:#fff;
+    z-index:30;
+}
+
+.day-no-col,
+.day-name-col,
+.date-col{
+    position:sticky;
+    background:#f3f5f7;
+    z-index:15;
+}
+
+.day-name-col{
+    width:30px;
+    min-width:30px;
+    left:130px;
+    text-align:center;
+    font-weight:600;
+    color:#38B000;
+}
+
+thead .day-name-col{
+    color:#fff;
+}
+
+thead .day-no-col,
+thead .day-name-col,
+thead .date-col{
+    background:#1E2A38;
+    color:#fff;
+    z-index:30;
+}
+
+/* ==========================================================
+                    JOB CELL
+========================================================== */
+
+.job-cell:hover{
+    background:#EAF7EC;
+}
+
+.job-cell.highlight-cell{
+    background:#FFF4E5 !important;
+    box-shadow: inset 0 0 0 2px #E28A00;
+    animation: highlightPulse 1s ease-in-out 2;
+}
+
+@keyframes highlightPulse{
+    0%, 100% { background:#FFF4E5; }
+    50% { background:#FFE0B0; }
+}
+
+.job-input{
+    width:100%;
+    height:100%;
+    border:none;
+    outline:none;
+    text-align:center;
+    font-weight:600;
+    background:#fff;
+    box-shadow:inset 0 0 0 2px #38B000;
+}
+
+.job-link{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    width:100%;
+    height:100%;
+    color:#2563EB;
+    font-weight:700;
+    line-height:normal;
+}
+
+.job-link:hover{
+    background:#EFF6FF;
+}
+
+.job-info-link{
+    color:#8A98A6;
+    font-size:11px;
+    text-decoration:none;
+    opacity:.7;
+    transition:opacity .15s, color .15s;
+}
+
+.job-info-link:hover{
+    opacity:1;
+    color:#2563EB;
+}
+
+.add-column{
+    width:56px;
+    min-width:56px;
+    text-align:center;
+}
+
+.add-column-btn{
+    width:34px;
+    height:34px;
+    border:none;
+    border-radius:50%;
+    background:#38B000;
+    color:#fff;
+    cursor:pointer;
+    transition:transform .15s, background .15s;
+    font-size:16px;
+}
+
+.add-column-btn:hover{
+    transform:scale(1.08);
+    background:#2F9600;
+}
+
+.add-column-cell{
+    width:56px;
+}
+
+.archived-badge{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 16px;
+    border-radius:8px;
+    background:#F7F9FB;
+    border:1px solid #E7ECF2;
+    color:#5C6B78;
+    font-size:13px;
+    font-weight:600;
+}
+
+.archived-badge i{
+    color:#8A98A6;
+}
+
+/* ==========================================================
+                    CUSTOM CONFIRM MODAL
+========================================================== */
+
+.mgms-confirm-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(20,30,40,.45);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:3000;
+    animation:mgmsFadeIn .15s ease;
+}
+
+@keyframes mgmsFadeIn{
+    from{ opacity:0; }
+    to{ opacity:1; }
+}
+
+.mgms-confirm-box{
+    background:#fff;
+    border-radius:12px;
+    padding:26px 26px 20px;
+    width:100%;
+    max-width:380px;
+    text-align:center;
+    box-shadow:0 20px 45px rgba(20,30,40,.18);
+    animation:mgmsPopIn .18s ease;
+}
+
+@keyframes mgmsPopIn{
+    from{ transform:scale(.94); opacity:0; }
+    to{ transform:scale(1); opacity:1; }
+}
+
+.mgms-confirm-icon{
+    width:46px;
+    height:46px;
+    margin:0 auto 14px;
+    border-radius:50%;
+    background:#FFF4E5;
+    color:#E28A00;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+}
+
+.mgms-confirm-message{
+    font-size:14px;
+    color:#33404D;
+    line-height:1.6;
+    margin-bottom:20px;
+}
+
+.mgms-confirm-actions{
+    display:flex;
+    gap:10px;
+}
+
+.mgms-confirm-cancel,
+.mgms-confirm-ok{
+    flex:1;
+    padding:11px;
+    border-radius:8px;
+    border:none;
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+    transition:filter .15s;
+}
+
+.mgms-confirm-cancel{
+    background:#F1F4F7;
+    color:#33404D;
+}
+
+.mgms-confirm-cancel:hover{
+    filter:brightness(0.96);
+}
+
+.mgms-confirm-ok{
+    background:#E28A00;
+    color:#fff;
+}
+
+.mgms-confirm-ok:hover{
+    filter:brightness(0.94);
+}
+
+@media (max-width: 900px){
+
+    .jobs-page{
+        flex-direction:column;
+        height:auto;
+    }
+
+    .jobs-sidebar{
+        width:100%;
+        max-height:220px;
+    }
+
+    .jobs-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+    }
+}
+.job-cell-disabled{
+
+    cursor: default;
+
+    background: #fafafa;
+
+}
+
+.job-cell-disabled:hover{
+
+    background: #fafafa;
+
+}

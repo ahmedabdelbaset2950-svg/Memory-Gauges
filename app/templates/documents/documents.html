@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Documents | MGMS
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/documents.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="documents-page">
+
+    <!-- ================= Sidebar ================= -->
+
+    <aside class="documents-sidebar">
+
+        <div class="sidebar-title">
+            <i class="bi bi-folder2-open"></i>
+            Document Categories
+        </div>
+
+        <a href="{{ url_for('documents.index') }}"
+           class="category-link {{ 'active' if not active_category else '' }}">
+            <span>All Documents</span>
+            <span class="count">{{ total_docs }}</span>
+        </a>
+
+        {% for value, label in categories %}
+        <a href="{{ url_for('documents.index', category=value) }}"
+           class="category-link {{ 'active' if active_category == value else '' }}">
+            <span>{{ label }}</span>
+            <span class="count">{{ category_counts.get(value, 0) }}</span>
+        </a>
+        {% endfor %}
+
+    </aside>
+
+    <!-- ================= Main ================= -->
+
+    <section class="documents-content">
+
+        <div class="documents-header">
+
+            <div>
+                <h2>Documents Library</h2>
+                <p>Calibration certificates, pressure test reports, risk assessments, procedures & photos</p>
+            </div>
+
+            <button class="btn-add" id="openUploadModal">
+                <i class="bi bi-cloud-upload-fill"></i> Upload Document
+            </button>
+
+        </div>
+
+        <form class="doc-search-bar" method="get">
+            {% if active_category %}
+            <input type="hidden" name="category" value="{{ active_category }}">
+            {% endif %}
+            <i class="bi bi-search"></i>
+            <input type="text" name="search" value="{{ search }}"
+                   placeholder="Search by title or equipment serial number...">
+        </form>
+
+        
+
+        <div class="documents-grid">
+
+            {% for item in documents %}
+
+            {% set doc = item.doc %}
+
+            <div class="doc-card" data-doc-id="{{ doc.id }}">
+
+                <div class="doc-card-top">
+
+                    <div class="doc-icon" style="color:{{ item.color }};">
+                        <i class="bi {{ item.icon }}"></i>
+                    </div>
+
+                    <div class="doc-actions">
+                        <a href="{{ url_for('documents.download', doc_id=doc.id) }}"
+                           class="doc-action-btn" title="Download">
+                            <i class="bi bi-download"></i>
+                        </a>
+                        <button class="doc-action-btn del-doc-btn" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="doc-title editable" data-field="title">
+                    {{ doc.title }}
+                </div>
+
+                <div class="doc-meta">
+                    <span class="doc-category-badge">
+                        {{ dict(categories).get(doc.category, doc.category) }}
+                    </span>
+
+                    {% if item.equipment_label %}
+                    <span class="doc-equipment-badge">
+                        <i class="bi bi-link-45deg"></i> {{ item.equipment_label }}
+                    </span>
+                    {% endif %}
+                </div>
+
+                {% if doc.category == "calibration_certificate" %}
+                <div class="doc-expiry editable" data-field="expiry_date"
+                     data-raw="{{ doc.expiry_date.isoformat() if doc.expiry_date else '' }}">
+
+                    {% if doc.expiry_date %}
+                        {% if item.expiry_status == "expired" %}
+                        <span class="expiry-badge expired">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            Expired {{ doc.expiry_date.strftime("%d %b %Y") }}
+                        </span>
+                        {% elif item.expiry_status == "expiring" %}
+                        <span class="expiry-badge expiring">
+                            <i class="bi bi-clock-fill"></i>
+                            Expires {{ doc.expiry_date.strftime("%d %b %Y") }}
+                        </span>
+                        {% else %}
+                        <span class="expiry-badge valid">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Valid until {{ doc.expiry_date.strftime("%d %b %Y") }}
+                        </span>
+                        {% endif %}
+                    {% else %}
+                        <span class="expiry-badge unset">
+                            <i class="bi bi-calendar-plus"></i> Set expiry date
+                        </span>
+                    {% endif %}
+
+                </div>
+                {% endif %}
+
+                <div class="doc-footer">
+                    <span>{{ doc.original_filename }}</span>
+                    <span>{{ doc.created_at.strftime("%d %b %Y") }}</span>
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="empty-docs">
+                <i class="bi bi-folder2"></i>
+                <h4>No documents yet</h4>
+                <p>Click "Upload Document" to add your first file.</p>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- ================= Upload Modal ================= -->
+
+<div class="mgms-modal-overlay" id="uploadModal" style="display:none;">
+
+    <div class="mgms-modal-box">
+
+        <div class="mgms-modal-header">
+            <h3><i class="bi bi-cloud-upload-fill"></i> Upload Document</h3>
+            <button type="button" class="mgms-modal-close" id="closeUploadModal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <form method="POST" action="{{ url_for('documents.upload') }}"
+              enctype="multipart/form-data" class="mgms-modal-body">
+            
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="field">
+                <label>Title</label>
+                <input type="text" name="title" placeholder="e.g. Gauge S6005 Calibration 2026">
+            </div>
+
+            <div class="field">
+                <label>Category</label>
+                <select name="category" id="categorySelect">
+                    {% for value, label in categories %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="field-row">
+
+                <div class="field">
+                    <label>Link to Equipment (optional)</label>
+                    <select name="equipment_type" id="equipmentTypeSelect">
+                        <option value="">Not linked</option>
+                        <option value="gauge">Memory Gauge</option>
+                        <option value="bundle">Bundle Carrier</option>
+                    </select>
+                </div>
+
+                <div class="field" id="equipmentIdField" style="display:none;">
+                    <label>Serial Number</label>
+                    <select name="equipment_id" id="equipmentIdSelect">
+                        <option value="">—</option>
+                        {% for g in all_gauges %}
+                        <option value="{{ g.id }}" data-type="gauge">{{ g.serial_number }}</option>
+                        {% endfor %}
+                        {% for b in all_bundles %}
+                        <option value="{{ b.id }}" data-type="bundle">{{ b.serial_number }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="field" id="expiryField" style="display:none;">
+                <label>Expiry Date</label>
+                <input type="date" name="expiry_date">
+            </div>
+
+            <div class="field">
+                <label>File</label>
+                <input type="file" name="file" required>
+            </div>
+
+            <div class="field">
+                <label>Notes</label>
+                <textarea name="notes" rows="2" placeholder="optional"></textarea>
+            </div>
+
+            <div class="mgms-modal-footer">
+                <button type="button" class="cancel-btn" id="cancelUpload">Cancel</button>
+                <button type="submit" class="save-btn">Upload</button>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+<script src="{{ url_for('static', filename='js/documents.js') }}"></script>
+
+{% endblock %}

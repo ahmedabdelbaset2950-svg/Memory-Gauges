@@ -1,0 +1,532 @@
+/* ============================================
+   MGMS Login — Field Panel design
+   ============================================ */
+
+.login-page {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #05b33f;
+    font-family: 'IBM Plex Sans', sans-serif;
+    overflow: hidden;
+}
+
+/* ---- Ambient background ---- */
+
+.texture {
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.014) 0px,
+        rgba(255, 255, 255, 0.014) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+    z-index: 0;
+}
+
+.glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(2px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.glow-green {
+    width: 620px;
+    height: 620px;
+    left: -220px;
+    top: -180px;
+    background: radial-gradient(circle, rgba(63, 166, 90, 0.22), transparent 68%);
+}
+
+.glow-amber {
+    width: 560px;
+    height: 560px;
+    right: -200px;
+    top: -140px;
+    background: radial-gradient(circle, rgba(232, 162, 61, 0.16), transparent 68%);
+}
+
+.glow-teal {
+    width: 640px;
+    height: 640px;
+    right: -240px;
+    bottom: -260px;
+    background: radial-gradient(circle, rgba(58, 130, 140, 0.20), transparent 68%);
+}
+
+.gauge-ring {
+    position: absolute;
+    right: -160px;
+    bottom: -160px;
+    z-index: 0;
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+/* ---- Layout wrap ---- */
+
+
+
+/* ---- Header / brand ---- */
+
+.login-header {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #64716A;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 5px 12px;
+    border-radius: 20px;
+}
+
+.status-pill .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3FA65A;
+    box-shadow: 0 0 8px #3FA65A;
+}
+
+.login-header h1 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 40px;
+    color: #ECEFEB;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.login-header p {
+    font-size: 11px;
+    color: #74807A;
+    letter-spacing: 0.16em;
+    margin-top: 4px;
+    text-transform: uppercase;
+}
+
+/* ---- Flash / error messages ---- */
+
+.flash-stack {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.flash-msg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: rgba(232, 162, 61, 0.1);
+    border: 1px solid rgba(232, 162, 61, 0.3);
+    color: #E8A23D;
+}
+
+.flash-msg.flash-danger,
+.flash-msg.flash-error {
+    background: rgba(193, 68, 46, 0.1);
+    border-color: rgba(193, 68, 46, 0.35);
+    color: #E07156;
+}
+
+.flash-msg.flash-success {
+    background: rgba(63, 166, 90, 0.1);
+    border-color: rgba(63, 166, 90, 0.35);
+    color: #6FCB8B;
+}
+
+.field-error {
+    display: block;
+    font-size: 11.5px;
+    color: #E07156;
+    margin-top: 6px;
+}
+
+/* ---- Panel (field panel card) ---- */
+
+.panel {
+    position: relative;
+    background: linear-gradient(180deg, #1D2329, #1A2025);
+    border: 1px solid rgba(143, 18, 18, 0.07);
+    border-radius: 8px;
+    padding: 36px 30px 26px;
+}
+
+.plate {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #101417;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    padding: 3px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    color: #5C6862;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+}
+
+.rivet {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #4A5158, #22262A);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.rivet.tl { top: 12px; left: 12px; }
+.rivet.tr { top: 12px; right: 12px; }
+.rivet.bl { bottom: 12px; left: 12px; }
+.rivet.br { bottom: 12px; right: 12px; }
+
+/* ---- Form fields ---- */
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    color: #8B958E;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+}
+
+.input-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #101417;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 5px;
+    padding: 0 13px;
+    transition: border-color 0.15s;
+}
+
+.input-box:focus-within {
+    border-color: #3FA65A;
+}
+
+.input-box i {
+    color: #5C6862;
+    font-size: 14px;
+}
+
+.input-box #togglePassword {
+    cursor: pointer;
+}
+
+.input-box #togglePassword:hover {
+    color: #8B958E;
+}
+
+.input-field {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 12px 0;
+    color: #EAEDE9;
+    font-size: 14px;
+    font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.input-field::placeholder {
+    color: #4A544E;
+}
+
+/* ---- Remember me (styled as a physical switch) ---- */
+
+.remember-row {
+    margin-bottom: 24px;
+}
+
+.switch-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #8B958E;
+    cursor: pointer;
+}
+
+.switch-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-track {
+    width: 36px;
+    height: 19px;
+    background: #101417;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    position: relative;
+    display: inline-block;
+    transition: 0.15s;
+}
+
+.switch-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #5C6862;
+    transition: 0.15s;
+}
+
+.switch-input:checked + .switch-track {
+    background: rgba(63, 166, 90, 0.16);
+    border-color: #3FA65A;
+}
+
+.switch-input:checked + .switch-track .switch-knob {
+    left: 19px;
+    background: #3FA65A;
+    box-shadow: 0 0 6px #3FA65A;
+}
+
+/* ---- Submit button ---- */
+
+.login-btn {
+    width: 100%;
+    background: #3FA65A;
+    color: #0E1712;
+    border: none;
+    border-radius: 5px;
+    padding: 14px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.login-btn:hover {
+    background: #4bbf6b;
+}
+
+/* ---- Footer ---- */
+
+.version {
+    text-align: center;
+    margin-top: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #454E48;
+    letter-spacing: 0.1em;
+}
+
+
+
+
+/* ==========================================================
+   ENGINEER VIDEO ANIMATION STYLING
+   ========================================================== */
+
+
+
+/* التجاوب مع الشاشات الصغيرة (تخفي الشخصية لو الشاشة ضيقة عشان الفورم يفضل واضح) */
+@media (max-width: 850px) {
+    .engineer-scene {
+        display: none;
+    }
+    .login-main-wrapper {
+        justify-content: center;
+    }
+}
+/* ==========================================================
+   تنسيق العرض ليكون جنباً إلى جنب (Side-by-side)
+   ========================================================== */
+
+.login-page{
+
+    position: relative;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+/* الحاوية الكبيرة اللي بتجمع الشخصية والفورم في صف أفقي واحد */
+.login-main-wrapper{
+
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    padding-right: 120px;
+
+    z-index: 10;
+
+}
+
+/* تنسيق مشهد الفيديو للشخصية */
+.engineer-scene{
+
+    width:520px;
+    height:100vh;
+
+    display:flex;
+
+    align-items:flex-end;
+
+    justify-content:center;
+
+}
+
+.engineer-character {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.engineer-video-anim{
+
+    height:90vh;
+
+    width:auto;
+
+    object-fit:contain;
+
+}
+
+.engineer-shadow {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 16px;
+    background: rgba(0, 0, 0, 0.6);
+    filter: blur(8px);
+    border-radius: 50%;
+    z-index: -1;
+}
+
+
+/* التجاوب مع الشاشات الصغيرة لو الشاشة ضيقة ينزلوا تحت بعض تلقائياً */
+@media (max-width: 900px) {
+    .login-main-wrapper {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .engineer-scene {
+        width: 280px;
+        height: 250px;
+    }
+}
+/* Login Card */
+
+.login-wrap{
+
+    position: relative;
+    z-index: 5;
+
+    width: 100%;
+    max-width: 400px;
+    flex-shrink: 0;
+
+}
+/* ============================= */
+/* Background Video */
+/* ============================= */
+
+.login-bg-video{
+    position:absolute;
+    inset:0;
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+    z-index:0;
+}
+
+/* الصفحة */
+
+.login-page{
+
+    position: relative;
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+}
+.reveal-1,
+.reveal-2,
+.reveal-3,
+.reveal-4,
+.reveal-5,
+.reveal-6,
+.reveal-7,
+.reveal-8{
+
+    opacity:0;
+    transform:translateX(40px);
+    transition:all .60s ease;
+
+}
+
+.reveal-1.show,
+.reveal-2.show,
+.reveal-3.show,
+.reveal-4.show,
+.reveal-5.show,
+.reveal-6.show,
+.reveal-7.show,
+.reveal-8.show{
+
+    opacity:1;
+    transform:translateX(0);
+
+}

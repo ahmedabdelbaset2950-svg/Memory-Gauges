@@ -1,0 +1,387 @@
+{% extends 'base.html' %}
+
+{% block title %}Actual Gauges | MGMS{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/reports.css') }}">
+{% endblock %}
+
+
+{% block content %}
+
+<section class="reports-page">
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+    <div class="report-head">
+
+        <div>
+            <span class="eyebrow">REPORTS</span>
+
+            <h1>Actual Gauges</h1>
+
+            <p>
+                Actual gauge usage based on Information records.
+                Changed To is used when a gauge was replaced during the job.
+            </p>
+        </div>
+
+        {% include 'reports/_filters.html' %}
+
+    </div>
+
+
+    {% include 'reports/_nav.html' %}
+
+
+    <!-- =========================
+         GAUGE SUMMARY
+    ========================== -->
+    <div class="panel table-panel">
+
+        <table class="actual-gauges-table">
+
+            <thead>
+                <tr>
+
+                    <th>Gauge</th>
+                    <th>Jobs</th>
+                    <th>Wells</th>
+                    <th>Changes</th>
+
+                    {% if not month %}
+                        {% for m in months %}
+                            <th>{{ m }}</th>
+                        {% endfor %}
+                    {% endif %}
+
+                    <th>Total Days</th>
+                    <th></th>
+
+                </tr>
+            </thead>
+
+
+            <tbody>
+
+            {% for g in gauges %}
+
+                <!-- =========================
+                     MAIN GAUGE ROW
+                ========================== -->
+                <tr class="gauge-summary-row">
+
+                    <td>
+                        <strong>{{ g.serial }}</strong>
+                    </td>
+
+                    <td>{{ g.jobs_count }}</td>
+
+                    <td>{{ g.wells_count }}</td>
+
+                    <td>{{ g.changes }}</td>
+
+
+                    {% if not month %}
+
+                        {% for d in g.months %}
+
+                            <td>
+                                {% if d > 0 %}
+                                    {{ d }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+
+                    <td>
+                        <strong>{{ g.days }}</strong>
+                    </td>
+
+
+                    <td>
+
+                        <button
+                            type="button"
+                            class="history-toggle"
+                            onclick="toggleGaugeHistory('gauge-history-{{ loop.index }}', this)"
+                        >
+                            View History
+                        </button>
+
+                    </td>
+
+                </tr>
+
+
+                <!-- =========================
+                     WORK HISTORY
+                ========================== -->
+                <tr
+                    id="gauge-history-{{ loop.index }}"
+                    class="gauge-history-row"
+                    style="display:none;"
+                >
+
+                    <td colspan="19" class="history-cell">
+
+                        <div class="gauge-history-box">
+
+                            <div class="history-title">
+
+                                <div>
+                                    <span>WORK HISTORY</span>
+                                    <h3>{{ g.serial }}</h3>
+                                </div>
+
+                                <div class="history-total">
+                                    {{ g.days }} Working Days
+                                </div>
+
+                            </div>
+
+
+                            <div class="history-table-wrap">
+
+                                <table class="history-table">
+
+                                    <thead>
+
+                                        <tr>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Days</th>
+
+                                            <th>Well</th>
+
+                                            <th>Survey</th>
+                                            <th>Type</th>
+                                            <th>Rig</th>
+
+                                            <th>Original Gauge</th>
+                                            <th>Change</th>
+                                            <th>Actual Gauge</th>
+
+                                            <th>Battery</th>
+                                            <th>Bundle</th>
+
+                                            <th>Hours</th>
+
+                                            <th>Engineer</th>
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody>
+
+                                    {% for h in g.history %}
+
+                                        <tr>
+
+                                            <!-- FROM -->
+                                            <td>
+                                                {% if h.from_date %}
+                                                    {{ h.from_date.strftime('%d %b %Y') }}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+
+
+                                            <!-- TO -->
+                                            <td>
+                                                {% if h.to_date %}
+                                                    {{ h.to_date.strftime('%d %b %Y') }}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </td>
+
+
+                                            <!-- DAYS -->
+                                            <td>
+                                                <strong>
+                                                    {{ h.days }}
+                                                </strong>
+                                            </td>
+
+
+                                            <!-- WELL -->
+                                            <td>
+                                                {{ h.well_number or '-' }}
+                                            </td>
+
+
+                                            <!-- SURVEY -->
+                                            <td>
+                                                {{ h.survey or '-' }}
+                                            </td>
+
+
+                                            <!-- TYPE -->
+                                            <td>
+                                                {{ h.type or '-' }}
+                                            </td>
+
+
+                                            <!-- RIG -->
+                                            <td>
+                                                {{ h.rig_name or '-' }}
+                                            </td>
+
+
+                                            <!-- ORIGINAL GAUGE -->
+                                            <td>
+                                                {{ h.original_gauge or '-' }}
+                                            </td>
+
+
+                                            <!-- CHANGE -->
+                                            <td>
+
+                                                {% if h.changed_to %}
+
+                                                    <span class="change-badge">
+                                                        {{ h.changed_to }}
+                                                    </span>
+
+                                                {% else %}
+
+                                                    -
+
+                                                {% endif %}
+
+                                            </td>
+
+
+                                            <!-- ACTUAL GAUGE -->
+                                            <td>
+                                                <strong>
+                                                    {{ h.actual_gauge }}
+                                                </strong>
+                                            </td>
+
+
+                                            <!-- BATTERY -->
+                                            <td>
+                                                {{ h.battery_sn or '-' }}
+                                            </td>
+
+
+                                            <!-- BUNDLE -->
+                                            <td>
+                                                {{ h.bundle_carrier_sn or '-' }}
+                                            </td>
+
+
+                                            <!-- HOURS -->
+                                            <td>
+                                                {{ h.total_hours }}
+                                            </td>
+
+
+                                            <!-- ENGINEER -->
+                                            <td>
+                                                {{ h.engineer or '-' }}
+                                            </td>
+
+                                        </tr>
+
+                                    {% else %}
+
+                                        <tr>
+                                            <td colspan="14"
+                                                class="empty">
+
+                                                No work history available.
+
+                                            </td>
+                                        </tr>
+
+                                    {% endfor %}
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+            {% else %}
+
+                <tr>
+
+                    <td colspan="19"
+                        class="empty">
+
+                        No actual gauge usage for this period.
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<script>
+
+function toggleGaugeHistory(id, button){
+
+    const row = document.getElementById(id);
+
+    if(row.style.display === "none"){
+
+        row.style.display = "table-row";
+        button.textContent = "Hide History";
+        button.classList.add("active");
+
+        const wrap = row.querySelector(".history-table-wrap");
+
+        if(wrap){
+
+            requestAnimationFrame(() => {
+
+                const left = wrap.getBoundingClientRect().left;
+                const available = Math.max(window.innerWidth - left - 32, 320);
+
+                wrap.style.maxWidth = available + "px";
+
+            });
+
+        }
+
+    }else{
+
+        row.style.display = "none";
+        button.textContent = "View History";
+        button.classList.remove("active");
+
+    }
+
+}
+
+</script>
+
+{% endblock %}

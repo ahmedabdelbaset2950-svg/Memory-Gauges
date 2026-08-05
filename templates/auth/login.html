@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}
+MGMS Login
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/login.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<div class="login-page">
+
+    <!-- Ambient background -->
+    <div class="texture"></div>
+    <div class="glow glow-green"></div>
+    <div class="glow glow-amber"></div>
+    <div class="glow glow-teal"></div>
+
+    <svg class="gauge-ring" width="440" height="440" viewBox="0 0 440 440">
+        <circle cx="220" cy="220" r="190" fill="none" stroke="#3FA65A" stroke-width="1" opacity="0.35"/>
+        <circle cx="220" cy="220" r="160" fill="none" stroke="#E8A23D" stroke-width="1" stroke-dasharray="4 10" opacity="0.4"/>
+        <circle cx="220" cy="220" r="130" fill="none" stroke="#4A8B85" stroke-width="1" opacity="0.3"/>
+    </svg>
+
+    <div class="login-wrap">
+
+        <div class="login-header">
+            <div class="status-pill"><span class="dot"></span> System online</div>
+            <h1>MGMS</h1>
+            <p>MEMORY GAUGE MANAGEMENT SYSTEM</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash-msg flash-{{ category }}">
+                            <i class="bi bi-exclamation-triangle-fill"></i> {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Field Panel Card -->
+        <div class="panel">
+
+            <div class="plate">MODEL MG-7 · UNIT 00142</div>
+            <span class="rivet tl"></span><span class="rivet tr"></span>
+            <span class="rivet bl"></span><span class="rivet br"></span>
+
+            <form method="POST" novalidate>
+
+                {{ form.hidden_tag() }}
+
+                <div class="form-group">
+
+                    <label>Username</label>
+
+                    <div class="input-box">
+
+                        <i class="bi bi-person-fill"></i>
+
+                        {{ form.username(
+                            class="input-field",
+                            placeholder="Enter your username"
+                        ) }}
+
+                    </div>
+                    {% if form.username.errors %}
+                        <span class="field-error">{{ form.username.errors[0] }}</span>
+                    {% endif %}
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>Password</label>
+
+                    <div class="input-box">
+
+                        <i class="bi bi-lock-fill"></i>
+
+                        {{ form.password(
+                            class="input-field",
+                            id="password",
+                            placeholder="Enter your password"
+                        ) }}
+
+                        <i class="bi bi-eye-slash-fill"
+                           id="togglePassword"></i>
+
+                    </div>
+                    {% if form.password.errors %}
+                        <span class="field-error">{{ form.password.errors[0] }}</span>
+                    {% endif %}
+
+                </div>
+
+                <div class="remember-row">
+
+                    <label class="switch-label">
+                        {{ form.remember(class="switch-input") }}
+                        <span class="switch-track"><span class="switch-knob"></span></span>
+                        Remember Me
+                    </label>
+
+                </div>
+
+                {{ form.submit(class="login-btn") }}
+
+            </form>
+
+        </div>
+
+        <div class="version">
+            Version 1.0.0
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/login.js') }}"></script>
+{% endblock %}
