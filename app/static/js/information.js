@@ -870,27 +870,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
-const importBtn = document.getElementById("importExcelBtn");
+document
+.getElementById("importExcelBtn")
+.addEventListener("click", () => {
+
+    document
+    .getElementById("importExcelFile")
+    .click();
+
+});
+
+
 const importInput = document.getElementById("importExcelFile");
 
-if (importBtn && importInput) {
-
-    importBtn.addEventListener("click", () => {
-        importInput.click();
-    });
+if (importInput) {
 
     importInput.addEventListener("change", async function () {
 
-        if (!this.files.length) return;
+        console.log("Selected file:", this.files);
+
+        if (!this.files.length)
+            return;
 
         const formData = new FormData();
         formData.append("file", this.files[0]);
 
-        const csrfToken = document
-            .querySelector('meta[name="csrf-token"]')
-            .getAttribute("content");
+        console.log("Sending request...");
 
         try {
+
+            const csrfToken = document
+                .querySelector('meta[name="csrf-token"]')
+                ?.content;
 
             const res = await fetch("/information/import", {
                 method: "POST",
@@ -900,20 +911,19 @@ if (importBtn && importInput) {
                 body: formData
             });
 
-            const result = await res.json();
+            console.log("Status:", res.status);
 
+            const result = await res.json();
             if (result.success) {
                 alert(result.message);
-                location.reload();
+                window.location.reload();
             } else {
-                alert(result.message);
+                alert(result.message || "Import failed.");
             }
-
         } catch (err) {
             console.error(err);
-            alert("Import failed.");
+            alert("Server Error: " + err.message);
         }
-
     });
 
 }
