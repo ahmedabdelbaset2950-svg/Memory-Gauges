@@ -235,6 +235,8 @@ def import_information_excel(file):
                 .astype(str)
                 .str.strip()
             )
+            print(f"Sheet: {sheet_name}")
+            print(df.columns.tolist())
 
             if df.empty:
                 print("Sheet Empty")
