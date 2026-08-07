@@ -86,6 +86,4 @@ def create_app():
     with app.app_context():
         os.makedirs(app.instance_path, exist_ok=True)
         db.create_all() 
-    with app.app_context():
-        db.create_all()
     return app
