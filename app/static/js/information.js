@@ -870,60 +870,48 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
-document
-.getElementById("importExcelBtn")
-.addEventListener("click", () => {
-
-    document
-    .getElementById("importExcelFile")
-    .click();
-
-});
-
-
+const importBtn = document.getElementById("importExcelBtn");
 const importInput = document.getElementById("importExcelFile");
 
-if (importInput) {
+if (importBtn && importInput) {
+
+    importBtn.addEventListener("click", () => {
+        importInput.click();
+    });
 
     importInput.addEventListener("change", async function () {
 
-        console.log("Selected file:", this.files);
-
-        if (!this.files.length)
-            return;
+        if (!this.files.length) return;
 
         const formData = new FormData();
         formData.append("file", this.files[0]);
 
-        console.log("Sending request...");
+        const csrfToken = document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute("content");
 
         try {
 
-            const csrfToken = document
-    .querySelector('meta[name="csrf-token"]')
-    ?.getAttribute("content");
+            const res = await fetch("/information/import", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken
+                },
+                body: formData
+            });
 
-const res = await fetch("/information/import", {
+            const result = await res.json();
 
-    method: "POST",
-
-    headers: {
-        "X-CSRFToken": csrfToken
-    },
-
-    body: formData
-
-});
-
-            console.log("Status:", res.status);
-
-            const text = await res.text();
-            console.log("Response:", text);
+            if (result.success) {
+                alert(result.message);
+                location.reload();
+            } else {
+                alert(result.message);
+            }
 
         } catch (err) {
-
             console.error(err);
-
+            alert("Import failed.");
         }
 
     });
