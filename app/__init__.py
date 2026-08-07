@@ -82,8 +82,6 @@ def create_app():
         if settings is None:
             settings = AppSettings()
         return dict(app_settings=settings)
-    
-    with app.app_context():
-        os.makedirs(app.instance_path, exist_ok=True)
-        db.create_all() 
+
+    os.makedirs(app.instance_path, exist_ok=True)
     return app
