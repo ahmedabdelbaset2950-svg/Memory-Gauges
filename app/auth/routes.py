@@ -1,11 +1,25 @@
-from flask import render_template, redirect, url_for, flash
-from flask_login import login_user, logout_user, login_required
+from datetime import datetime
+
+from flask import (
+    render_template,
+    redirect,
+    url_for,
+    flash,
+    jsonify,
+    request,
+)
+
+from flask_login import (
+    login_user,
+    logout_user,
+    login_required,
+)
 
 from app.auth import auth_bp
 from app.auth.forms import LoginForm
 from app.auth.services import authenticate_user
-from datetime import datetime
 from app.extensions import db
+
 
 @auth_bp.route("/", methods=["GET", "POST"])
 def login():
@@ -16,28 +30,51 @@ def login():
 
         user = authenticate_user(
             form.username.data,
-            form.password.data
+            form.password.data,
         )
 
         if user:
+
             login_user(
-                 user,
-                 remember=form.remember.data
+                user,
+                remember=form.remember.data,
             )
 
             user.last_login = datetime.utcnow()
             db.session.commit()
 
-        return redirect(url_for("dashboard.dashboard"))
+            # AJAX Login
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return jsonify(
+                    {
+                        "success": True,
+                        "redirect": url_for("dashboard.dashboard"),
+                    }
+                )
+
+            flash("Login successful.", "success")
+
+            return redirect(
+                url_for("dashboard.dashboard")
+            )
+
+        # AJAX Error
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return jsonify(
+                {
+                    "success": False,
+                    "message": "Invalid username or password.",
+                }
+            ), 401
 
         flash(
-            "Invalid username/email or password.",
-            "danger"
+            "Invalid username or password.",
+            "danger",
         )
 
     return render_template(
         "auth/login.html",
-        form=form
+        form=form,
     )
 
 
@@ -49,9 +86,9 @@ def logout():
 
     flash(
         "Logged out successfully.",
-        "success"
+        "success",
     )
 
-    return redirect(url_for("auth.login"))
-
-
+    return redirect(
+        url_for("auth.login")
+    )
