@@ -469,32 +469,46 @@ def export_excel():
 @login_required
 @admin_required
 def import_information():
-    print("FILES:", request.files)
-    print("FORM :", request.form)
-
-    file = request.files.get("file")
-    print("FILE :", file)
-
-    if not file:
-        return jsonify({
-            "success": False,
-            "message": "No file selected."
-        }), 400
 
     try:
+        print("========== IMPORT START ==========")
+
+        print("FILES:", request.files)
+        print("FORM :", request.form)
+
+        file = request.files.get("file")
+
+        print("FILE :", file)
+
+        if file is None:
+            return jsonify({
+                "success": False,
+                "message": "No file received."
+            }), 400
+
+        print("Filename:", file.filename)
+        print("Content-Type:", file.content_type)
+
+        # مهم جداً
+        file.seek(0)
+
+        print("Calling import_information_excel...")
+
         count = import_information_excel(file)
-        print("Imported Count =", count)
+
+        print("Imported:", count)
+        print("========== IMPORT END ==========")
 
         return jsonify({
             "success": True,
             "message": f"{count} rows imported successfully."
         })
 
-    except Exception as e:
+    except Exception:
         import traceback
-        traceback.print_exc()      # ← مهم جدًا
+        traceback.print_exc()
 
         return jsonify({
             "success": False,
-            "message": str(e)
+            "message": "Server Error أثناء استيراد الملف."
         }), 500
