@@ -551,32 +551,31 @@ def _dashboard_data(year, month):
     # JOB TYPE ANALYSIS
     # =====================================================
 
-position_counts = defaultdict(set)
+    position_counts = defaultdict(set)
 
-for r in rows:
+    for r in rows:
 
-    position = (
-        r.position.strip()
-        if r.position and r.position.strip()
-        else "Not Specified"
+        position = (
+            r.position.strip()
+            if r.position and r.position.strip()
+            else "Not Specified"
+        )
+
+        position_counts[position].add(
+            (r.year, r.month, r.group_no)
+        )
+
+    position_data = sorted(
+        [
+            (name, len(job_set))
+            for name, job_set in position_counts.items()
+        ],
+        key=lambda x: x[1],
+        reverse=True
     )
-
-    position_counts[position].add(
-        (r.year, r.month, r.group_no)
-    )
-
-position_data = sorted(
-    [
-        (name, len(job_set))
-        for name, job_set in position_counts.items()
-    ],
-    key=lambda x: x[1],
-    reverse=True
-)
 
     type_labels = [x[0] for x in position_data]
     type_values = [x[1] for x in position_data]
-
     # =====================================================
     # RIG ANALYSIS
     # =====================================================
@@ -1857,7 +1856,7 @@ def export_report(kind):
                 "Days",
                 "Well",
                 "Survey",
-                "Type",
+                "PositionP",
                 "Rig",
                 "Original Gauge",
                 "Changed To",
