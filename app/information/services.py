@@ -72,7 +72,7 @@ def build_information_workbook(year, month):
         "Well Number",
         "Changed To",
         "Survey",
-        "Type",
+        "Position",
         "Rig Name",
         "Bundle Carrier S/N",
         "Battery S/N",
@@ -189,208 +189,166 @@ def build_information_workbook(year, month):
     sheet.freeze_panes = "A2"
 
     return workbook
-import pandas as pd
-from app.extensions import db
-from app.models.information import InformationMonth, InformationRow
-
-
 def import_information_excel(file):
 
     excel = pd.ExcelFile(file)
 
     imported = 0
 
-    REQUIRED_COLUMNS = [
-        "No",
-        "Gauge Type S/N (Used )",
-        "From",
-        "To",
-        "No(D)",
-        "Well No",
-        "Changed To",
-        "Survey",
-        "Type",
-        "Rig Name",
-        "B.Carrier S/N",
-        "Battery S/N",
-        "ENGINEER",
-        "Total Used (H)",
-        "Comment"
-    ]
-
+    # المرور على جميع الـ Sheets
     for sheet_name in excel.sheet_names:
+        print(f"========== {sheet_name} ==========")
 
-        print(f"\n========== {sheet_name} ==========")
+        print(f"Importing: {sheet_name}")
 
-        try:
+        df = pd.read_excel(
+            excel,
+            sheet_name=sheet_name,
+            header=8
+        )
 
-            df = pd.read_excel(
-                excel,
-                sheet_name=sheet_name,
-                header=8
+        df.columns = df.columns.str.strip()
+
+        # تجاهل الشيت الفاضي
+        if df.empty:
+            continue
+
+        # تجاهل الصفوف بدون Gauge
+        df = df[df["Gauge Type S/N (Used )"].notna()].copy()
+
+        if df.empty:
+            continue
+
+        # استخراج السنة والشهر من أول تاريخ في الشيت
+        first_date = pd.to_datetime(
+            df.iloc[0]["From"],
+            errors="coerce"
+        )
+        print("First Date =", first_date)
+
+        if pd.isna(first_date):
+            continue
+
+        year = first_date.year
+        month = first_date.month
+
+        print(f"Year={year}  Month={month}")
+
+        # حذف بيانات هذا الشهر فقط
+        InformationRow.query.filter_by(
+            year=year,
+            month=month
+        ).delete()
+
+        # إنشاء الشهر إذا لم يكن موجوداً
+        month_obj = InformationMonth.query.filter_by(
+            year=year,
+            month=month
+        ).first()
+
+        if not month_obj:
+
+            month_obj = InformationMonth(
+                year=year,
+                month=month
             )
 
-            df.columns = (
-                df.columns
-                .astype(str)
-                .str.strip()
-            )
-            print(f"Sheet: {sheet_name}")
-            print(df.columns.tolist())
+            db.session.add(month_obj)
 
-            if df.empty:
-                print("Sheet Empty")
-                continue
+        current_group = 0
 
-            missing = [
-                col for col in REQUIRED_COLUMNS
-                if col not in df.columns
-            ]
+        for _, row in df.iterrows():
 
-            if missing:
-                print(f"Missing Columns : {missing}")
-                continue
+            # رقم الجوب
+            if pd.notna(row["No"]):
+                current_group = int(row["No"])
 
-            df = df[
-                df["Gauge Type S/N (Used )"]
-                .notna()
-            ].copy()
-
-            if df.empty:
-                continue
-
-            first_date = pd.to_datetime(
-                df.iloc[0]["From"],
+            from_date = pd.to_datetime(
+                row["From"],
                 errors="coerce"
             )
 
-            if pd.isna(first_date):
-                print("Invalid Date")
-                continue
+            to_date = pd.to_datetime(
+                row["To"],
+                errors="coerce"
+            )
 
-            year = first_date.year
-            month = first_date.month
+            info = InformationRow(
 
-            print(f"Importing {month}/{year}")
-
-            InformationRow.query.filter_by(
                 year=year,
-                month=month
-            ).delete()
+                month=month,
 
-            month_obj = InformationMonth.query.filter_by(
-                year=year,
-                month=month
-            ).first()
+                group_no=current_group,
 
-            if not month_obj:
+                gauge_serial=str(
+                    row["Gauge Type S/N (Used )"]
+                ).strip(),
 
-                month_obj = InformationMonth(
-                    year=year,
-                    month=month
-                )
-
-                db.session.add(month_obj)
-
-            current_group = 0
-
-            for _, row in df.iterrows():
-
-                if pd.notna(row["No"]):
-                    current_group = int(row["No"])
-
-                from_date = pd.to_datetime(
-                    row["From"],
-                    errors="coerce"
-                )
-
-                to_date = pd.to_datetime(
-                    row["To"],
-                    errors="coerce"
-                )
-
-                info = InformationRow(
-
-                    year=year,
-                    month=month,
-
-                    group_no=current_group,
-
-                    gauge_serial=str(
-                        row["Gauge Type S/N (Used )"]
-                    ).strip(),
-
-                    from_date=from_date.date()
+                from_date=(
+                    from_date.date()
                     if pd.notna(from_date)
-                    else None,
+                    else None
+                ),
 
-                    to_date=to_date.date()
+                to_date=(
+                    to_date.date()
                     if pd.notna(to_date)
-                    else None,
+                    else None
+                ),
 
-                    days=float(row["No(D)"])
-                    if pd.notna(row["No(D)"])
-                    else 0,
+                days=float(row["No(D)"])
+                if pd.notna(row["No(D)"])
+                else 0,
 
-                    well_number=str(
-                        row["Well No"]
-                    ).strip(),
+                well_number=str(
+                    row["Well No"]
+                ).strip(),
 
-                    changed_to=str(
-                        row["Changed To"]
-                    ).strip(),
+                changed_to=str(
+                    row["Changed To"]
+                ).strip(),
 
-                    survey=str(
-                        row["Survey"]
-                    ).strip(),
+                survey=str(
+                    row["Survey"]
+                ).strip(),
 
-                    type=str(
-                        row["Type"]
-                    ).strip(),
+                position = (""
+                            if pd.isna(row["Position"])
+                            else str(row["Position"]).strip()
+                            ),
 
-                    rig_name=str(
-                        row["Rig Name"]
-                    ).strip(),
+                rig_name=str(
+                    row["Rig Name"]
+                ).strip(),
+                bundle_carrier_sn=str(
+                    row["B.Carrier S/N"]
+                ).strip(),
 
-                    position="",
+                battery_sn=str(
+                    row["Battery S/N"]
+                ).strip(),
 
-                    bundle_carrier_sn=str(
-                        row["B.Carrier S/N"]
-                    ).strip(),
+                engineer=str(
+                    row["ENGINEER"]
+                ).strip(),
 
-                    battery_sn=str(
-                        row["Battery S/N"]
-                    ).strip(),
+                total_hours=float(
+                    row["Total Used (H)"]
+                ) if pd.notna(row["Total Used (H)"]) else 0,
 
-                    engineer=str(
-                        row["ENGINEER"]
-                    ).strip(),
+                total_samples=0,
 
-                    total_hours=float(
-                        row["Total Used (H)"]
-                    ) if pd.notna(row["Total Used (H)"]) else 0,
+                comment=""
+                if pd.isna(row["Comment"])
+                else str(row["Comment"]).strip()
 
-                    total_samples=0,
+            )
 
-                    comment="" if pd.isna(row["Comment"])
-                    else str(row["Comment"]).strip()
+            db.session.add(info)
 
-                )
+            imported += 1
 
-                db.session.add(info)
-                imported += 1
-
-            db.session.commit()
-
-            print(f"Imported {sheet_name} Successfully")
-
-        except Exception as e:
-
-            db.session.rollback()
-
-            print(f"ERROR IN SHEET {sheet_name}")
-            print(e)
-
-            continue
+            print("Imported rows:", imported)
+    db.session.commit()
 
     return imported
