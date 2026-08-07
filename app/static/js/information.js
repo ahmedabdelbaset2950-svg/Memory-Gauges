@@ -901,7 +901,7 @@ if (importInput) {
 
             const csrfToken = document
     .querySelector('meta[name="csrf-token"]')
-    ?.content;
+    ?.getAttribute("content");
 
 const res = await fetch("/information/import", {
 
