@@ -551,36 +551,31 @@ def _dashboard_data(year, month):
     # JOB TYPE ANALYSIS
     # =====================================================
 
-    type_counts = defaultdict(set)
+position_counts = defaultdict(set)
 
-    for r in rows:
+for r in rows:
 
-        job_type = (
-            r.type.strip()
-            if r.type and r.type.strip()
-            else "Not Specified"
-        )
-
-        type_counts[job_type].add(
-            (r.year, r.month, r.group_no)
-        )
-
-    type_data = sorted(
-        [
-            (name, len(job_set))
-            for name, job_set in type_counts.items()
-        ],
-        key=lambda x: x[1],
-        reverse=True
+    position = (
+        r.position.strip()
+        if r.position and r.position.strip()
+        else "Not Specified"
     )
 
-    type_labels = [
-        x[0] for x in type_data
-    ]
+    position_counts[position].add(
+        (r.year, r.month, r.group_no)
+    )
 
-    type_values = [
-        x[1] for x in type_data
-    ]
+position_data = sorted(
+    [
+        (name, len(job_set))
+        for name, job_set in position_counts.items()
+    ],
+    key=lambda x: x[1],
+    reverse=True
+)
+
+    type_labels = [x[0] for x in position_data]
+    type_values = [x[1] for x in position_data]
 
     # =====================================================
     # RIG ANALYSIS
