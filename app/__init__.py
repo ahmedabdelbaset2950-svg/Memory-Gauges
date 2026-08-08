@@ -222,12 +222,18 @@ def migrate_local_database():
             "success": False,
             "message": str(e)
         }), 500
-    @app.context_processor
-    def inject_settings():
-        settings = AppSettings.query.first()
-        if settings is None:
-            settings = AppSettings()
+@app.context_processor
+def inject_settings():
+    settings = AppSettings.query.first()
+    if settings is None:
+        settings = AppSettings()
         return dict(app_settings=settings)
+with app.app_context():
+    os.makedirs(
+        app.instance_path,
+        exist_ok=True
+    )
+    db.create_all()
 
-    os.makedirs(app.instance_path, exist_ok=True)
-    return app
+return app
+    
