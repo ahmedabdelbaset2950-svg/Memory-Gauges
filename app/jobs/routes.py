@@ -164,7 +164,7 @@ def save_job():
 
     well_number = (data.get("well_number") or "").strip()
 
-    # نجيب كل الصفوف المطابقة (مش صف واحد بس) عشان نلغي أي تكرار قديم
+    # نجيب كل الصفوف المطابقة
     existing_rows = Job.query.filter_by(
         year=data["year"],
         month=data["month"],
@@ -173,9 +173,11 @@ def save_job():
         equipment_id=data["equipment_id"]
     ).all()
 
+    # =========================
+    # DELETE JOB
+    # =========================
     if well_number == "":
 
-        # مسح القيمة = حذف كل الصفوف المطابقة (لو فيه تكرار قديم يتحذف برضه)
         for row in existing_rows:
             db.session.delete(row)
 
@@ -189,21 +191,26 @@ def save_job():
         )
 
         return jsonify({
-    "success": True,
-    "imported": len(jobs),
-    "year": min(y for y, m in months_to_delete),
-    "month": min(m for y, m in months_to_delete)
-})
+            "success": True,
+            "deleted": len(existing_rows),
+            "worked_days": worked_days
+        })
 
+    # =========================
+    # UPDATE EXISTING JOB
+    # =========================
     if existing_rows:
 
-        # نعدّل أول صف، ونحذف أي صفوف مكررة تانية لنفس اليوم
         job = existing_rows[0]
         job.well_number = well_number
 
+        # حذف أي تكرار قديم
         for duplicate in existing_rows[1:]:
             db.session.delete(duplicate)
 
+    # =========================
+    # CREATE NEW JOB
+    # =========================
     else:
 
         job = Job(
