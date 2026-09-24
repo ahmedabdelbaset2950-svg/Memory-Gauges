@@ -623,6 +623,11 @@ def _dashboard_data(year, month):
     well_labels = [x[0] for x in well_data]
     well_values = [x[1] for x in well_data]
 
+    top_types = type_data[:10]
+    top_rigs = rig_data[:10]
+    top_wells = well_data[:10]
+
+
     # =====================================================
     # BAND CARRIER ANALYSIS
     # =====================================================
