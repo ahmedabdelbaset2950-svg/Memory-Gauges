@@ -309,7 +309,257 @@ Operations Analytics | MGMS
 
     </div>
 
+<!-- =================================================
+     BAND CARRIER ANALYSIS
+================================================== -->
 
+<div class="analytics-section-title">
+
+    <span>EQUIPMENT ANALYSIS</span>
+
+    <h2>
+        Band Carrier Analysis
+    </h2>
+
+</div>
+
+
+<!-- BAND CARRIER KPIs -->
+
+<div class="analytics-kpi-grid">
+
+    <div class="analytics-kpi">
+
+        <span>Used Band Carriers</span>
+
+        <strong>
+            {{ total_carriers_used }}
+        </strong>
+
+        <small>
+            Unique carriers used
+        </small>
+
+    </div>
+
+
+    <div class="analytics-kpi">
+
+        <span>Total Usage</span>
+
+        <strong>
+            {{ total_carrier_usage }}
+        </strong>
+
+        <small>
+            Carrier / Job usage
+        </small>
+
+    </div>
+
+
+    <div class="analytics-kpi">
+
+        <span>Working Days</span>
+
+        <strong>
+            {{ total_carrier_days }}
+        </strong>
+
+        <small>
+            Total carrier utilization
+        </small>
+
+    </div>
+
+
+    <div class="analytics-kpi">
+
+        <span>Most Used Carrier</span>
+
+        <strong>
+            {% if most_used_carrier %}
+                {{ most_used_carrier.serial }}
+            {% else %}
+                -
+            {% endif %}
+        </strong>
+
+        <small>
+            {% if most_used_carrier %}
+                {{ most_used_carrier.days }} Working Days
+            {% else %}
+                No usage data
+            {% endif %}
+        </small>
+
+    </div>
+
+</div>
+
+
+<!-- BAND CARRIER CHARTS -->
+
+<div class="analytics-grid two">
+
+    <!-- TOP CARRIERS -->
+
+    <div class="panel">
+
+        <div class="chart-head">
+
+            <div>
+
+                <span class="chart-eyebrow">
+                    UTILIZATION
+                </span>
+
+                <h3>
+                    Most Used Band Carriers
+                </h3>
+
+            </div>
+
+        </div>
+
+        <div class="chart-box chart-large">
+
+            <canvas id="carrierChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+    <!-- MONTHLY USAGE -->
+
+    <div class="panel">
+
+        <div class="chart-head">
+
+            <div>
+
+                <span class="chart-eyebrow">
+                    MONTHLY ACTIVITY
+                </span>
+
+                <h3>
+                    Band Carrier Usage
+                </h3>
+
+            </div>
+
+        </div>
+
+        <div class="chart-box chart-large">
+
+            <canvas id="carrierMonthlyChart"></canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- BAND CARRIER TABLE -->
+
+<div class="panel table-panel analytics-table-panel">
+
+    <div class="chart-head">
+
+        <div>
+
+            <span class="chart-eyebrow">
+                CARRIER DETAILS
+            </span>
+
+            <h3>
+                Band Carrier Usage Details
+            </h3>
+
+        </div>
+
+    </div>
+
+
+    <div class="analytics-table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Band Carrier</th>
+
+                    <th>Jobs</th>
+
+                    <th>Working Days</th>
+
+                    <th>Wells</th>
+
+                    <th>Last Used</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for carrier in top_carriers %}
+
+                <tr>
+
+                    <td>
+
+                        <strong>
+                            {{ carrier.serial }}
+                        </strong>
+
+                    </td>
+
+                    <td>
+                        {{ carrier.jobs }}
+                    </td>
+
+                    <td>
+                        {{ carrier.days }}
+                    </td>
+
+                    <td>
+                        {{ carrier.wells }}
+                    </td>
+
+                    <td>
+                        {{ carrier.last_used }}
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="5"
+                        style="text-align:center;">
+
+                        No Band Carrier usage data available.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
     <!-- =================================================
          CHANGES
     ================================================== -->
@@ -946,7 +1196,130 @@ new Chart(
 
     }
 );
+/* ============================================
+   BAND CARRIER UTILIZATION
+============================================ */
 
+new Chart(
+    document.getElementById("carrierChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels:
+                {{ carrier_labels | tojson }},
+
+            datasets: [{
+
+                label: "Working Days",
+
+                data:
+                    {{ carrier_values | tojson }},
+
+                borderRadius: 6
+
+            }]
+
+        },
+
+        options: {
+
+            indexAxis: "y",
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+                    display: false
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ============================================
+   BAND CARRIER MONTHLY USAGE
+============================================ */
+
+new Chart(
+    document.getElementById("carrierMonthlyChart"),
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels:
+                months,
+
+            datasets: [{
+
+                label: "Usage",
+
+                data:
+                    {{ carrier_usage_by_month | tojson }},
+
+                borderRadius: 6
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    display: false
+
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        precision: 0
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
 </script>
 
 {% endblock %}
