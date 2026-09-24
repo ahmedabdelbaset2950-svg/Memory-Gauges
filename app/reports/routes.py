@@ -546,7 +546,131 @@ def _dashboard_data(year, month):
     survey_values = [
         x[1] for x in survey_data
     ]
+         # =====================================================
+    # BAND CARRIER ANALYSIS
+    # =====================================================
 
+    carrier_stats = defaultdict(lambda: {
+        "jobs": set(),
+        "days": 0.0,
+        "wells": set(),
+        "months": [0] * 12,
+        "last_used": None
+    })
+
+    for r in rows:
+
+        carrier = (
+            r.bundle_carrier_sn.strip()
+            if r.bundle_carrier_sn
+            and r.bundle_carrier_sn.strip()
+            else ""
+        )
+
+        if not carrier:
+            continue
+
+        item = carrier_stats[carrier]
+
+        # Unique jobs
+        item["jobs"].add(
+            (r.year, r.month, r.group_no)
+        )
+
+        # Working days
+        item["days"] += float(r.days or 0)
+
+        # Wells
+        if r.well_number and r.well_number.strip():
+            item["wells"].add(
+                r.well_number.strip()
+            )
+
+        # Monthly usage
+        if r.month and 1 <= r.month <= 12:
+            item["months"][r.month - 1] += 1
+
+        # Last used date
+        if r.to_date:
+            if (
+                item["last_used"] is None
+                or r.to_date > item["last_used"]
+            ):
+                item["last_used"] = r.to_date
+
+    carrier_data = []
+
+    for serial, item in carrier_stats.items():
+
+        carrier_data.append({
+            "serial": serial,
+            "jobs": len(item["jobs"]),
+            "days": round(item["days"], 2),
+            "wells": len(item["wells"]),
+            "months": item["months"],
+            "last_used": (
+                item["last_used"].strftime("%d %b %Y")
+                if item["last_used"]
+                else "-"
+            )
+        })
+
+    # Most used first
+    carrier_data.sort(
+        key=lambda x: x["days"],
+        reverse=True
+    )
+
+    top_carriers = carrier_data[:10]
+
+    carrier_labels = [
+        item["serial"]
+        for item in top_carriers
+    ]
+
+    carrier_values = [
+        item["days"]
+        for item in top_carriers
+    ]
+
+    # Total unique carriers actually used
+    total_carriers_used = len(carrier_data)
+
+    # Total carrier usage = unique carrier/job combinations
+    total_carrier_usage = sum(
+        item["jobs"]
+        for item in carrier_data
+    )
+
+    # Total days where carriers were used
+    total_carrier_days = round(
+        sum(item["days"] for item in carrier_data),
+        2
+    )
+
+    most_used_carrier = (
+        carrier_data[0]
+        if carrier_data
+        else None
+    )
+
+    # Monthly carrier usage
+    carrier_usage_by_month = [0] * 12
+
+    for r in rows:
+
+        carrier = (
+            r.bundle_carrier_sn.strip()
+            if r.bundle_carrier_sn
+            and r.bundle_carrier_sn.strip()
+            else ""
+        )
+
+        if not carrier:
+            continue
+
+        if r.month and 1 <= r.month <= 12:
+            carrier_usage_by_month[r.month - 1] += 1
     # =====================================================
     # JOB TYPE ANALYSIS
     # =====================================================
@@ -697,6 +821,16 @@ def _dashboard_data(year, month):
         "most_active_month": most_active_month,
         "most_used_gauge": most_used_gauge,
         "most_active_rig": most_active_rig,
+                # Band Carrier Analysis
+        "carrier_labels": carrier_labels,
+        "carrier_values": carrier_values,
+        "carrier_data": carrier_data,
+        "top_carriers": top_carriers,
+        "total_carriers_used": total_carriers_used,
+        "total_carrier_usage": total_carrier_usage,
+        "total_carrier_days": total_carrier_days,
+        "most_used_carrier": most_used_carrier,
+        "carrier_usage_by_month": carrier_usage_by_month,
     }
 
 
