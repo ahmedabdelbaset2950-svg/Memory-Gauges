@@ -548,6 +548,82 @@ def _dashboard_data(year, month):
     ]
     # =====================================================
     # =====================================================
+    # TYPE / RIG / WELL ANALYSIS
+    # =====================================================
+
+    # These analyses are job-based so that a Job containing
+    # multiple gauge rows is counted only once.
+
+    type_stats = defaultdict(set)
+    rig_stats = defaultdict(set)
+    well_stats = defaultdict(set)
+
+    for r in rows:
+
+        job_key = (
+            r.year,
+            r.month,
+            r.group_no
+        )
+
+        job_type = (
+            r.type.strip()
+            if r.type and r.type.strip()
+            else "Not Specified"
+        )
+        type_stats[job_type].add(job_key)
+
+        rig_name = (
+            r.rig_name.strip()
+            if r.rig_name and r.rig_name.strip()
+            else "Not Specified"
+        )
+        rig_stats[rig_name].add(job_key)
+
+        well_name = (
+            r.well_number.strip()
+            if r.well_number and r.well_number.strip()
+            else "Not Specified"
+        )
+        well_stats[well_name].add(job_key)
+
+    type_data = sorted(
+        (
+            (name, len(job_set))
+            for name, job_set in type_stats.items()
+        ),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    rig_data = sorted(
+        (
+            (name, len(job_set))
+            for name, job_set in rig_stats.items()
+        ),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    well_data = sorted(
+        (
+            (name, len(job_set))
+            for name, job_set in well_stats.items()
+        ),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    type_labels = [x[0] for x in type_data]
+    type_values = [x[1] for x in type_data]
+
+    rig_labels = [x[0] for x in rig_data]
+    rig_values = [x[1] for x in rig_data]
+
+    well_labels = [x[0] for x in well_data]
+    well_values = [x[1] for x in well_data]
+
+    # =====================================================
     # BAND CARRIER ANALYSIS
     # =====================================================
 
@@ -698,7 +774,7 @@ def _dashboard_data(year, month):
                 carrier["months"][i]
             )
 
-# INSIGHTS
+    # INSIGHTS
     # =====================================================
 
     most_active_month = None
