@@ -546,223 +546,189 @@ def _dashboard_data(year, month):
     survey_values = [
         x[1] for x in survey_data
     ]
-         # =====================================================
-    # BAND CARRIER ANALYSIS
     # =====================================================
+# BAND CARRIER ANALYSIS
+# =====================================================
 
-    carrier_stats = defaultdict(lambda: {
-        "jobs": set(),
-        "days": 0.0,
-        "wells": set(),
-        "months": [0] * 12,
-        "last_used": None
-    })
+carrier_stats = defaultdict(lambda: {
+    "jobs": set(),
+    "days_by_job": {},
+    "wells": set(),
+    "months": [0] * 12,
+    "last_used": None
+})
 
-    for r in rows:
 
-        carrier = (
-            r.bundle_carrier_sn.strip()
-            if r.bundle_carrier_sn
-            and r.bundle_carrier_sn.strip()
-            else ""
+for r in rows:
+
+    carrier = (
+        r.bundle_carrier_sn.strip()
+        if r.bundle_carrier_sn
+        and r.bundle_carrier_sn.strip()
+        else ""
+    )
+
+    if not carrier:
+        continue
+
+    item = carrier_stats[carrier]
+
+    # One job = one usage
+    job_key = (
+        r.year,
+        r.month,
+        r.group_no
+    )
+
+    item["jobs"].add(job_key)
+
+    # -------------------------------------------------
+    # Store days ONCE per job
+    # -------------------------------------------------
+
+    if job_key not in item["days_by_job"]:
+
+        item["days_by_job"][job_key] = float(
+            r.days or 0
         )
 
-        if not carrier:
-            continue
-
-        item = carrier_stats[carrier]
-
-        # Unique jobs
-        item["jobs"].add(
-            (r.year, r.month, r.group_no)
-        )
-
-        # Working days
-        item["days"] += float(r.days or 0)
-
-        # Wells
-        if r.well_number and r.well_number.strip():
-            item["wells"].add(
-                r.well_number.strip()
-            )
-
-        # Monthly usage
+        # Monthly usage ONCE per job
         if r.month and 1 <= r.month <= 12:
+
             item["months"][r.month - 1] += 1
 
-        # Last used date
-        if r.to_date:
-            if (
-                item["last_used"] is None
-                or r.to_date > item["last_used"]
-            ):
-                item["last_used"] = r.to_date
+    # -------------------------------------------------
+    # Wells
+    # -------------------------------------------------
 
-    carrier_data = []
+    if r.well_number and r.well_number.strip():
 
-    for serial, item in carrier_stats.items():
+        item["wells"].add(
+            r.well_number.strip()
+        )
 
-        carrier_data.append({
-            "serial": serial,
-            "jobs": len(item["jobs"]),
-            "days": round(item["days"], 2),
-            "wells": len(item["wells"]),
-            "months": item["months"],
-            "last_used": (
-                item["last_used"].strftime("%d %b %Y")
-                if item["last_used"]
-                else "-"
+    # -------------------------------------------------
+    # Last Used
+    # -------------------------------------------------
+
+    if r.to_date:
+
+        if (
+            item["last_used"] is None
+            or r.to_date > item["last_used"]
+        ):
+
+            item["last_used"] = r.to_date
+
+
+# =====================================================
+# BUILD CARRIER DATA
+# =====================================================
+
+carrier_data = []
+
+for serial, item in carrier_stats.items():
+
+    total_days = sum(
+        item["days_by_job"].values()
+    )
+
+    carrier_data.append({
+
+        "serial": serial,
+
+        "jobs": len(
+            item["jobs"]
+        ),
+
+        "days": round(
+            total_days,
+            2
+        ),
+
+        "wells": len(
+            item["wells"]
+        ),
+
+        "months": item["months"],
+
+        "last_used": (
+            item["last_used"].strftime(
+                "%d %b %Y"
             )
-        })
+            if item["last_used"]
+            else "-"
+        )
 
-    # Most used first
-    carrier_data.sort(
-        key=lambda x: x["days"],
-        reverse=True
-    )
+    })
 
-    top_carriers = carrier_data[:10]
 
-    carrier_labels = [
-        item["serial"]
-        for item in top_carriers
-    ]
+# =====================================================
+# SORT BY WORKING DAYS
+# =====================================================
 
-    carrier_values = [
+carrier_data.sort(
+    key=lambda x: x["days"],
+    reverse=True
+)
+
+
+top_carriers = carrier_data[:10]
+
+
+carrier_labels = [
+    item["serial"]
+    for item in top_carriers
+]
+
+
+carrier_values = [
+    item["days"]
+    for item in top_carriers
+]
+
+
+# =====================================================
+# SUMMARY
+# =====================================================
+
+total_carriers_used = len(
+    carrier_data
+)
+
+total_carrier_usage = sum(
+    item["jobs"]
+    for item in carrier_data
+)
+
+total_carrier_days = round(
+    sum(
         item["days"]
-        for item in top_carriers
-    ]
-
-    # Total unique carriers actually used
-    total_carriers_used = len(carrier_data)
-
-    # Total carrier usage = unique carrier/job combinations
-    total_carrier_usage = sum(
-        item["jobs"]
         for item in carrier_data
-    )
+    ),
+    2
+)
 
-    # Total days where carriers were used
-    total_carrier_days = round(
-        sum(item["days"] for item in carrier_data),
-        2
-    )
+most_used_carrier = (
+    carrier_data[0]
+    if carrier_data
+    else None
+)
 
-    most_used_carrier = (
-        carrier_data[0]
-        if carrier_data
-        else None
-    )
 
-    # Monthly carrier usage
-    carrier_usage_by_month = [0] * 12
+# =====================================================
+# MONTHLY USAGE
+# =====================================================
 
-    for r in rows:
+carrier_usage_by_month = [0] * 12
 
-        carrier = (
-            r.bundle_carrier_sn.strip()
-            if r.bundle_carrier_sn
-            and r.bundle_carrier_sn.strip()
-            else ""
+for carrier in carrier_data:
+
+    for i in range(12):
+
+        carrier_usage_by_month[i] += (
+            carrier["months"][i]
         )
-
-        if not carrier:
-            continue
-
-        if r.month and 1 <= r.month <= 12:
-            carrier_usage_by_month[r.month - 1] += 1
-    # =====================================================
-    # JOB TYPE ANALYSIS
-    # =====================================================
-
-    position_counts = defaultdict(set)
-
-    for r in rows:
-
-        position = (
-            r.position.strip()
-            if r.position and r.position.strip()
-            else "Not Specified"
-        )
-
-        position_counts[position].add(
-            (r.year, r.month, r.group_no)
-        )
-
-    position_data = sorted(
-        [
-            (name, len(job_set))
-            for name, job_set in position_counts.items()
-        ],
-        key=lambda x: x[1],
-        reverse=True
-    )
-
-    type_labels = [x[0] for x in position_data]
-    type_values = [x[1] for x in position_data]
-    # =====================================================
-    # RIG ANALYSIS
-    # =====================================================
-
-    rig_counts = defaultdict(set)
-
-    for r in rows:
-
-        if not r.rig_name or not r.rig_name.strip():
-            continue
-
-        rig_counts[r.rig_name.strip()].add(
-            (r.year, r.month, r.group_no)
-        )
-
-    rig_data = sorted(
-        [
-            (name, len(job_set))
-            for name, job_set in rig_counts.items()
-        ],
-        key=lambda x: x[1],
-        reverse=True
-    )[:10]
-
-    rig_labels = [
-        x[0] for x in rig_data
-    ]
-
-    rig_values = [
-        x[1] for x in rig_data
-    ]
-
-    # =====================================================
-    # WELL ANALYSIS
-    # =====================================================
-
-    well_counts = defaultdict(set)
-
-    for r in rows:
-
-        if not r.well_number or not r.well_number.strip():
-            continue
-
-        well_counts[r.well_number.strip()].add(
-            (r.year, r.month, r.group_no)
-        )
-
-    top_wells = sorted(
-        [
-            (name, len(job_set))
-            for name, job_set in well_counts.items()
-        ],
-        key=lambda x: x[1],
-        reverse=True
-    )[:10]
-
-    well_labels = [
-        x[0] for x in top_wells
-    ]
-
-    well_values = [
-        x[1] for x in top_wells
-    ]
 
     # =====================================================
     # INSIGHTS
