@@ -54,9 +54,10 @@ def create_year(year):
 @information.route("/")
 @login_required
 def index():
-
-    year = request.args.get("year", 2026, type=int)
-    month = request.args.get("month", 7, type=int)
+    
+    now = datetime.now()
+    year = request.args.get("year", now.year, type=int)
+    month = request.args.get("month", now.month, type=int)
     search = request.args.get("search", "", type=str).strip()
 
     # =====================================================
