@@ -1000,14 +1000,14 @@ new Chart(
         data: {
 
             labels:
-                {{ type_labels | tojson }},
+                {{ position_labels | tojson }},
 
             datasets: [{
 
                 label: "Jobs",
 
                 data:
-                    {{ type_values | tojson }},
+                    {{ position_values | tojson }},
 
                 borderWidth: 2,
 
