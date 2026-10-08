@@ -247,8 +247,8 @@ Operations Analytics | MGMS
 
             </div>
 
-            <div class="chart-box">
-                <canvas id="typeChart"></canvas>
+            <div class="chart-box position-chart-box">
+                <canvas id="positionChart"></canvas>
             </div>
 
         </div>
@@ -301,7 +301,7 @@ Operations Analytics | MGMS
 
             </div>
 
-            <div class="chart-box">
+            <div class="chart-box well-chart-box">
                 <canvas id="wellChart"></canvas>
             </div>
 
@@ -988,14 +988,14 @@ new Chart(
 
 
 /* ============================================
-   TYPE
+   POSITION
 ============================================ */
 
 new Chart(
-    document.getElementById("typeChart"),
+    document.getElementById("positionChart"),
     {
 
-        type: "doughnut",
+        type: "bar",
 
         data: {
 
@@ -1004,8 +1004,16 @@ new Chart(
 
             datasets: [{
 
+                label: "Jobs",
+
                 data:
-                    {{ type_values | tojson }}
+                    {{ type_values | tojson }},
+
+                borderRadius: 6,
+
+                barPercentage: 0.72,
+
+                categoryPercentage: 0.72
 
             }]
 
@@ -1013,11 +1021,49 @@ new Chart(
 
         options: {
 
+            indexAxis: "y",
+
             responsive: true,
 
             maintainAspectRatio: false,
 
-            cutout: "68%"
+            plugins: {
+
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return "Jobs: " + context.raw;
+                        }
+                    }
+                }
+
+            },
+
+            scales: {
+
+                x: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+                        precision: 0
+                    }
+
+                },
+
+                y: {
+
+                    ticks: {
+                        autoSkip: false
+                    }
+
+                }
+
+            }
 
         }
 
@@ -1085,6 +1131,24 @@ new Chart(
    WELLS
 ============================================ */
 
+const wellLabels =
+    {{ well_labels | tojson }};
+
+const wellValues =
+    {{ well_values | tojson }};
+
+/*
+ * Keep the dashboard readable.
+ * The backend still calculates the Top 10;
+ * the dashboard displays the Top 8 only.
+ */
+const visibleWellLabels =
+    wellLabels.slice(0, 8);
+
+const visibleWellValues =
+    wellValues.slice(0, 8);
+
+
 new Chart(
     document.getElementById("wellChart"),
     {
@@ -1094,16 +1158,20 @@ new Chart(
         data: {
 
             labels:
-                {{ well_labels | tojson }},
+                visibleWellLabels,
 
             datasets: [{
 
                 label: "Jobs",
 
                 data:
-                    {{ well_values | tojson }},
+                    visibleWellValues,
 
-                borderRadius: 6
+                borderRadius: 6,
+
+                barPercentage: 0.72,
+
+                categoryPercentage: 0.72
 
             }]
 
@@ -1121,6 +1189,14 @@ new Chart(
 
                 legend: {
                     display: false
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return "Jobs: " + context.raw;
+                        }
+                    }
                 }
 
             },
@@ -1128,7 +1204,21 @@ new Chart(
             scales: {
 
                 x: {
-                    beginAtZero: true
+
+                    beginAtZero: true,
+
+                    ticks: {
+                        precision: 0
+                    }
+
+                },
+
+                y: {
+
+                    ticks: {
+                        autoSkip: false
+                    }
+
                 }
 
             }
