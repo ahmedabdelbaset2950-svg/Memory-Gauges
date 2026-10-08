@@ -264,6 +264,24 @@
     height:340px;
 }
 
+/* =========================================================
+   ANALYTICS - POSITION / WELL CHARTS
+========================================================= */
+
+.position-chart-box{
+    height:330px;
+}
+
+.well-chart-box{
+    height:390px;
+}
+
+.position-chart-box canvas,
+.well-chart-box canvas{
+    max-height:100%;
+}
+
+
 
 .analytics-section-title{
     margin:25px 0 13px;
