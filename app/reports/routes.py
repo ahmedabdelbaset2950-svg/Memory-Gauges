@@ -627,6 +627,43 @@ def _dashboard_data(year, month):
     top_rigs = rig_data[:10]
     top_wells = well_data[:10]
 
+    # =====================================================
+    # POSITION ANALYSIS
+    # =====================================================
+    # Position belongs to the Information row, but a Job can
+    # have multiple gauge rows. Count each Position once per Job.
+
+    position_stats = defaultdict(set)
+
+    for r in rows:
+
+        job_key = (
+            r.year,
+            r.month,
+            r.group_no
+        )
+
+        position = (
+            r.position.strip()
+            if r.position and r.position.strip()
+            else "Not Specified"
+        )
+
+        position_stats[position].add(job_key)
+
+    position_data = sorted(
+        (
+            (name, len(job_set))
+            for name, job_set in position_stats.items()
+        ),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    position_labels = [x[0] for x in position_data]
+    position_values = [x[1] for x in position_data]
+    top_positions = position_data[:10]
+
 
     # =====================================================
     # BAND CARRIER ANALYSIS
@@ -830,6 +867,9 @@ def _dashboard_data(year, month):
         "rig_values": rig_values,
         "well_labels": well_labels,
         "well_values": well_values,
+        "position_labels": position_labels,
+        "position_values": position_values,
+        "top_positions": top_positions,
         "top_gauges": top_gauges,
         "top_wells": top_wells,
         "most_active_month": most_active_month,
