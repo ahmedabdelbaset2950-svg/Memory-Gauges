@@ -995,7 +995,7 @@ new Chart(
     document.getElementById("positionChart"),
     {
 
-        type: "bar",
+        type: "doughnut",
 
         data: {
 
@@ -1009,11 +1009,9 @@ new Chart(
                 data:
                     {{ type_values | tojson }},
 
-                borderRadius: 6,
+                borderWidth: 2,
 
-                barPercentage: 0.72,
-
-                categoryPercentage: 0.72
+                hoverOffset: 8
 
             }]
 
@@ -1021,44 +1019,57 @@ new Chart(
 
         options: {
 
-            indexAxis: "y",
-
             responsive: true,
 
             maintainAspectRatio: false,
 
+            cutout: "58%",
+
             plugins: {
 
                 legend: {
-                    display: false
+
+                    position: "bottom",
+
+                    labels: {
+
+                        boxWidth: 12,
+
+                        padding: 14
+
+                    }
+
                 },
 
                 tooltip: {
+
                     callbacks: {
+
                         label: function(context) {
-                            return "Jobs: " + context.raw;
+
+                            const value =
+                                context.raw;
+
+                            const total =
+                                context.dataset.data.reduce(
+                                    (a, b) => a + b,
+                                    0
+                                );
+
+                            const percentage =
+                                total
+                                    ? ((value / total) * 100).toFixed(1)
+                                    : 0;
+
+                            return context.label
+                                + ": "
+                                + value
+                                + " Jobs ("
+                                + percentage
+                                + "%)";
+
                         }
-                    }
-                }
 
-            },
-
-            scales: {
-
-                x: {
-
-                    beginAtZero: true,
-
-                    ticks: {
-                        precision: 0
-                    }
-
-                },
-
-                y: {
-
-                    ticks: {
-                        autoSkip: false
                     }
 
                 }
