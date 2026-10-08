@@ -119,7 +119,7 @@ def build_information_workbook(year, month):
             item.well_number,
             item.changed_to,
             item.survey,
-            item.type,
+            item.position,
             item.rig_name,
             item.bundle_carrier_sn,
             item.battery_sn,
