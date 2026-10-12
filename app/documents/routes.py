@@ -235,41 +235,43 @@ def upload():
 
 
 
+
 @documents.route("/<int:doc_id>/download")
 @login_required
 def download(doc_id):
     doc = db.session.get(Document, doc_id)
 
     if doc is None:
-        current_app.logger.error(
-            "Document ID %s was not found in the database", doc_id
-        )
         return "Document record not found in database.", 404
 
-    upload_dir = _upload_dir()
-    file_path = os.path.abspath(
-        os.path.join(upload_dir, doc.file_filename or "")
-    )
+    upload_dir = os.path.abspath(_upload_dir())
+    filename = os.path.basename(doc.file_filename or "")
 
-    # Prevent paths outside the document upload directory
-    if os.path.commonpath([upload_dir, file_path]) != os.path.abspath(upload_dir):
-        return "Invalid document path.", 400
-
-    if not doc.file_filename or not os.path.isfile(file_path):
+    if not filename or filename != doc.file_filename:
         current_app.logger.error(
-            "Document file missing: id=%s, filename=%s, path=%s",
+            "Invalid stored filename for document %s: %r",
             doc.id,
-            doc.file_filename,
+            doc.file_filename
+        )
+        return "Invalid stored filename.", 400
+
+    file_path = os.path.abspath(os.path.join(upload_dir, filename))
+
+    if not os.path.isfile(file_path):
+        current_app.logger.error(
+            "Document file missing: id=%s, path=%s",
+            doc.id,
             file_path
         )
-        return "Document record exists, but its file is missing from storage.", 404
+        return "Document file is missing from storage.", 404
 
     return send_from_directory(
         upload_dir,
-        doc.file_filename,
+        filename,
         as_attachment=True,
-        download_name=doc.original_filename or doc.file_filename
+        download_name=doc.original_filename or filename
     )
+
 
 
 @documents.route("/<int:doc_id>/delete", methods=["POST"])
