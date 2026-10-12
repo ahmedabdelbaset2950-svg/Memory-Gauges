@@ -234,17 +234,41 @@ def upload():
     return redirect(url_for("documents.index"))
 
 
+
 @documents.route("/<int:doc_id>/download")
 @login_required
 def download(doc_id):
+    doc = db.session.get(Document, doc_id)
 
-    doc = Document.query.get_or_404(doc_id)
+    if doc is None:
+        current_app.logger.error(
+            "Document ID %s was not found in the database", doc_id
+        )
+        return "Document record not found in database.", 404
+
+    upload_dir = _upload_dir()
+    file_path = os.path.abspath(
+        os.path.join(upload_dir, doc.file_filename or "")
+    )
+
+    # Prevent paths outside the document upload directory
+    if os.path.commonpath([upload_dir, file_path]) != os.path.abspath(upload_dir):
+        return "Invalid document path.", 400
+
+    if not doc.file_filename or not os.path.isfile(file_path):
+        current_app.logger.error(
+            "Document file missing: id=%s, filename=%s, path=%s",
+            doc.id,
+            doc.file_filename,
+            file_path
+        )
+        return "Document record exists, but its file is missing from storage.", 404
 
     return send_from_directory(
-        _upload_dir(),
+        upload_dir,
         doc.file_filename,
         as_attachment=True,
-        download_name=doc.original_filename
+        download_name=doc.original_filename or doc.file_filename
     )
 
 
