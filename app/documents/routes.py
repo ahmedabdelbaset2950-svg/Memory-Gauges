@@ -28,8 +28,17 @@ documents = Blueprint(
 UPLOAD_SUBDIR = os.path.join("static", "uploads", "documents")
 
 
+
 def _upload_dir():
-    upload_dir = os.path.join(current_app.root_path, "..", UPLOAD_SUBDIR)
+    upload_dir = os.path.abspath(
+        os.path.join(
+            current_app.root_path,
+            "..",
+            "static",
+            "uploads",
+            "documents"
+        )
+    )
     os.makedirs(upload_dir, exist_ok=True)
     return upload_dir
 
