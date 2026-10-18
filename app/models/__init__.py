@@ -11,3 +11,4 @@ from .maintenance import MaintenanceRecord
 from .document import Document
 from app.models.information import InformationMonth, InformationRow
 from app.models.app_settings import AppSettings
+from .battery_cycle import BatteryCycle
