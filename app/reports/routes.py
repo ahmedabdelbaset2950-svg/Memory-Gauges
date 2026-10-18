@@ -46,6 +46,7 @@ from app.models.memory_gauge import MemoryGauge
 from app.models.bundle_carrier import BundleCarrier
 from app.models.battery import Battery
 from app.utils.excel_report import ExcelReport
+from app.models.battery_cycle import BatteryCycle
 
 
 reports = Blueprint("reports", __name__, url_prefix="/reports")
@@ -1060,6 +1061,43 @@ def actual_gauges():
 def _battery_data(year, month):
 
     rows = _rows(year, month)
+    
+# فلترة سجلات Information حسب الدورة الحالية لكل بطارية.
+active_cycles = {
+    cycle.battery_id: cycle
+    for cycle in BatteryCycle.query.filter_by(
+        ended_on=None
+    ).all()
+}
+
+battery_by_serial = {
+    battery.serial_number.strip(): battery
+    for battery in Battery.query.all()
+}
+
+filtered_rows = []
+
+for row in rows:
+    serial = (row.battery_sn or "").strip()
+    battery = battery_by_serial.get(serial)
+
+    # البطارية التي لم تبدأ لها دورة مسجلة تحتفظ
+    # بالسلوك القديم حتى يتم بدء أول دورة لها.
+    if not battery or battery.id not in active_cycles:
+        filtered_rows.append(row)
+        continue
+
+    cycle = active_cycles[battery.id]
+    row_date = row.from_date
+
+    if row_date is None:
+        continue
+
+    if row_date >= cycle.started_on:
+        filtered_rows.append(row)
+
+rows = filtered_rows
+
 
     # =====================================================
     # COLLECT BATTERY USAGE FROM INFORMATION
