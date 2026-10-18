@@ -1267,12 +1267,13 @@ def _battery_data(year, month):
         # =================================================
 
         if mgms_consumption is not None:
-
-            total_consumed = (
-                previous_consumption
-                +
-                mgms_consumption
-            )
+            if b.id in active_cycles:
+                # New cycle: calculate battery percentage from
+                # current-cycle consumption only.
+                total_consumed = mgms_consumption
+            else:
+                # Batteries without a new cycle keep old behavior.
+                total_consumed = previous_consumption + mgms_consumption
 
         # =================================================
         # REMAINING / PERCENTAGES
