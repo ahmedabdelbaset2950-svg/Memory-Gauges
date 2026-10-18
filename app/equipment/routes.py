@@ -342,3 +342,106 @@ def remove_battery(battery_id):
     delete_battery(battery)
     flash("Battery deleted successfully.", "success")
     return redirect(url_for("equipment.equipment"))
+
+@equipment_bp.route(
+    "/batteries/<int:battery_id>/start-cycle",
+    methods=["POST"]
+)
+@login_required
+@admin_required
+def start_battery_cycle(battery_id):
+    battery = get_battery(battery_id)
+
+    if not battery:
+        flash("Battery not found.", "danger")
+        return redirect(url_for("equipment.equipment"))
+
+    today = date.today()
+
+    active_cycle = (
+        BatteryCycle.query
+        .filter_by(
+            battery_id=battery.id,
+            ended_on=None
+        )
+        .order_by(BatteryCycle.cycle_number.desc())
+        .first()
+    )
+
+    # منع إنشاء دورتين بتاريخ البداية نفسه،
+    # لأن سجلات Information تعتمد على التاريخ.
+    if active_cycle and active_cycle.started_on >= today:
+        flash(
+            "A new cycle has already started today. "
+            "The current cycle was not changed.",
+            "warning"
+        )
+        return redirect(url_for("equipment.equipment"))
+
+    # إغلاق الدورة الحالية في نهاية أمس.
+    if active_cycle:
+        active_cycle.ended_on = today - timedelta(days=1)
+
+    else:
+        # أول مرة: نحفظ السجلات القديمة ضمن دورة تاريخية.
+        last_cycle = (
+            BatteryCycle.query
+            .filter_by(battery_id=battery.id)
+            .order_by(BatteryCycle.cycle_number.desc())
+            .first()
+        )
+
+        if last_cycle is None:
+            first_usage = (
+                db.session.query(
+                    db.func.min(InformationRow.from_date)
+                )
+                .filter(
+                    db.func.trim(InformationRow.battery_sn)
+                    == battery.serial_number.strip(),
+                    InformationRow.from_date.isnot(None)
+                )
+                .scalar()
+            )
+
+            if first_usage and first_usage < today:
+                db.session.add(
+                    BatteryCycle(
+                        battery_id=battery.id,
+                        cycle_number=1,
+                        started_on=first_usage,
+                        ended_on=today - timedelta(days=1)
+                    )
+                )
+                next_cycle_number = 2
+            else:
+                next_cycle_number = 1
+        else:
+            next_cycle_number = last_cycle.cycle_number + 1
+
+    # إنشاء الدورة الجديدة من اليوم.
+    db.session.add(
+        BatteryCycle(
+            battery_id=battery.id,
+            cycle_number=next_cycle_number,
+            started_on=today,
+            ended_on=None
+        )
+    )
+
+    try:
+        db.session.commit()
+        flash(
+            f"New consumption cycle started for battery "
+            f"{battery.serial_number}.",
+            "success"
+        )
+    except Exception:
+        db.session.rollback()
+        flash(
+            "Could not start the new battery cycle.",
+            "danger"
+        )
+
+    return redirect(url_for("equipment.equipment"))
+
