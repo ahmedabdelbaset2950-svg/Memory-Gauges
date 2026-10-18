@@ -571,6 +571,30 @@ Equipment
             {% if current_user.role == "admin" %}
 
             <div class="table-actions">
+                  
+<form
+    method="POST"
+    action="{{ url_for(
+        'equipment.start_battery_cycle',
+        battery_id=battery.id
+    ) }}"
+    style="display:inline;"
+    onsubmit="return confirm(
+        'Start a new consumption cycle for this battery?'
+    );"
+>
+    {{ battery_form.hidden_tag() }}
+
+    <button
+        type="submit"
+        class="action-btn"
+        title="Start New Battery Cycle"
+        style="color:#f59e0b;"
+    >
+        <i class="bi bi-arrow-repeat"></i>
+    </button>
+</form>
+
 
                 <button
                     class="action-btn edit edit-battery-btn"
