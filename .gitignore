@@ -1,10 +1,18 @@
 venv/
 
-instance/*
-!instance/mgms.db
+instance/
 
 __pycache__/
 *.pyc
 
 .env
 .vscode/
+
+# Uploaded user data
+static/uploads/documents/*
+static/uploads/information/*
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
