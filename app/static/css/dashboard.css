@@ -1,254 +1,111 @@
-/* ==========================================================
-   MGMS Dashboard CSS v2.0 — simplified, flat design
-========================================================== */
-
-.dashboard-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-    padding: 24px;
-}
-
-/* ---- Stat cards ---- */
-
-.cards-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-}
-
-.stat-card {
-    background: #FFFFFF;
-    border: 1px solid #E7ECF2;
-    border-radius: 9px;
-    padding: 13px 14px;
-    transition: border-color .15s, box-shadow .15s;
-}
-
-.stat-card:hover {
-    border-color: #C9D6E0;
-    box-shadow: 0 4px 14px rgba(20, 40, 60, 0.06);
-}
-
-.stat-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.stat-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 7px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #EAF7EC;
-    color: #38B000;
-    font-size: 14px;
-}
-
-.stat-number {
-    font-size: 19px;
+width: 100%;
+    color: #e0effb;
+    font-size: 8px;
     font-weight: 700;
-    line-height: 1;
-    color: #1E2A38;
+    text-align: center;
+    letter-spacing: .5px;
 }
-
-.stat-title {
-    margin-top: 6px;
-    font-size: 12.5px;
-    font-weight: 600;
-    color: #33404D;
+.mgms-scene-data {
+    position: absolute;
+    z-index: 3;
+    padding: 5px 8px;
+    color: #a9c8e3;
+    background: rgba(5, 23, 42, .58);
+    border: 1px solid rgba(142, 190, 225, .2);
+    border-radius: 5px;
+    font: 9px/1.2 monospace;
+    animation: mgmsDataFloat 5s ease-in-out infinite;
 }
-
-.stat-sub {
-    margin-top: 2px;
-    color: #8A98A6;
-    font-size: 10.5px;
-}
-
-/* ---- Charts ---- */
-
-.chart-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
-}
-
-.chart-card {
-    display: flex;
-    flex-direction: column;
-    background: #FFFFFF;
-    border: 1px solid #E7ECF2;
-    border-radius: 10px;
-    padding: 20px;
-    height: 360px;
-}
-
-.chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
-}
-
-.chart-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1E2A38;
-}
-
-.chart-subtitle {
-    display: block;
-    margin-top: 4px;
-    font-size: 12.5px;
-    color: #8A98A6;
-}
-
-.chart-filter {
-    border: 1px solid #E7ECF2;
-    outline: none;
-    padding: 7px 14px;
-    border-radius: 8px;
-    background: #F7F9FB;
-    font-weight: 600;
-    font-size: 13px;
-    color: #33404D;
-    cursor: pointer;
-}
-
-.chart-body {
-    flex: 1;
-    position: relative;
-    min-height: 0;
-}
-
-.chart-body canvas {
-    width: 100% !important;
-    height: 100% !important;
-}
-
-/* ---- Bottom section ---- */
-
-.dashboard-bottom {
-    display: grid;
-    grid-template-columns: 38% 62%;
-    gap: 18px;
-    align-items: start;
-}
-
-.panel {
-    background: #FFFFFF;
-    border: 1px solid #E7ECF2;
-    border-radius: 10px;
-    padding: 20px;
-}
-
-/* ---- Quick actions ---- */
-
-.action-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px;
-    border-radius: 8px;
-    border: 1px solid #EEF2F7;
-    transition: background .15s, border-color .15s;
-    cursor: pointer;
-}
-
-.action-card + .action-card {
-    margin-top: 10px;
-}
-
-.action-card:hover {
-    background: #F7F9FB;
-    border-color: #DCE4EC;
-}
-
-.action-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 9px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #FFFFFF;
-    font-size: 18px;
-    flex-shrink: 0;
-}
-
-.action-icon.green  { background: #38B000; }
-.action-icon.blue   { background: #2563EB; }
-.action-icon.orange { background: #E28A00; }
-.action-icon.purple { background: #7C3AED; }
-
-.action-content h5 {
-    margin: 0;
-    font-size: 14.5px;
-    font-weight: 600;
-    color: #1E2A38;
-}
-
-.action-content p {
-    margin: 3px 0 0;
-    font-size: 12.5px;
-    color: #8A98A6;
-}
-
-/* ---- Calibration table ---- */
-
-.calibration-table {
+.mgms-scene-data b { color: #f4c16c; font-weight: 700; }
+.mgms-scene-data-one { top: 27%; right: 10%; }
+.mgms-scene-data-two { top: 47%; right: 33%; animation-delay: -2.2s; }
+.mgms-scene-scanline {
+    position: absolute;
+    top: -20%;
+    left: 0;
     width: 100%;
-    border-collapse: collapse;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139, 203, 245, .42), transparent);
+    box-shadow: 0 0 14px rgba(139, 203, 245, .35);
+    animation: mgmsScan 8s linear infinite;
+}
+.mgms-hero-bottom-line {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, #e6a23c 58%, #6db5e5 100%);
+    opacity: .85;
 }
 
-.calibration-table th {
-    text-align: left;
-    font-size: 12px;
-    font-weight: 600;
-    color: #8A98A6;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    padding: 10px 12px;
-    border-bottom: 1px solid #E7ECF2;
+@keyframes mgmsPumpMotion {
+    from { transform: rotate(-5deg); }
+    to { transform: rotate(5deg); }
 }
-
-.calibration-table td {
-    padding: 12px;
-    border-bottom: 1px solid #F1F4F7;
-    text-align: left;
-    font-size: 13.5px;
-    color: #33404D;
+@keyframes mgmsDotPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .45; }
 }
-
-/* ---- Responsive ---- */
-
-@media (max-width: 1200px) {
-    .cards-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+@keyframes mgmsStatusPulse {
+    0% { box-shadow: 0 0 0 0 rgba(86, 228, 154, .5); }
+    70% { box-shadow: 0 0 0 7px rgba(86, 228, 154, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(86, 228, 154, 0); }
+}
+@keyframes mgmsStarsDrift {
+    from { background-position: 8px 11px, 37px 29px; }
+    to { background-position: 81px 72px, 150px 126px; }
+}
+@keyframes mgmsLampGlow {
+    0%, 100% { opacity: .14; }
+    50% { opacity: .55; }
+}
+@keyframes mgmsDataFloat {
+    0%, 100% { transform: translateY(0); opacity: .78; }
+    50% { transform: translateY(-7px); opacity: 1; }
+}
+@keyframes mgmsScan {
+    from { top: -10%; }
+    to { top: 110%; }
 }
 
 @media (max-width: 900px) {
-    .chart-grid,
-    .dashboard-bottom {
-        grid-template-columns: 1fr;
-    }
-
-    .cards-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+    .mgms-hero { min-height: 205px; padding: 25px; }
+    .mgms-hero-content { width: 66%; }
+    .mgms-oilfield-scene { width: 48%; opacity: .85; }
+    .mgms-pumpjack { width: 82%; right: -4%; }
+    .mgms-derrick { right: 56%; width: 78px; }
 }
-
 @media (max-width: 600px) {
-    .cards-grid {
-        grid-template-columns: 1fr;
+    .mgms-hero {
+        min-height: 260px;
+        align-items: flex-start;
+        padding: 22px 19px;
+        border-radius: 14px;
     }
-
-    .stat-number {
-        font-size: 22px;
+    .mgms-hero-content { width: 100%; }
+    .mgms-hero h1 { max-width: 95%; font-size: 23px; }
+    .mgms-hero-subtitle { max-width: 90%; font-size: 11px; }
+    .mgms-hero-meta { gap: 7px 12px; font-size: 9px; }
+    .mgms-hero-status { margin-top: 10px; }
+    .mgms-oilfield-scene {
+        top: auto;
+        bottom: 0;
+        width: 100%;
+        height: 115px;
+        opacity: .72;
+    }
+    .mgms-derrick { right: 60%; bottom: 5px; width: 55px; height: 100px; }
+    .mgms-pumpjack { right: 0; bottom: 0; width: 65%; height: 115px; }
+    .mgms-oil-tank { bottom: 14px; transform: scale(.72); transform-origin: bottom; }
+    .mgms-scene-data { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .mgms-hero *,
+    .mgms-hero *::before,
+    .mgms-hero *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
     }
 }
