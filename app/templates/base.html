@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{% block title %}MGMS{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}">
+
+    <!-- Main Style -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Floating Reports -->
+    {% if current_user.is_authenticated %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/floating_reports.css') }}">
+    {% endif %}
+
+
+    <style>
+        :root { --mgms-navy: #173B68; --mgms-hover: #2d5e9c; --mgms-gold: #E6A23C; --mgms-bg: #eef2f7; }
+        .nav-item.active { background: var(--mgms-navy) !important; color: #fff !important; }
+        .nav-item:hover { color: var(--mgms-hover); }
+        .user-name { color: var(--mgms-navy); }
+        .avatar { background-color: var(--mgms-navy); border-color: var(--mgms-gold); }
+    </style>
+    {% block css %}{% endblock %}
+</head>
+
+<body
+    class="{% if current_user.role == 'admin' %}admin-user{% endif %}"
+    data-role="{{ current_user.role }}">
+
+<!-- Global animated background: visible on every page -->
+<div class="mgms-animated-background" aria-hidden="true">
+    <span class="mgms-bg-orb mgms-bg-orb-one"></span>
+    <span class="mgms-bg-orb mgms-bg-orb-two"></span>
+    <span class="mgms-bg-orb mgms-bg-orb-three"></span>
+    <span class="mgms-bg-grid"></span>
+    <span class="mgms-bg-particles"></span>
+    <span class="mgms-bg-flow"></span>
+</div>
+
+{% if current_user.is_authenticated %}
+
+    <header class="top-navbar">
+        <div class="navbar-container flex items-center justify-between px-6 py-3">
+
+            <!-- Logo -->
+            <div class="logo-section flex items-center gap-3">
+                <div class="logo-icon text-2xl" style="color:#173B68;"><i class="bi bi-cpu-fill"></i></div>
+                <div>
+                    <h3 class="font-bold text-lg leading-tight">MGMS</h3>
+                    <span class="text-[10px] text-gray-500 uppercase font-semibold">Memory Gauge Management</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="main-menu flex items-center gap-6">
+                <a href="{{ url_for('dashboard.dashboard') }}"
+                   class="nav-item {% if request.endpoint == 'dashboard.dashboard' %}active{% endif %}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('equipment.equipment') }}"
+                   class="nav-item {% if request.endpoint == 'equipment.equipment' %}active{% endif %}">
+                    Equipment
+                </a>
+
+                <a href="{{ url_for('jobs.index') }}"
+                   class="nav-item {% if request.endpoint == 'jobs.index' %}active{% endif %}">
+                    Jobs
+                </a>
+
+                <a href="{{ url_for('information.index') }}"
+                   class="nav-item {% if request.endpoint == 'information.index' %}active{% endif %}">
+                    Information
+                </a>
+
+                <div class="more-menu relative group">
+                    <button class="more-btn nav-item flex items-center gap-1" type="button">
+                        More <i class="bi bi-chevron-down"></i>
+                    </button>
+
+                    <div class="more-dropdown">
+                        <a href="{{ url_for('reports.dashboard') }}" class="dropdown-item">Reports</a>
+                        <a href="{{ url_for('documents.index') }}" class="dropdown-item">Documents</a>
+
+                        {% if current_user.role == "admin" %}
+                        <a href="{{ url_for('users.users') }}" class="dropdown-item">
+                            <i class="bi bi-people"></i> Users
+                        </a>
+                        <a href="{{ url_for('settings.index') }}" class="dropdown-item">
+                            <i class="bi bi-gear"></i> Settings
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Right Side -->
+            <div class="navbar-right flex items-center gap-6">
+                <div class="search-box position-relative">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" id="globalSearch" class="search-input" placeholder="Search ...">
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+
+                <div class="datetime-box text-xs text-gray-500 text-right">
+                    <div id="liveDate">15 Jul 2026</div>
+                    <div id="liveTime" class="font-bold" style="color:#173B68;">10:45:25 AM</div>
+                </div>
+
+                <div class="user-menu relative group">
+                    <button class="user-btn flex items-center gap-2" type="button">
+                        {% if current_user.profile_image != "default.png" %}
+                        <img
+                            src="{{ url_for('static', filename='uploads/profiles/' ~ current_user.profile_image) }}"
+                            class="avatar"
+                            alt="Profile image">
+                        {% else %}
+                        <div class="avatar">{{ current_user.full_name[0]|upper }}</div>
+                        {% endif %}
+
+                        <span class="user-name">{{ current_user.full_name }}</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+
+                    <div class="user-dropdown">
+                        <a href="{{ url_for('users.profile') }}" class="dropdown-item">
+                            <i class="bi bi-person"></i> My Profile
+                        </a>
+                        <a href="{{ url_for('users.change_password') }}" class="dropdown-item">
+                            <i class="bi bi-key"></i> Change Password
+                        </a>
+                        <hr>
+                        <a href="{{ url_for('auth.logout') }}" class="dropdown-item text-danger">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endif %}
+
+<!-- Main Content -->
+<main class="{% if current_user.is_authenticated %}main-content{% endif %}">
+    {% block content %}{% endblock %}
+</main>
+
+{% if current_user.is_authenticated %}
+<!-- Floating Reports: visible on every authenticated page -->
+<aside id="mgms-floating-reports"
+       class="mgms-floating-reports"
+       aria-label="MGMS notifications"
+       aria-live="polite"
+       data-interval="6000">
+    <section class="mgms-report-card">
+        <button type="button"
+                class="mgms-report-close"
+                id="mgmsReportClose"
+                aria-label="Close notifications"
+                title="Close">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="mgms-report-header">
+            <div class="mgms-report-icon" id="mgmsReportIcon">
+                <i class="bi bi-bell-fill"></i>
+            </div>
+            <div class="mgms-report-label" id="mgmsReportCategory">System Update</div>
+            <span class="mgms-report-live"><span class="mgms-live-dot"></span> LIVE</span>
+        </div>
+
+        <h3 class="mgms-report-title" id="mgmsReportTitle">Welcome to MGMS</h3>
+        <p class="mgms-report-message" id="mgmsReportMessage">
+            Important system notifications and operational updates will appear here.
+        </p>
+
+        <div class="mgms-report-footer">
+            <span class="mgms-report-counter" id="mgmsReportCounter">1 / 3</span>
+            <div class="mgms-report-controls">
+                <button type="button" id="mgmsReportPrev" aria-label="Previous notification" title="Previous">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button type="button" id="mgmsReportNext" aria-label="Next notification" title="Next">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+</aside>
+{% endif %}
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Global JS -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ url_for('static', filename='js/global_search.js') }}"></script>
+
+{% if current_user.is_authenticated %}
+<script src="{{ url_for('static', filename='js/floating_reports.js') }}" defer></script>
+{% endif %}
+
+{% block js %}{% endblock %}
+</body>
+</html>
