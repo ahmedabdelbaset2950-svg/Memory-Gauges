@@ -1,0 +1,712 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-wrapper">
+
+    <!-- ===========================
+         Animated Oilfield Welcome Banner
+    ============================ -->
+    <section class="mgms-hero" aria-label="MGMS welcome and system status">
+        <div class="mgms-hero-grid" aria-hidden="true"></div>
+        <div class="mgms-hero-glow mgms-hero-glow-one" aria-hidden="true"></div>
+        <div class="mgms-hero-glow mgms-hero-glow-two" aria-hidden="true"></div>
+
+        <div class="mgms-hero-content">
+            <div class="mgms-hero-eyebrow">
+                <span class="mgms-hero-eyebrow-dot"></span>
+                MEMORY GAUGE MANAGEMENT SYSTEM
+            </div>
+
+            <h1 id="mgmsWelcomeTitle">
+                Welcome back, {{ current_user.full_name.split()[0] if current_user.is_authenticated else 'Engineer' }}
+            </h1>
+
+            <p class="mgms-hero-subtitle">
+                Your oilfield operations at a glance.
+            </p>
+
+            <div class="mgms-hero-meta">
+                <span><i class="bi bi-calendar3"></i> <span id="mgmsHeroDate">Loading date...</span></span>
+                <span class="mgms-hero-time"><i class="bi bi-clock"></i> <span id="mgmsHeroTime">--:--</span> Cairo (UTC+2)</span>
+            </div>
+
+            <div class="mgms-hero-status">
+                <span class="mgms-status-pulse"></span>
+                All systems operational
+            </div>
+        </div>
+
+        <div class="mgms-oilfield-scene" aria-hidden="true">
+            <div class="mgms-scene-stars"></div>
+            <div class="mgms-scene-horizon"></div>
+            <div class="mgms-scene-ground"></div>
+
+            <!-- Distant drilling derrick -->
+            <svg class="mgms-derrick" viewBox="0 0 150 220" role="presentation">
+                <defs>
+                    <linearGradient id="mgmsDerrickLine" x1="0" x2="1" y1="0" y2="1">
+                        <stop offset="0" stop-color="#d9efff"/>
+                        <stop offset="1" stop-color="#5d91bd"/>
+                    </linearGradient>
+                </defs>
+                <g fill="none" stroke="url(#mgmsDerrickLine)" stroke-width="2.2" stroke-linecap="round">
+                    <path d="M75 12 L24 204 M75 12 L126 204 M24 204 H126 M35 164 H115 M45 124 H105 M56 84 H94 M66 44 H84"/>
+                    <path d="M35 164 L115 204 M115 164 L35 204 M45 124 L105 164 M105 124 L45 164 M56 84 L94 124 M94 84 L56 124 M66 44 L84 84"/>
+                    <path d="M75 12 V204 M58 28 H92 M66 12 H84"/>
+                </g>
+                <path class="mgms-derrick-lamp" d="M75 0 C62 14 66 24 75 29 C84 24 88 14 75 0Z" fill="#ffc45b"/>
+                <circle class="mgms-derrick-light" cx="75" cy="16" r="18" fill="#ffc45b" opacity=".18"/>
+                <rect x="18" y="204" width="114" height="7" rx="2" fill="#8bb3d5" opacity=".65"/>
+            </svg>
+
+            <!-- Moving pumpjack -->
+            <svg class="mgms-pumpjack" viewBox="0 0 430 250" role="presentation">
+                <defs>
+                    <linearGradient id="mgmsPumpMetal" x1="0" x2="0" y1="0" y2="1">
+                        <stop offset="0" stop-color="#f7c56d"/>
+                        <stop offset="1" stop-color="#b9782e"/>
+                    </linearGradient>
+                </defs>
+                <g fill="none" stroke="#9dbbd7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity=".85">
+                    <path d="M170 218 L215 102 L260 218 M185 178 H245 M196 143 H234 M206 116 H224"/>
+                    <path d="M170 218 H260"/>
+                </g>
+                <g class="mgms-pumpjack-beam">
+                    <path d="M62 83 Q205 42 350 78" fill="none" stroke="url(#mgmsPumpMetal)" stroke-width="17" stroke-linecap="round"/>
+                    <path d="M70 82 Q205 48 345 77" fill="none" stroke="#ffe0a1" stroke-width="3" opacity=".7"/>
+                    <path d="M205 65 L205 105" stroke="#d9e8f6" stroke-width="7"/>
+                    <circle cx="205" cy="66" r="13" fill="#e8ad50" stroke="#ffe0a1" stroke-width="3"/>
+                    <path d="M347 76 L365 151" stroke="#d9e8f6" stroke-width="4"/>
+                    <path d="M365 151 Q380 161 365 171 Q350 161 365 151Z" fill="#f3bd5c" stroke="#ffe0a1" stroke-width="2"/>
+                    <path d="M62 83 L42 118" stroke="#d9e8f6" stroke-width="4"/>
+                    <circle cx="62" cy="83" r="12" fill="#e8ad50" stroke="#ffe0a1" stroke-width="3"/>
+                </g>
+                <path d="M205 106 V218" stroke="#d9e8f6" stroke-width="3" stroke-dasharray="5 5" opacity=".7"/>
+                <rect x="143" y="216" width="145" height="9" rx="4" fill="#7299bd"/>
+                <circle cx="205" cy="106" r="6" fill="#f5c56c"/>
+            </svg>
+
+            <!-- Storage tanks -->
+            <div class="mgms-oil-tank mgms-oil-tank-one"><span>MGMS</span></div>
+            <div class="mgms-oil-tank mgms-oil-tank-two"></div>
+            <div class="mgms-scene-data mgms-scene-data-one">P  <b>2,450</b> psi</div>
+            <div class="mgms-scene-data mgms-scene-data-two">T  <b>193.6</b> °F</div>
+            <div class="mgms-scene-scanline"></div>
+        </div>
+
+        <div class="mgms-hero-bottom-line" aria-hidden="true"></div>
+    </section>
+
+
+    <!-- ===========================
+            Statistics Cards
+    ============================ -->
+
+    <section class="cards-grid">
+
+        <!-- Total Equipment -->
+
+        <div class="stat-card shadow-hover">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+
+                    <i class="bi bi-box-seam"></i>
+
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+
+                {{ total_equipment|default(0) }}
+
+            </div>
+
+            <div class="stat-title">
+
+                Total Equipment
+
+            </div>
+
+            <div class="stat-sub">
+
+                All registered equipment
+
+            </div>
+
+        </div>
+
+        <!-- Memory Gauges -->
+
+        <div class="stat-card shadow-hover">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+
+                    <i class="bi bi-cpu"></i>
+
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+
+                {{ total_gauges|default(0) }}
+
+            </div>
+
+            <div class="stat-title">
+
+                Memory Gauges
+
+            </div>
+
+            <div class="stat-sub">
+
+                Ready & Installed Gauges
+
+            </div>
+
+        </div>
+
+        <!-- Band Carriers -->
+
+        <div class="stat-card shadow-hover">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+
+                    <i class="bi bi-link-45deg"></i>
+
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+
+                {{ total_band|default(0) }}
+
+            </div>
+
+            <div class="stat-title">
+
+                Band Carriers
+
+            </div>
+
+            <div class="stat-sub">
+
+                Available Band Carriers
+
+            </div>
+
+        </div>
+
+        <!-- Batteries -->
+
+        <div class="stat-card shadow-hover">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+
+                    <i class="bi bi-battery-full"></i>
+
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+
+                {{ total_batteries|default(0) }}
+
+            </div>
+
+            <div class="stat-title">
+
+                Total Batteries
+
+            </div>
+
+            <div class="stat-sub">
+
+                Installed & Spare Batteries
+
+            </div>
+
+        </div>
+
+        <!-- Jobs -->
+
+        <div class="stat-card shadow-hover">
+
+            <div class="stat-top">
+
+                <div class="stat-icon">
+
+                    <i class="bi bi-briefcase"></i>
+
+                </div>
+
+            </div>
+
+            <div class="stat-number">
+
+                {{ annual_jobs|default(0) }}
+
+            </div>
+
+            <div class="stat-title">
+
+                Jobs {{ current_year }}
+
+            </div>
+
+            <div class="stat-sub">
+
+                {{ monthly_jobs|default(0) }} Jobs This Month
+
+            </div>
+
+        </div>
+
+    </section>
+        <!-- ===========================
+            Charts
+    ============================ -->
+
+    <section class="chart-grid">
+
+        <!-- Gauge Usage - Year -->
+
+        <div class="chart-card">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h4 class="chart-title">
+
+                        Gauge Used (Year)
+
+                    </h4>
+
+                    <span class="chart-subtitle">
+
+                        Most used gauges during the selected year
+
+                    </span>
+
+                </div>
+
+                <select id="yearFilter" class="chart-filter">
+
+    {% for year in years %}
+        <option value="{{ year }}"
+            {% if year == selected_year %}selected{% endif %}>
+            {{ year }}
+        </option>
+    {% endfor %}
+
+</select>
+
+            </div>
+
+            <div class="chart-body">
+    <canvas id="gaugeYearChart"></canvas>
+</div>
+
+        </div>
+
+        <!-- Gauge Usage - Month -->
+
+        <div class="chart-card">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h4 class="chart-title">
+
+                        Gauge Used (Month)
+
+                    </h4>
+
+                    <span class="chart-subtitle">
+
+                        Most used gauges during the selected month
+
+                    </span>
+
+                </div>
+
+                <select id="monthFilter" class="chart-filter">
+
+    {% for month in months %}
+        <option value="{{ month }}"
+            {% if month == selected_month %}selected{% endif %}>
+            {{ month_names[month] }}
+        </option>
+    {% endfor %}
+
+</select>
+
+            </div>
+
+           <div class="chart-body">
+    <canvas id="gaugeMonthChart"></canvas>
+</div>
+
+        </div>
+
+    </section>
+
+    <!-- ===========================
+            Ticket Statistics
+            (based on how much each gauge worked per Job records)
+    ============================ -->
+
+    <section class="chart-grid">
+
+    <!-- Changed Gauge - Year -->
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+
+            <div>
+
+                <h4 class="chart-title">
+                    Changed Gauge (Year)
+                </h4>
+
+                <span class="chart-subtitle">
+                    Most replacement gauges during the selected year
+                </span>
+
+            </div>
+
+            <select id="yearFilter2" class="chart-filter">
+
+    {% for year in years %}
+        <option value="{{ year }}"
+            {% if year == selected_year %}selected{% endif %}>
+            {{ year }}
+        </option>
+    {% endfor %}
+
+</select>
+
+        </div>
+
+        <div class="chart-body">
+
+            <canvas id="changedGaugeYearChart"></canvas>
+
+        </div>
+
+    </div>
+
+    <!-- Changed Gauge - Month -->
+
+    <div class="chart-card">
+
+        <div class="chart-header">
+
+            <div>
+
+                <h4 class="chart-title">
+                    Changed Gauge (Month)
+                </h4>
+
+                <span class="chart-subtitle">
+                    Most replacement gauges during the selected month
+                </span>
+
+            </div>
+
+            <select id="monthFilter2" class="chart-filter">
+
+    {% for month in months %}
+        <option value="{{ month }}"
+            {% if month == selected_month %}selected{% endif %}>
+            {{ month_names[month] }}
+        </option>
+    {% endfor %}
+
+</select>
+
+        </div>
+
+        <div class="chart-body">
+
+            <canvas id="changedGaugeMonthChart"></canvas>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+        <!-- ===========================
+            Bottom Section
+    ============================ -->
+
+    <section class="dashboard-bottom">
+
+        <!-- ===========================
+                Quick Actions
+        ============================ -->
+
+        <div class="panel">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h4 class="chart-title">
+
+                        Quick Actions
+
+                    </h4>
+
+                    <span class="chart-subtitle">
+
+                        Frequently used shortcuts
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="action-card"
+     data-bs-toggle="modal"
+     data-bs-target="#addEquipmentModal"
+     style="cursor:pointer;">
+
+    <div class="action-icon green">
+        <i class="bi bi-plus-circle"></i>
+    </div>
+
+    <div class="action-content">
+        <h5>Add Equipment</h5>
+        <p>Add new Memory Gauge or Band Carrier</p>
+    </div>
+
+</div>
+
+<a href="{{ url_for('jobs.index') }}" class="action-card">
+
+    <div class="action-icon blue">
+        <i class="bi bi-briefcase"></i>
+    </div>
+
+    <div class="action-content">
+        <h5>New Job</h5>
+        <p>Create a new job ticket</p>
+    </div>
+
+</a>
+
+<a href="{{ url_for('information.index') }}" class="action-card">
+
+    <div class="action-icon orange">
+        <i class="bi bi-file-earmark-text"></i>
+    </div>
+
+    <div class="action-content">
+        <h5>Information</h5>
+        <p>View job information</p>
+    </div>
+
+</a>
+
+<a href="{{ url_for('reports.index') }}" class="action-card">
+
+    <div class="action-icon purple">
+        <i class="bi bi-bar-chart"></i>
+    </div>
+
+    <div class="action-content">
+        <h5>Reports</h5>
+        <p>Generate reports</p>
+    </div>
+
+</a>
+</div> 
+        <!-- ===========================
+            Upcoming Calibrations
+        ============================ -->
+
+        <div class="panel">
+
+            <div class="chart-header">
+
+                <div>
+
+                    <h4 class="chart-title">
+
+                        Upcoming Calibrations
+
+                    </h4>
+
+                    <span class="chart-subtitle">
+
+                        Next equipment due for calibration
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <table class="calibration-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Serial</th>
+
+                        <th>Equipment</th>
+
+                        <th>Due Date</th>
+
+                        <th>Days Left</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in upcoming_calibrations %}
+                    <tr>
+
+                        <td>{{ item.serial }}</td>
+
+                        <td>{{ item.type }}</td>
+
+                        <td>{{ item.due_date.strftime("%d %b %Y") }}</td>
+
+                        <td>
+                            {% if item.days_left < 0 %}
+                            <span class="badge bg-danger">Overdue</span>
+                            {% elif item.days_left <= 7 %}
+                            <span class="badge bg-warning">{{ item.days_left }} Days</span>
+                            {% else %}
+                            <span class="badge bg-success">{{ item.days_left }} Days</span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">No calibration dates recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+<!-- ==========================================
+            ADD EQUIPMENT MODAL
+========================================== -->
+
+<div class="modal fade"
+     id="addEquipmentModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h4 class="modal-title">
+                    Add Equipment
+                </h4>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="d-grid gap-3">
+
+                    <a href="/equipment?open=gauge"
+                       class="btn btn-outline-primary btn-lg">
+
+                        <i class="bi bi-cpu me-2"></i>
+
+                        Memory Gauge
+
+                    </a>
+
+                    <a href="/equipment?open=bundle"
+                       class="btn btn-outline-success btn-lg">
+
+                        <i class="bi bi-link-45deg me-2"></i>
+
+                        Bundle Carrier
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    window.MGMS_DASHBOARD_DATA = {
+
+    gaugeUsedYear: {{ gauge_used_year|tojson }},
+    gaugeUsedMonth: {{ gauge_used_month|tojson }},
+
+    changedGaugeYear: {{ changed_gauge_year|tojson }},
+    changedGaugeMonth: {{ changed_gauge_month|tojson }}
+
+};
+</script>
+
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+{% endblock %}
