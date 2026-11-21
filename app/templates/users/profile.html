@@ -43,7 +43,9 @@ My Profile
                         class="user-avatar"
                         style="width:130px;height:130px;"
                         src="{{ url_for('static',
-                        filename='uploads/profiles/' ~ current_user.profile_image) }}">
+                        filename='uploads/profiles/' ~ current_user.profile_image) }}?v={{ current_user.profile_image }}"
+                        onerror="this.hidden=true; this.nextElementSibling.hidden=false">
+                    <div class="avatar-circle mx-auto" style="width:130px;height:130px;font-size:48px;" hidden>{{ current_user.full_name[0]|upper }}</div>
 
                     {% else %}
 

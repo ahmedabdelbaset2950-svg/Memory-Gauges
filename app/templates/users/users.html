@@ -179,7 +179,9 @@ Users
 
                         <img
                             class="user-avatar"
-                            src="{{ url_for('static', filename='uploads/profiles/' ~ user.profile_image) }}">
+                            src="{{ url_for('static', filename='uploads/profiles/' ~ user.profile_image) }}?v={{ user.profile_image }}"
+                            onerror="this.hidden=true; this.nextElementSibling.hidden=false">
+                        <div class="avatar-circle" hidden>{{ user.full_name[0]|upper }}</div>
 
                         {% else %}
 
