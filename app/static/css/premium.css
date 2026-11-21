@@ -229,8 +229,8 @@ a:hover { color: #8bc2ff; }
 .jobs-page, .information-page { height: auto !important; min-height: calc(100vh - 130px); align-items: stretch; gap: 18px; }
 .jobs-content, .information-content { min-width: 0; overflow: visible !important; }
 .page-header h2, .jobs-header h2, .information-header h2, .documents-header h2,
-.documents-header h2, .section-header h3, .report-head h1, .chart-title, .chart-title,
-.settings-page h2, .panel h3, .chart-title, .chart-title, .chart-head h3 {
+.section-header h3, .report-head h1, .chart-title, .settings-page h2,
+.panel h3, .chart-head h3 {
     color: var(--mgms-text) !important;
 }
 .page-header p, .jobs-header p, .information-header p, .documents-header p,
@@ -240,10 +240,9 @@ a:hover { color: #8bc2ff; }
 .section-header h3 { font-size: 15px !important; font-weight: 680 !important; }
 .section-header h3 i { color: var(--mgms-blue) !important; }
 
-.equipment-section, .equipment-card, .stat-card, .chart-card, .panel, .chart-card,
-.chart-card, .documents-sidebar, .doc-card, .jobs-sidebar, .information-sidebar,
-.analytics-kpi, .kpi, .battery-analysis-card, .settings-page .equipment-section,
-.users-page .equipment-section {
+.equipment-section, .equipment-card, .stat-card, .chart-card, .panel,
+.documents-sidebar, .doc-card, .jobs-sidebar, .information-sidebar,
+.analytics-kpi, .kpi, .battery-analysis-card {
     color: var(--mgms-text) !important;
     background: linear-gradient(145deg, rgba(16, 35, 56, .96), rgba(11, 27, 44, .98)) !important;
     border: 1px solid var(--mgms-border) !important;
@@ -601,6 +600,144 @@ input.job-input, .information-table input, .job-input {
 .swal2-popup { color: var(--mgms-text) !important; background: #102238 !important; border: 1px solid var(--mgms-border-strong) !important; border-radius: 15px !important; }
 .swal2-title, .swal2-html-container { color: var(--mgms-text) !important; }
 .swal2-cancel { color: #d7e1eb !important; background: #1a2d42 !important; }
+/* Refinements: keep the enterprise shell aligned at the requested viewports. */
+:root { --mgms-header-height: 72px; }
+.top-navbar {
+    min-height: var(--mgms-header-height);
+    gap: clamp(12px, 1.5vw, 24px);
+    padding: 10px clamp(18px, 2.2vw, 32px);
+}
+.topbar-context { flex: 0 1 270px; }
+.navbar-right { min-width: 0; flex: 0 1 auto; gap: clamp(10px, 1.3vw, 18px); }
+.navbar-right > .search-box { min-width: 210px; flex: 1 1 300px; }
+.datetime-box {
+    min-width: 116px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 10px;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+}
+#liveDate, #liveTime { white-space: nowrap; }
+.user-menu { flex: 0 0 auto; }
+.user-btn { min-width: 0; }
+.avatar-frame { position: relative; display: inline-flex; width: 36px; height: 36px; flex: 0 0 36px; }
+.avatar-frame .avatar { position: absolute; inset: 0; width: 36px; height: 36px; }
+.avatar-fallback[hidden] { display: none !important; }
+.main-content { padding-top: 24px !important; }
+
+/* Right-size the dashboard hero and give its live labels room to wrap. */
+.dashboard-wrapper { gap: 18px !important; }
+.mgms-hero { min-height: 190px; padding: 24px 30px; }
+.mgms-hero-content { width: 55%; max-width: 590px; }
+.mgms-hero-eyebrow { margin-bottom: 10px; }
+.mgms-hero-subtitle { margin: 7px 0 12px; }
+.mgms-hero-meta { gap: 7px 14px; font-size: 10px; }
+.mgms-hero-meta > span { min-width: 0; }
+.mgms-hero-meta .mgms-hero-time { flex-wrap: wrap; white-space: normal; }
+.cards-grid { grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)) !important; gap: 12px !important; }
+.chart-grid { gap: 14px !important; }
+.chart-card { min-width: 0; height: 315px !important; }
+.chart-body { min-width: 0; }
+
+/* Dark hover states override legacy module-specific light row colors. */
+.table-hover > tbody > tr:hover > *,
+.table tbody tr:hover > *,
+.equipment-table tbody tr:hover > *,
+.jobs-table tbody tr:hover > *,
+.information-table tbody tr:hover > *,
+.calibration-table tbody tr:hover > *,
+.table-panel table tbody tr:hover > *,
+.actual-gauges-table tbody tr:hover > *,
+.history-table tbody tr:hover > *,
+.info-row:hover > td,
+.job-cell-disabled:hover {
+    color: #e8f2fc !important;
+    background-color: #142c45 !important;
+    border-color: rgba(99, 164, 222, .22) !important;
+}
+.table-hover > tbody > tr:hover > *,
+.table tbody tr:hover > *,
+.equipment-table tbody tr:hover > *,
+.jobs-table tbody tr:hover > *,
+.information-table tbody tr:hover > *,
+.calibration-table tbody tr:hover > *,
+.table-panel table tbody tr:hover > *,
+.actual-gauges-table tbody tr:hover > *,
+.history-table tbody tr:hover > * {
+    box-shadow: none !important;
+}
+.equipment-table td, .jobs-table td, .information-table td,
+.table-panel table td, .actual-gauges-table td, .history-table td {
+    overflow-wrap: anywhere;
+}
+.job-cell-disabled, .job-cell-disabled:hover { color: #96a9bd !important; }
+
+/* Documents: keep actions compact, visible, and distinct by intent. */
+.doc-card { padding: 18px !important; }
+.doc-card-top { gap: 12px; }
+.doc-actions { flex: 0 0 auto; gap: 7px; }
+.doc-action-btn {
+    width: 34px;
+    height: 34px;
+    color: #b9d1e8 !important;
+    background: #142a42 !important;
+    border: 1px solid var(--mgms-border) !important;
+}
+.doc-action-btn:hover { color: #f3f8ff !important; background: #1d5688 !important; }
+.doc-action-btn.del-doc-btn, .doc-action-btn.delete { color: #efadad !important; background: rgba(160, 61, 61, .14) !important; }
+.doc-action-btn.del-doc-btn:hover, .doc-action-btn.delete:hover { color: #fff !important; background: #8f3939 !important; }
+.doc-title { color: #e4edf7 !important; font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+.doc-title:hover { background: #142a42 !important; }
+.doc-meta { gap: 7px; }
+.doc-footer { align-items: flex-start; gap: 10px; }
+.doc-footer span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.doc-footer span:last-child { flex: 0 0 auto; }
+.documents-content { min-width: 0; }
+.doc-search-bar { min-width: 0; }
+.mgms-modal-close { color: #9db1c5 !important; }
+.mgms-modal-close:hover { color: #eff7ff !important; background: #1a3652 !important; }
+#mgms-floating-reports { z-index: 1010; width: min(320px, calc(100vw - 32px)); }
+body:has(.documents-page) #mgms-floating-reports { position: relative; right: auto; bottom: auto; width: min(320px, calc(100vw - 32px)); margin: 12px 16px 24px auto; }
+#mgms-floating-reports .mgms-report-message { font-size: 11px; }
+
+@media (min-width: 1201px) {
+    .main-content { padding-left: clamp(22px, 2.1vw, 38px) !important; padding-right: clamp(22px, 2.1vw, 38px) !important; }
+}
+@media (max-width: 1200px) {
+    .datetime-box { display: block; }
+    .navbar-right > .search-box { min-width: 180px; }
+    .cards-grid { grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)) !important; }
+}
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .navbar-right > .search-box:focus-within { width: min(300px, 34vw); }
+}
+@media (max-width: 991.98px) {
+    .top-navbar { min-height: 68px; }
+    .topbar-context { flex: 0 1 auto; }
+    .navbar-right > .search-box { width: min(300px, 34vw); min-width: 180px; flex: 0 1 auto; }
+    .navbar-right { flex: 1 1 auto; justify-content: flex-end; }
+    .cards-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important; }
+    .mgms-hero { min-height: 190px; padding: 22px 24px; }
+    .mgms-hero-content { width: 60%; }
+}
+@media (max-width: 767.98px) {
+    .top-navbar { min-height: 64px; }
+    .navbar-right > .search-box { min-width: 42px; flex: 0 0 42px; }
+    .datetime-box { display: none; }
+    .cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+    .mgms-hero { min-height: 218px; }
+    .mgms-hero-meta { max-width: 90%; }
+    .doc-actions { gap: 5px; }
+    #mgms-floating-reports { right: 12px; bottom: 12px; width: min(300px, calc(100vw - 24px)); }
+}
+@media (max-width: 420px) {
+    .cards-grid { grid-template-columns: minmax(0, 1fr) !important; }
+    .mgms-hero { min-height: 232px; }
+    .mgms-hero-meta { max-width: 100%; }
+    .main-content { padding-top: 16px !important; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
