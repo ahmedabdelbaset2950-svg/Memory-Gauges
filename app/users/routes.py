@@ -49,13 +49,30 @@ def profile():
         current_user.full_name = form.full_name.data
         current_user.email = form.email.data
 
+        old_profile_image = current_user.profile_image
         image = form.profile_image.data
 
         if image:
 
             filename = secure_filename(image.filename)
 
+            if "." not in filename:
+                flash("Invalid profile image format.", "danger")
+                return redirect(url_for("users.profile"))
+
             extension = filename.rsplit(".", 1)[1].lower()
+
+            if extension not in {"jpg", "jpeg", "png", "webp"}:
+                flash("Profile images must be JPG, PNG, or WebP.", "danger")
+                return redirect(url_for("users.profile"))
+
+            image.stream.seek(0, os.SEEK_END)
+            image_size = image.stream.tell()
+            image.stream.seek(0)
+
+            if image_size > 2 * 1024 * 1024:
+                flash("Profile image size must be 2 MB or less.", "danger")
+                return redirect(url_for("users.profile"))
 
             new_filename = (
                 f"{uuid.uuid4().hex}.{extension}"

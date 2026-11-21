@@ -1,19 +1,21 @@
 document.body.classList.add('dashboard-page');
 
-function updateDateTime() {
+function updateDashboardClock() {
     const dateElement = document.getElementById('liveDate');
     const timeElement = document.getElementById('liveTime');
     if (!dateElement || !timeElement) return;
 
     const now = new Date();
-    dateElement.textContent = now.toLocaleDateString('en-GB', {
-        day: '2-digit', month: 'short', year: 'numeric'
-    });
-    timeElement.textContent = now.toLocaleTimeString('en-GB', { hour12: true });
+    dateElement.textContent = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Africa/Cairo', day: '2-digit', month: 'short', year: 'numeric'
+    }).format(now);
+    timeElement.textContent = new Intl.DateTimeFormat('en-GB', {
+        timeZone: 'Africa/Cairo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+    }).format(now);
 }
 
-updateDateTime();
-window.setInterval(updateDateTime, 1000);
+updateDashboardClock();
+window.setInterval(updateDashboardClock, 1000);
 
 const dashboardData = window.MGMS_DASHBOARD_DATA || {};
 const palette = ['#38BDF8', '#3B82F6', '#2DD4BF', '#34D399', '#FBBF24', '#A78BFA', '#FB7185'];
@@ -21,14 +23,14 @@ const palette = ['#38BDF8', '#3B82F6', '#2DD4BF', '#34D399', '#FBBF24', '#A78BFA
 if (window.Chart) {
     Chart.defaults.font.family = 'Inter, Segoe UI, Arial, sans-serif';
     Chart.defaults.font.size = 10;
-    Chart.defaults.color = '#91a4b8';
-    Chart.defaults.borderColor = 'rgba(148,176,203,.10)';
+    Chart.defaults.color = '#64748B';
+    Chart.defaults.borderColor = 'rgba(148,163,184,.18)';
 
     const tooltip = {
-        backgroundColor: 'rgba(7, 19, 33, .96)',
-        titleColor: '#edf4fb',
-        bodyColor: '#c8d8e7',
-        borderColor: 'rgba(56, 189, 248, .26)',
+        backgroundColor: 'rgba(23, 59, 104, .96)',
+        titleColor: '#FFFFFF',
+        bodyColor: '#EAF3FC',
+        borderColor: 'rgba(38, 132, 217, .32)',
         borderWidth: 1,
         padding: 10,
         cornerRadius: 8,
@@ -40,13 +42,13 @@ if (window.Chart) {
         x: {
             grid: { display: false },
             border: { display: false },
-            ticks: { color: '#879db2', maxRotation: 0, autoSkip: true }
+            ticks: { color: '#64748B', maxRotation: 0, autoSkip: true }
         },
         y: {
             beginAtZero: true,
-            grid: { color: 'rgba(148,176,203,.09)', drawBorder: false },
+            grid: { color: 'rgba(148,163,184,.16)', drawBorder: false },
             border: { display: false },
-            ticks: { precision: 0, color: '#879db2', padding: 6 }
+            ticks: { precision: 0, color: '#64748B', padding: 6 }
         }
     };
 
@@ -124,7 +126,7 @@ if (window.Chart) {
                     tension: .38,
                     pointRadius: 3,
                     pointHoverRadius: 5,
-                    pointBackgroundColor: '#0d1d30',
+                    pointBackgroundColor: '#FFFFFF',
                     pointBorderColor: palette[colorIndex],
                     pointBorderWidth: 2
                 }]
@@ -208,5 +210,5 @@ function reloadDashboard() {
     }
 
     updateHeroClock();
-    window.setInterval(updateHeroClock, 30000);
+    window.setInterval(updateHeroClock, 1000);
 })();

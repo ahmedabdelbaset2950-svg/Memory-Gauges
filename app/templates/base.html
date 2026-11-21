@@ -59,7 +59,7 @@
                     <button class="user-btn" type="button" aria-label="Open user menu">
                         {% if current_user.profile_image != "default.png" %}
                         <span class="avatar-frame">
-                            <img src="{{ url_for('static', filename='uploads/profiles/' ~ current_user.profile_image) }}" class="avatar" alt="Profile image" onerror="this.hidden=true; this.nextElementSibling.hidden=false">
+                            <img src="{{ url_for('static', filename='uploads/profiles/' ~ current_user.profile_image) }}?v={{ current_user.profile_image }}" class="avatar" alt="Profile image" onerror="this.hidden=true; this.nextElementSibling.hidden=false">
                             <span class="avatar avatar-fallback" hidden>{{ current_user.full_name[0]|upper }}</span>
                         </span>
                         {% else %}
@@ -78,6 +78,17 @@
         </header>
 {% endif %}
 
+{% set flashed_messages = get_flashed_messages(with_categories=true) %}
+{% if flashed_messages %}
+<div class="mgms-toast-stack" aria-live="polite" aria-label="Notifications">
+{% for category, message in flashed_messages %}
+<div class="mgms-toast mgms-toast-{{ category }}" role="status">
+    <i class="bi {% if category == 'success' %}bi-check-circle-fill{% elif category == 'danger' or category == 'error' %}bi-exclamation-circle-fill{% elif category == 'warning' %}bi-exclamation-triangle-fill{% else %}bi-info-circle-fill{% endif %}"></i>
+    <span>{{ message }}</span>
+</div>
+{% endfor %}
+</div>
+{% endif %}
 <main class="{% if current_user.is_authenticated %}main-content{% endif %}">{% block content %}{% endblock %}</main>
 
 {% if current_user.is_authenticated %}

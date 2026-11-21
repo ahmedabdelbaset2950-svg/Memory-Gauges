@@ -6,11 +6,18 @@ function updateDateTime() {
 
     const now = new Date();
     dateElement.textContent = now.toLocaleDateString("en-GB", {
+        timeZone: "Africa/Cairo",
         day: "2-digit",
         month: "short",
         year: "numeric"
     });
-    timeElement.textContent = now.toLocaleTimeString("en-GB");
+    timeElement.textContent = now.toLocaleTimeString("en-GB", {
+        timeZone: "Africa/Cairo",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    });
 }
 
 updateDateTime();
@@ -39,6 +46,22 @@ document.querySelectorAll(".sidebar-link").forEach(link => {
 
 document.addEventListener("keydown", event => {
     if (event.key === "Escape") setSidebarOpen(false);
+});
+
+document.querySelectorAll('form[action*="/delete/"]').forEach(form => {
+    form.addEventListener("submit", event => {
+        if (form.dataset.confirmed === "true") return;
+        event.preventDefault();
+        if (window.confirm("Delete this record? This action cannot be undone.")) {
+            form.dataset.confirmed = "true";
+            form.requestSubmit();
+        }
+    });
+});
+
+document.querySelectorAll(".mgms-toast").forEach(toast => {
+    window.setTimeout(() => toast.classList.add("mgms-toast-leaving"), 5000);
+    window.setTimeout(() => toast.remove(), 5350);
 });
 
 mobileNavigation.addEventListener("change", event => {
