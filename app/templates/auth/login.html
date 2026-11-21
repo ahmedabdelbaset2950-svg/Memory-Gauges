@@ -1,205 +1,161 @@
 {% extends "base.html" %}
 
-{% block title %}
-MGMS Login
-{% endblock %}
+{% block title %}MGMS Login{% endblock %}
 
 {% block css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
-
-
-
 {% endblock %}
 
 {% block content %}
-
-<div class="login-page">
-
-    <!-- Intro Video -->
-<video
-    id="loginVideo"
-    class="login-bg-video"
-    autoplay
-    muted
-    playsinline
-    preload="auto">
-
-    <source
-        src="{{ url_for('static', filename='videos/login.mp4') }}"
-        type="video/mp4">
-
-</video>
-
-<!-- Idle Video -->
-<video
-    id="moveVideo"
-    class="login-bg-video"
-    muted
-    playsinline
-    preload="auto"
-    loop
-    style="display:none;">
-
-    <source
-        src="{{ url_for('static', filename='videos/move.mp4') }}"
-        type="video/mp4">
-
-</video>
-
-    <div class="texture"></div>
-    <div class="glow glow-green"></div>
-    <div class="glow glow-amber"></div>
-    <div class="glow glow-teal"></div>
-
-    <svg class="gauge-ring" width="440" height="440" viewBox="0 0 440 440">
-        <circle cx="220" cy="220" r="190" fill="none" stroke="#3FA65A" stroke-width="1" opacity="0.35"/>
-        <circle cx="220" cy="220" r="160" fill="none" stroke="#E8A23D" stroke-width="1" stroke-dasharray="4 10" opacity="0.4"/>
-        <circle cx="220" cy="220" r="130" fill="none" stroke="#4A8B85" stroke-width="1" opacity="0.3"/>
-    </svg>
-
-    <div class="login-main-wrapper">
-
-        <div class="login-wrap">
-
-            <div class="login-header">
-
-                <div class="status-pill reveal-1">
-                    <span class="dot"></span>
-                    SECURE ACCESS
-                </div>
-
-                <h1 class="reveal-2">MGMS</h1>
-
-                <p class="reveal-3">
-                    MEMORY GAUGE MANAGEMENT SYSTEM
-                </p>
-
-            </div>
-
-            <div class="panel reveal-4">
-
-                <div class="plate">
-                    SECURE OPERATIONS PORTAL
-                </div>
-                
-
-                <span class="rivet tl"></span>
-                <span class="rivet tr"></span>
-                <span class="rivet bl"></span>
-                <span class="rivet br"></span>
-                <div id="loginMessage"></div>
-                
- 
-                <form id="loginForm" method="POST" novalidate>
-
-                    {{ form.hidden_tag() }}
-
-                    <div class="form-group reveal-5">
-
-                        <label>Username</label>
-
-                        <div class="input-box">
-
-                            <i class="bi bi-person-fill"></i>
-
-                            {{ form.username(class="input-field", placeholder="Enter your username") }}
-
-                        </div>
-
-                        {% if form.username.errors %}
-                        <span class="field-error">{{ form.username.errors[0] }}</span>
-                        {% endif %}
-
-                    </div>
-
-                    <div class="form-group reveal-6">
-
-                        <label>Password</label>
-
-                        <div class="input-box">
-
-                            <i class="bi bi-lock-fill"></i>
-
-                            {{ form.password(class="input-field", id="password", placeholder="Enter your password") }}
-
-                            <i class="bi bi-eye-slash-fill" id="togglePassword"></i>
-
-                        </div>
-
-                        {% if form.password.errors %}
-                        <span class="field-error">{{ form.password.errors[0] }}</span>
-                        {% endif %}
-
-                    </div>
-
-                    <div class="remember-row reveal-7">
-
-                        <label class="switch-label">
-
-                            {{ form.remember(class="switch-input") }}
-
-                            <span class="switch-track">
-                                <span class="switch-knob"></span>
-                            </span>
-
-                            Remember Me
-
-                        </label>
-
-                    </div>
-
-                    {{ form.submit(class="login-btn reveal-8") }}
-
-                </form>
-
-            </div>
-
-            <div class="version reveal-8">
-                AUTHORIZED SYSTEM ACCESS
-            </div>
-
-        </div>
-
+<div class="login-page" id="mgmsLogin" data-intro-duration="3400">
+    <div class="login-atmosphere" aria-hidden="true">
+        <div class="login-grid"></div>
+        <div class="login-horizon"></div>
+        <div class="login-light login-light-one"></div>
+        <div class="login-light login-light-two"></div>
+        <div class="login-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </div>
 
-</div>
+    <section class="login-visual" aria-label="MGMS oilfield operations">
+        <div class="visual-brand">
+            <span class="visual-brand-mark"><i class="bi bi-cpu-fill"></i></span>
+            <span><strong>MGMS</strong><small>FIELD OPERATIONS PLATFORM</small></span>
+        </div>
 
+        <div class="visual-copy">
+            <div class="visual-kicker"><span></span> MEMORY GAUGE MANAGEMENT SYSTEM</div>
+            <h1>Precision in every<br><em>operation.</em></h1>
+            <p>Intelligent Oilfield Equipment &amp; Operations Management.</p>
+        </div>
+
+        <div class="oilfield-scene" aria-hidden="true">
+            <div class="scene-halo"></div>
+            <svg class="scene-rig" viewBox="0 0 760 520" role="presentation">
+                <defs>
+                    <linearGradient id="rigSteel" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#B7D1E4"/><stop offset="1" stop-color="#52799A"/></linearGradient>
+                    <linearGradient id="sceneGold" x1="0" x2="1"><stop stop-color="#D6A84F" stop-opacity="0"/><stop offset=".5" stop-color="#D6A84F" stop-opacity=".72"/><stop offset="1" stop-color="#D6A84F" stop-opacity="0"/></linearGradient>
+                </defs>
+                <path class="rig-ground" d="M0 448 C130 424 228 456 346 438 S572 425 760 446 V520 H0Z"/>
+                <path class="gold-arc" d="M30 430 C190 310 420 340 725 445" fill="none" stroke="url(#sceneGold)" stroke-width="2"/>
+                <g class="rig-structure" fill="none" stroke="url(#rigSteel)" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke-width="9" d="M482 95 382 426 M482 95 582 426 M405 353h154 M423 295h118 M441 237h82 M459 178h47 M475 127h14"/>
+                    <path stroke-width="5" d="m414 353 132-58m-116 0 101-58m-82 0 64-59m-42 0 23-51m-85 194 108 58m-89-116 83 58m-64-116 59 58m-40-116 37 58"/>
+                    <path stroke-width="8" d="M442 96h81M458 80h49M467 64h32M474 47h18M479 30h8M474 30h16l-8-22z"/>
+                    <path stroke-width="5" d="M368 426h226M356 442h250"/>
+                </g>
+                <g class="scene-equipment">
+                    <path d="M64 426h246v10H64zM84 416h202v10H84z" fill="#8EAFC8" opacity=".55"/>
+                    <rect x="113" y="359" width="46" height="57" rx="8" fill="#28577D" stroke="#9ABBD4" stroke-width="2"/>
+                    <rect x="177" y="342" width="48" height="74" rx="8" fill="#173B68" stroke="#9ABBD4" stroke-width="2"/>
+                    <rect x="242" y="371" width="35" height="45" rx="7" fill="#28577D" stroke="#9ABBD4" stroke-width="2"/>
+                    <path d="M120 374h32M185 359h32M249 384h21" stroke="#D6A84F" stroke-width="3" opacity=".8"/>
+                    <circle cx="136" cy="399" r="7" fill="#168BFF" opacity=".8"/><circle cx="201" cy="390" r="7" fill="#D6A84F" opacity=".85"/>
+                    <path d="M92 342h204" stroke="#7EA1BC" stroke-width="2" stroke-dasharray="5 8"/>
+                </g>
+                <g class="pumpjack" fill="none" stroke="#7798B2" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+                    <path d="m62 419 31-87 34 87m-52-43h39m-27-33h23m-53 76h72"/>
+                    <path d="m70 314 77-37 14 12-85 43z" fill="#173B68"/><path d="m145 282 44-32m-53 31 16 28m13-42 17 20m-2-26 13 3"/>
+                    <path d="M187 250v94m-7 0h14" stroke="#D6A84F" stroke-width="3"/>
+                </g>
+                <path class="scene-scanline" d="M0 0h760" stroke="#168BFF" stroke-opacity=".32" stroke-width="2"/>
+            </svg>
+            <img class="engineer engineer-walking" src="{{ url_for('static', filename='images/login-engineer-walk.png') }}" alt="">
+            <img class="engineer engineer-inspecting" src="{{ url_for('static', filename='images/login-engineer-crouch.png') }}" alt="">
+            <div class="engineer-shadow"></div>
+            <div class="scene-floor-light"></div>
+        </div>
+
+        <div class="visual-footer">
+            <span><i class="bi bi-shield-check"></i> SECURE OPERATIONS ENVIRONMENT</span>
+            <span class="visual-status"><i></i> ALL SYSTEMS OPERATIONAL</span>
+        </div>
+    </section>
+
+    <aside class="login-panel" id="loginPanel" aria-label="Sign in">
+        <div class="panel-topline"><span class="panel-logo"><i class="bi bi-cpu-fill"></i></span><span class="panel-brand">MGMS <small>OILFIELD SYSTEMS</small></span></div>
+        <div class="panel-content">
+            <div class="panel-eyebrow"><span></span> SECURE ACCESS PORTAL</div>
+            <h2>Welcome back</h2>
+            <p class="panel-intro">Sign in to continue to your operations workspace.</p>
+            <div class="panel-divider"><span>AUTHORIZED PERSONNEL</span></div>
+            <div id="loginMessage" aria-live="polite"></div>
+            <form id="loginForm" method="POST" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-box"><i class="bi bi-person-fill" aria-hidden="true"></i>{{ form.username(class="input-field", id="username", placeholder="Enter your username", autocomplete="username") }}</div>
+                    {% if form.username.errors %}<span class="field-error">{{ form.username.errors[0] }}</span>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-box"><i class="bi bi-lock-fill" aria-hidden="true"></i>{{ form.password(class="input-field", id="password", placeholder="Enter your password", autocomplete="current-password") }}<button class="password-toggle" type="button" id="togglePassword" aria-label="Show password"><i class="bi bi-eye-slash-fill" aria-hidden="true"></i></button></div>
+                    {% if form.password.errors %}<span class="field-error">{{ form.password.errors[0] }}</span>{% endif %}
+                </div>
+                <div class="remember-row"><label class="remember-label">{{ form.remember(class="remember-input") }}<span class="remember-check"><i class="bi bi-check2"></i></span><span>Remember me</span></label></div>
+                {{ form.submit(class="login-btn", value="Sign in") }}
+            </form>
+            <div class="login-help"><i class="bi bi-info-circle"></i><span>Need access? Contact your system administrator.</span></div>
+        </div>
+        <div class="panel-footer"><span>MGMS · MEMORY GAUGE MANAGEMENT SYSTEM</span><span>SECURE SESSION</span></div>
+    </aside>
+
+    <div class="login-intro" id="loginIntro" aria-label="MGMS cinematic introduction">
+        <div class="intro-vignette"></div><div class="intro-beam intro-beam-one"></div><div class="intro-beam intro-beam-two"></div>
+        <div class="intro-brand"><span class="intro-mark"><i class="bi bi-cpu-fill"></i></span><span>MGMS<small>MEMORY GAUGE MANAGEMENT SYSTEM</small></span></div>
+        <div class="intro-title"><span>FIELD INTELLIGENCE</span><strong>Precision below<br>the surface.</strong><i></i></div>
+        <div class="intro-engineer-walk"></div><div class="intro-engineer-inspect"></div><div class="intro-equipment"></div>
+        <div class="intro-bottom"><span><i></i> INITIALIZING SECURE OPERATIONS</span><span>OILFIELD SYSTEMS</span></div>
+        <button class="skip-intro" id="skipIntro" type="button">Skip intro <i class="bi bi-arrow-right"></i></button>
+    </div>
+</div>
 {% endblock %}
 
 {% block js %}
 <script>
-document.getElementById("loginForm").addEventListener("submit", async function(e){
+(() => {
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("loginMessage");
+    if (!form || !message) return;
 
-    e.preventDefault();
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+        const submit = form.querySelector("[type=submit]");
+        if (submit) {
+            submit.disabled = true;
+            submit.setAttribute("aria-busy", "true");
+        }
+        message.replaceChildren();
 
-    const form = this;
-    const formData = new FormData(form);
-
-    const response = await fetch(form.action || window.location.pathname,{
-        method:"POST",
-        body:formData,
-        headers:{
-            "X-Requested-With":"XMLHttpRequest"
+        try {
+            const response = await fetch(form.action || window.location.pathname, {
+                method: "POST",
+                body: new FormData(form),
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+            const data = await response.json();
+            if (data.success) {
+                window.location.href = data.redirect;
+                return;
+            }
+            const alert = document.createElement("div");
+            alert.className = "login-alert";
+            alert.setAttribute("role", "alert");
+            alert.textContent = data.message || "Unable to sign in. Check your details and try again.";
+            message.replaceChildren(alert);
+        } catch (error) {
+            const alert = document.createElement("div");
+            alert.className = "login-alert";
+            alert.setAttribute("role", "alert");
+            alert.textContent = "The sign-in service could not be reached. Please try again.";
+            message.replaceChildren(alert);
+        } finally {
+            if (submit) {
+                submit.disabled = false;
+                submit.removeAttribute("aria-busy");
+            }
         }
     });
-
-    const data = await response.json();
-
-    if(data.success){
-
-        window.location.href = data.redirect;
-
-    }else{
-
-        document.getElementById("loginMessage").innerHTML=`
-            <div class="alert alert-danger login-alert">
-                ${data.message}
-            </div>
-        `;
-
-    }
-
-});
+})();
 </script>
 <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 {% endblock %}
