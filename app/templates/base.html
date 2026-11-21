@@ -19,6 +19,7 @@
 {% if current_user.is_authenticated %}
 <div class="app-shell">
     <aside class="app-sidebar" id="appSidebar" aria-label="Primary navigation">
+        <div class="sidebar-rig-art" aria-hidden="true"></div>
         <a class="sidebar-brand" href="{{ url_for('dashboard.dashboard') }}">
             <span class="sidebar-brand-mark"><i class="bi bi-cpu-fill"></i></span>
             <span class="sidebar-brand-copy"><strong>MGMS</strong><small>OILFIELD OPERATIONS</small></span>

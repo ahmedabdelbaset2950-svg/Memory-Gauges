@@ -73,3 +73,77 @@ body.dashboard-page #mgms-floating-reports .mgms-report-message { color:#64748B;
 @media (max-width:991.98px){ .mgms-hero{min-height:156px}.mgms-hero-content{width:70%}.mgms-oilfield-scene{width:36%}.chart-grid{grid-template-columns:1fr}.chart-card{height:310px}.chart-body{height:230px} }
 @media (max-width:767.98px){ .mgms-hero{min-height:150px;padding:20px 22px}.mgms-hero-content{width:72%}.cards-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-bottom{grid-template-columns:1fr}.chart-card{height:300px}.chart-body{height:220px} }
 @media (max-width:575.98px){ .mgms-hero{min-height:160px;padding:18px}.mgms-hero-content{width:100%}.mgms-hero h1{max-width:92%;font-size:22px!important}.mgms-oilfield-scene{display:none}.cards-grid{grid-template-columns:1fr 1fr;gap:9px}.stat-card{min-height:112px;padding:12px}.stat-number{font-size:22px!important}.chart-card{height:286px;padding:14px 12px 10px!important}.chart-body{height:216px}.calibration-table{min-width:520px}.panel{overflow-x:auto} }
+
+/* Reference proportions and industrial accents */
+body.dashboard-page { background:#EAF2FC !important; }
+body.dashboard-page .mgms-hero {
+    min-height:220px;
+    background:
+        linear-gradient(112deg,rgba(7,31,61,.99) 0%,rgba(23,59,104,.98) 58%,rgba(38,132,217,.94) 100%) !important;
+    border-radius:18px !important;
+    border-color:rgba(23,59,104,.55) !important;
+}
+body.dashboard-page .mgms-hero::before {
+    position:absolute;
+    right:-20px;
+    bottom:-76px;
+    z-index:1;
+    width:58%;
+    height:190px;
+    content:"";
+    border:2px solid rgba(245,166,35,.42);
+    border-radius:50% 0 0 0;
+    transform:rotate(-8deg);
+}
+body.dashboard-page .mgms-hero::after {
+    position:absolute;
+    right:-25%;
+    bottom:-130px;
+    z-index:1;
+    width:72%;
+    height:210px;
+    content:"";
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:50%;
+}
+body.dashboard-page .mgms-hero-grid { opacity:.16; background-size:34px 34px; }
+body.dashboard-page .mgms-hero-content { width:58%; }
+body.dashboard-page .mgms-hero h1 { font-size:clamp(30px,2.6vw,38px)!important; }
+body.dashboard-page .mgms-hero-subtitle { font-size:13px; }
+body.dashboard-page .mgms-hero-status {
+    min-height:38px;
+    margin-top:14px;
+    padding:8px 13px;
+    color:#FFFFFF;
+    background:rgba(38,132,217,.75);
+    border-color:rgba(255,255,255,.22);
+    border-radius:9px;
+    text-decoration:none;
+}
+body.dashboard-page .mgms-hero-status:hover { background:#2684D9; transform:translateY(-1px); }
+body.dashboard-page .mgms-oilfield-scene { width:43%; height:100%; opacity:.95; }
+body.dashboard-page .cards-grid { gap:14px; }
+body.dashboard-page .stat-card { min-height:138px; border-radius:14px!important; box-shadow:0 10px 28px rgba(45,94,156,.09)!important; }
+body.dashboard-page .stat-card::before {
+    position:absolute;
+    right:-16px;
+    bottom:-28px;
+    width:90px;
+    height:90px;
+    content:"";
+    opacity:.10;
+    border:8px solid #2684D9;
+    border-radius:50%;
+}
+body.dashboard-page .stat-card:nth-child(2)::before { border-radius:12px; transform:rotate(32deg); border-color:#34D399; }
+body.dashboard-page .stat-card:nth-child(3)::before { border-color:#A78BFA; }
+body.dashboard-page .stat-card:nth-child(4)::before { border-color:#F5A623; }
+body.dashboard-page .stat-card:nth-child(5)::before { border-color:#FB7185; }
+body.dashboard-page .stat-number { font-size:30px!important; }
+body.dashboard-page .chart-card { height:336px; border-radius:14px!important; box-shadow:0 10px 28px rgba(45,94,156,.09)!important; }
+body.dashboard-page .chart-body { height:256px; }
+body.dashboard-page .chart-header { border-bottom:1px solid #EDF2F7; }
+
+@media (max-width:991.98px){ body.dashboard-page .mgms-hero{min-height:200px}body.dashboard-page .mgms-hero-content{width:64%}body.dashboard-page .mgms-oilfield-scene{width:42%} }
+@media (max-width:767.98px){ body.dashboard-page .mgms-hero{min-height:188px}body.dashboard-page .mgms-hero-content{width:70%}body.dashboard-page .mgms-oilfield-scene{width:38%}body.dashboard-page .stat-card{min-height:126px} }
+@media (max-width:575.98px){ body.dashboard-page .mgms-hero{min-height:176px}body.dashboard-page .mgms-hero-content{width:100%}body.dashboard-page .mgms-hero h1{font-size:24px!important}body.dashboard-page .mgms-oilfield-scene{display:none}body.dashboard-page .chart-card{height:286px}body.dashboard-page .chart-body{height:216px} }
