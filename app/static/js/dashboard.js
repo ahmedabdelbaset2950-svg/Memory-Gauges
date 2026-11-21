@@ -35,9 +35,10 @@ setInterval(updateDateTime,1000);
 // Charts
 // ======================================================
 
-Chart.defaults.font.family = "Poppins";
+Chart.defaults.font.family = "Segoe UI";
 
-Chart.defaults.color = "#64748b";
+Chart.defaults.color = "#a4b7ca";
+Chart.defaults.borderColor = "rgba(151, 177, 204, .16)";
 
 
 // -------------------------
