@@ -18,4 +18,16 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    SECRET_KEY = os.getenv("SECRET_KEY", "change-this-secret-key")
+    ENVIRONMENT = os.getenv("FLASK_ENV", os.getenv("ENVIRONMENT", "development")).lower()
+
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    if not SECRET_KEY:
+        if ENVIRONMENT in {"production", "prod", "railway"}:
+            raise RuntimeError("SECRET_KEY must be configured in production.")
+        SECRET_KEY = os.urandom(32)
+
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = ENVIRONMENT in {"production", "prod", "railway"}
+    PERMANENT_SESSION_LIFETIME = 28800
+    MAX_CONTENT_LENGTH = 10 * 1024 * 1024

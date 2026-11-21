@@ -59,7 +59,7 @@ class ChangePasswordForm(FlaskForm):
         "New Password",
         validators=[
             DataRequired(),
-            Length(min=6)
+            Length(min=10)
         ]
     )
 
@@ -107,7 +107,7 @@ class UserForm(FlaskForm):
         "Password",
         validators=[
             Optional(),
-            Length(min=6)
+            Length(min=10)
         ]
     )
 

@@ -23,6 +23,7 @@ from app.settings import settings_bp
 from app.settings.forms import SettingsForm
 
 from app.users.decorators import admin_required
+from app.utils.uploads import validate_and_save_upload, IMAGE_EXTENSIONS
 
 
 # ======================================================
@@ -63,27 +64,16 @@ def index():
 
         if image and hasattr(image, "filename") and image.filename:
 
-            filename = secure_filename(image.filename)
-
-            extension = filename.rsplit(".", 1)[1].lower()
-
-            new_name = f"{uuid.uuid4().hex}.{extension}"
-
-            upload_folder = os.path.join(
-                current_app.static_folder,
-                "uploads",
-                "company"
-            )
-
-            os.makedirs(upload_folder, exist_ok=True)
-
-            image.save(
-                os.path.join(
-                    upload_folder,
-                    new_name
+            try:
+                new_name, _, _ = validate_and_save_upload(
+                    image,
+                    os.path.join(current_app.static_folder, "uploads", "company"),
+                    IMAGE_EXTENSIONS,
+                    2 * 1024 * 1024
                 )
-            )
-
+            except ValueError as error:
+                flash(str(error), "danger")
+                return redirect(url_for("settings.index"))
             settings.company_logo = new_name
 
         db.session.commit()

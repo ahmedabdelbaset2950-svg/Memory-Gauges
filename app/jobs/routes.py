@@ -12,6 +12,7 @@ import io
 from collections import defaultdict
 from flask import jsonify
 import pandas as pd
+from app.users.decorators import admin_required
 
 
 
@@ -158,6 +159,7 @@ def index():
 
 @jobs.route("/save", methods=["POST"])
 @login_required
+@admin_required
 def save_job():
 
     data = request.get_json()
@@ -241,6 +243,7 @@ def save_job():
 
 @jobs.route("/add-column", methods=["POST"])
 @login_required
+@admin_required
 def add_column():
 
     data = request.get_json()
@@ -262,6 +265,7 @@ def add_column():
     })
 @jobs.route("/close-month", methods=["POST"])
 @login_required
+@admin_required
 def close_month():
 
     data = request.get_json()
@@ -360,6 +364,7 @@ def export_excel():
     )
 @jobs.route("/import-preview", methods=["POST"])
 @login_required
+@admin_required
 def import_preview():
 
     print("STEP 1")
@@ -404,6 +409,7 @@ def import_preview():
 
 @jobs.route("/import", methods=["POST"])
 @login_required
+@admin_required
 def import_jobs():
 
     file = request.files.get("excel_file")

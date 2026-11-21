@@ -17,6 +17,7 @@ from app.models.information import InformationRow, InformationMonth
 from app.information.services import get_next_group_no, build_information_workbook
 from app.information.services import import_information_excel
 from app.users.decorators import admin_required
+from app.utils.uploads import validate_and_save_upload, DOCUMENT_EXTENSIONS
 information = Blueprint(
     "information",
     __name__,
@@ -269,6 +270,7 @@ def add_group():
 
 @information.route("/row/<int:row_id>/update", methods=["POST"])
 @login_required
+@admin_required
 def update_row(row_id):
 
     row = InformationRow.query.get_or_404(row_id)
@@ -351,15 +353,14 @@ def upload_attachment(row_id):
     if not file or file.filename == "":
         return jsonify({"success": False, "message": "No file provided"}), 400
 
-    upload_dir = os.path.join(current_app.root_path, "..", UPLOAD_SUBDIR)
-    upload_dir = os.path.abspath(upload_dir)
-    os.makedirs(upload_dir, exist_ok=True)
-
-    original_name = secure_filename(file.filename)
-    stored_name = f"{uuid.uuid4().hex}_{original_name}"
-
-    file.save(os.path.join(upload_dir, stored_name))
-
+    try:
+        stored_name, original_name, _ = validate_and_save_upload(
+            file,
+            os.path.join(current_app.root_path, "..", UPLOAD_SUBDIR),
+            DOCUMENT_EXTENSIONS
+        )
+    except ValueError as error:
+        return jsonify({"success": False, "message": str(error)}), 400
     row.attachment_filename = stored_name
     row.attachment_original_name = original_name
 

@@ -13,7 +13,7 @@ def admin_required(view):
 
         role = (current_user.role or "").strip().lower()
 
-        if role != "admin":
+        if role not in {"admin", "administrator"}:
             abort(403)
 
         return view(*args, **kwargs)

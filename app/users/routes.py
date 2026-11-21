@@ -28,6 +28,7 @@ from app.users.forms import (
 )
 
 from app.users.decorators import admin_required
+from app.utils.uploads import validate_and_save_upload, IMAGE_EXTENSIONS
 from sqlalchemy.exc import IntegrityError
 
 # ======================================================
@@ -54,49 +55,16 @@ def profile():
 
         if image:
 
-            filename = secure_filename(image.filename)
-
-            if "." not in filename:
-                flash("Invalid profile image format.", "danger")
-                return redirect(url_for("users.profile"))
-
-            extension = filename.rsplit(".", 1)[1].lower()
-
-            if extension not in {"jpg", "jpeg", "png", "webp"}:
-                flash("Profile images must be JPG, PNG, or WebP.", "danger")
-                return redirect(url_for("users.profile"))
-
-            image.stream.seek(0, os.SEEK_END)
-            image_size = image.stream.tell()
-            image.stream.seek(0)
-
-            if image_size > 2 * 1024 * 1024:
-                flash("Profile image size must be 2 MB or less.", "danger")
-                return redirect(url_for("users.profile"))
-
-            new_filename = (
-                f"{uuid.uuid4().hex}.{extension}"
-            )
-
-            upload_folder = os.path.join(
-                current_app.root_path,
-                "static",
-                "uploads",
-                "profiles"
-            )
-
-            os.makedirs(
-                upload_folder,
-                exist_ok=True
-            )
-
-            image.save(
-                os.path.join(
-                    upload_folder,
-                    new_filename
+            try:
+                new_filename, _, _ = validate_and_save_upload(
+                    image,
+                    os.path.join(current_app.static_folder, "uploads", "profiles"),
+                    IMAGE_EXTENSIONS,
+                    2 * 1024 * 1024
                 )
-            )
-
+            except ValueError as error:
+                flash(str(error), "danger")
+                return redirect(url_for("users.profile"))
             current_user.profile_image = new_filename
 
         db.session.commit()
@@ -206,7 +174,7 @@ def create_user():
 
             email=form.email.data,
 
-            role=form.role.data,
+            role=(form.role.data or "user").strip().lower(),
 
             is_active=form.is_active.data
 
@@ -253,7 +221,7 @@ def edit_user(user_id):
 
         user.email = form.email.data
 
-        user.role = form.role.data
+        user.role = (form.role.data or "user").strip().lower()
 
         user.is_active = form.is_active.data
 

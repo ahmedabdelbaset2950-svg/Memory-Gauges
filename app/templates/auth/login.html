@@ -29,6 +29,8 @@
         </div>
 
         <div class="oilfield-scene" aria-hidden="true">
+            <canvas id="loginScene" class="login-scene-canvas" data-model-url="{{ url_for('static', filename='models/login-engineer.gltf') }}"></canvas>
+            <div class="scene-fallback" id="loginSceneFallback">
             <div class="scene-halo"></div>
             <svg class="scene-rig" viewBox="0 0 760 520" role="presentation">
                 <defs>
@@ -59,9 +61,10 @@
                 </g>
                 <path class="scene-scanline" d="M0 0h760" stroke="#168BFF" stroke-opacity=".32" stroke-width="2"/>
             </svg>
-            <img class="engineer engineer-walking" src="{{ url_for('static', filename='images/login-engineer-walk.png') }}" alt="">
-            <img class="engineer engineer-inspecting" src="{{ url_for('static', filename='images/login-engineer-crouch.png') }}" alt="">
-            <div class="engineer-shadow"></div>
+            </div>
+
+
+
             <div class="scene-floor-light"></div>
         </div>
 
@@ -96,14 +99,14 @@
             </form>
             <div class="login-help"><i class="bi bi-info-circle"></i><span>Need access? Contact your system administrator.</span></div>
         </div>
-        <div class="panel-footer"><span>MGMS · MEMORY GAUGE MANAGEMENT SYSTEM</span><span>SECURE SESSION</span></div>
+        <div class="panel-footer"><span>MGMS Â· MEMORY GAUGE MANAGEMENT SYSTEM</span><span>SECURE SESSION</span></div>
     </aside>
 
     <div class="login-intro" id="loginIntro" aria-label="MGMS cinematic introduction">
         <div class="intro-vignette"></div><div class="intro-beam intro-beam-one"></div><div class="intro-beam intro-beam-two"></div>
         <div class="intro-brand"><span class="intro-mark"><i class="bi bi-cpu-fill"></i></span><span>MGMS<small>MEMORY GAUGE MANAGEMENT SYSTEM</small></span></div>
         <div class="intro-title"><span>FIELD INTELLIGENCE</span><strong>Precision below<br>the surface.</strong><i></i></div>
-        <div class="intro-engineer-walk"></div><div class="intro-engineer-inspect"></div><div class="intro-equipment"></div>
+
         <div class="intro-bottom"><span><i></i> INITIALIZING SECURE OPERATIONS</span><span>OILFIELD SYSTEMS</span></div>
         <button class="skip-intro" id="skipIntro" type="button">Skip intro <i class="bi bi-arrow-right"></i></button>
     </div>
@@ -157,5 +160,6 @@
     });
 })();
 </script>
+<script type="importmap">{"imports":{"three":"{{ url_for('static', filename='js/vendor/three.module.js') }}"}}</script>
 <script src="{{ url_for('static', filename='js/login.js') }}"></script>
 {% endblock %}

@@ -51,3 +51,20 @@
         skipButton?.addEventListener('click', finishIntro);
     }
 })();
+
+(() => {
+    const page = document.getElementById('mgmsLogin');
+    const canvas = document.getElementById('loginScene');
+    if (!page || !canvas) return;
+
+    const loadScene = () => import('./login_scene.js').catch(error => {
+        console.error('MGMS 3D login scene could not be loaded.', error);
+        page.classList.add('login-scene-fallback');
+        canvas.hidden = true;
+    });
+    if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(loadScene, { timeout: 900 });
+    } else {
+        window.setTimeout(loadScene, 80);
+    }
+})();

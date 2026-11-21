@@ -42,6 +42,7 @@ from openpyxl.worksheet.page import (
 from app.extensions import db
 from app.models.information import InformationRow
 from app.models.maintenance import MaintenanceRecord
+from app.users.decorators import admin_required
 from app.models.memory_gauge import MemoryGauge
 from app.models.bundle_carrier import BundleCarrier
 from app.models.battery import Battery
@@ -1460,6 +1461,7 @@ def batteries():
 
 @reports.route("/maintenance", methods=["GET", "POST"])
 @login_required
+@admin_required
 def maintenance():
 
     if request.method == "POST":
@@ -1521,6 +1523,7 @@ def maintenance():
     )
 @reports.route("/maintenance/<int:maintenance_id>/delete", methods=["POST"])
 @login_required
+@admin_required
 def delete_maintenance(maintenance_id):
 
     record = MaintenanceRecord.query.get_or_404(maintenance_id)

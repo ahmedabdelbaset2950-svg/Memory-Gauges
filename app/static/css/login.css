@@ -1,4 +1,4 @@
-/* MGMS cinematic login — local artwork and motion, no video or libraries */
+/* MGMS cinematic login â€” local artwork and motion, no video or libraries */
 :root {
     --login-ink: #071A33;
     --login-navy: #102B4E;
@@ -47,7 +47,12 @@ body:has(.login-page) > main { width:100%; min-height:100vh; padding:0!important
 .visual-copy h1 { margin:18px 0 12px; color:#F6F9FC; font-size:clamp(38px,5vw,68px); font-weight:600; letter-spacing:-.045em; line-height:.99; }
 .visual-copy h1 em { color:#80BFFF; font-style:normal; }
 .visual-copy p { margin:0; color:#A8B9CA; font-size:14px; letter-spacing:.01em; }
-.oilfield-scene { position:absolute; right:1%; bottom:0; width:min(73%,790px); height:62%; min-height:360px; pointer-events:none; }
+.oilfield-scene { position:absolute; z-index:0; right:1%; bottom:0; width:min(73%,790px); height:62%; min-height:360px; pointer-events:none; }
+.login-scene-canvas,.scene-fallback { position:absolute; inset:0; width:100%; height:100%; }
+.login-scene-canvas { z-index:1; display:block; pointer-events:none; }
+.scene-fallback { z-index:0; opacity:1; transition:opacity .6s ease; }
+.login-scene-ready .scene-fallback { opacity:0; }
+.login-scene-fallback .scene-fallback { opacity:1; }
 .scene-rig { position:absolute; right:0; bottom:0; width:100%; height:100%; overflow:visible; }
 .rig-ground { fill:#071629; opacity:.8; }
 .rig-structure { opacity:.78; }
@@ -55,10 +60,10 @@ body:has(.login-page) > main { width:100%; min-height:100vh; padding:0!important
 .pumpjack { opacity:.68; transform-origin:145px 282px; animation:pumpjackNod 7s ease-in-out infinite; }
 .gold-arc { opacity:.55; stroke-dasharray:820; stroke-dashoffset:820; animation:goldTrace 4.5s .4s ease forwards; }
 .scene-scanline { transform:translateY(0); opacity:.6; animation:scanLine 8s linear infinite; }
-.engineer { position:absolute; z-index:2; bottom:-2%; left:32%; width:auto; height:min(64vh,535px); max-width:42%; object-fit:contain; object-position:center bottom; filter:drop-shadow(0 13px 22px rgba(0,0,0,.42)); }
-.engineer-walking { animation:fieldWalk 8s ease-in-out infinite; }
-.engineer-inspecting { left:26%; opacity:0; transform:translateY(7px); animation:fieldInspect 8s ease-in-out infinite; }
-.engineer-shadow { position:absolute; z-index:1; bottom:2%; left:31%; width:26%; height:18px; border-radius:50%; background:rgba(0,0,0,.48); filter:blur(11px); }
+
+
+
+
 .scene-floor-light { position:absolute; right:4%; bottom:4%; left:0; height:2px; opacity:.7; background:linear-gradient(90deg,transparent,rgba(22,139,255,.35),rgba(214,168,79,.55),transparent); }
 .visual-footer { position:relative; z-index:3; display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:auto; padding-top:16px; color:#8299B0; border-top:1px solid rgba(195,216,234,.12); font-size:8px; font-weight:800; letter-spacing:.13em; }
 .visual-footer span { display:flex; align-items:center; gap:7px; }
@@ -95,7 +100,7 @@ body:has(.login-page) > main { width:100%; min-height:100vh; padding:0!important
 .remember-input:checked + .remember-check { color:#fff; background:#168BFF; border-color:#168BFF; }
 .remember-input:focus-visible + .remember-check { outline:3px solid rgba(22,139,255,.35); outline-offset:2px; }
 .login-btn { display:block; width:100%; min-height:49px; padding:12px 18px; color:#fff!important; background:linear-gradient(105deg,#168BFF,#1376D6)!important; border:1px solid rgba(123,190,255,.42)!important; border-radius:9px!important; box-shadow:0 8px 22px rgba(10,95,181,.24),inset 0 1px rgba(255,255,255,.18); font-size:12px; font-weight:800; letter-spacing:.10em; text-transform:uppercase; cursor:pointer; transition:transform .18s,filter .18s,box-shadow .18s; }
-.login-btn::after { content:"  →"; color:#F6D38F; font-size:16px; }
+.login-btn::after { content:"  â†’"; color:#F6D38F; font-size:16px; }
 .login-btn:hover { filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 11px 26px rgba(10,95,181,.34),inset 0 1px rgba(255,255,255,.2); }
 .login-btn:active { transform:translateY(0); }
 .login-btn:disabled { opacity:.7; cursor:wait; }
@@ -104,9 +109,9 @@ body:has(.login-page) > main { width:100%; min-height:100vh; padding:0!important
 .login-alert { margin:0 0 16px; padding:10px 12px; color:#FFDADA; background:rgba(176,48,60,.14); border:1px solid rgba(255,122,134,.28); border-radius:8px; font-size:11px; line-height:1.45; }
 .panel-footer { display:flex; align-items:center; justify-content:space-between; gap:14px; padding-top:15px; color:#71869D; border-top:1px solid rgba(172,198,221,.12); font-size:7px; font-weight:800; letter-spacing:.12em; }
 
-.login-intro { position:fixed; inset:0; z-index:10; overflow:hidden; visibility:hidden; opacity:0; pointer-events:none; background:linear-gradient(110deg,rgba(3,13,26,.99) 0%,rgba(7,26,51,.98) 50%,rgba(8,30,54,.96) 100%); transition:opacity .85s ease,visibility .85s; }
+.login-intro { position:fixed; inset:0; z-index:10; overflow:hidden; visibility:hidden; opacity:0; pointer-events:none; background:linear-gradient(110deg,rgba(3,13,26,.34) 0%,rgba(7,26,51,.24) 50%,rgba(8,30,54,.32) 100%); transition:opacity .85s ease,visibility .85s; }
 .login-intro::before { position:absolute; inset:0; content:""; opacity:.40; background-image:linear-gradient(rgba(146,183,211,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(146,183,211,.07) 1px,transparent 1px); background-size:70px 70px; mask-image:linear-gradient(90deg,transparent,#000 30%,#000 85%,transparent); }
-.login-intro::after { position:absolute; right:32%; bottom:-8%; left:-4%; height:42%; content:""; opacity:.9; background:linear-gradient(180deg,transparent,rgba(1,8,17,.8)),linear-gradient(174deg,transparent 54%,#08172A 55%); }
+.login-intro::after { position:absolute; right:32%; bottom:-8%; left:-4%; height:42%; content:""; opacity:.22; background:linear-gradient(180deg,transparent,rgba(1,8,17,.8)),linear-gradient(174deg,transparent 54%,#08172A 55%); }
 .intro-vignette { position:absolute; inset:0; z-index:5; pointer-events:none; background:radial-gradient(ellipse at 48% 46%,transparent 10%,rgba(0,5,12,.23) 74%,rgba(0,5,12,.58)); }
 .intro-beam { position:absolute; top:-40%; bottom:-35%; z-index:1; width:13vw; opacity:0; transform:rotate(20deg); background:linear-gradient(90deg,transparent,rgba(121,188,242,.12),transparent); filter:blur(10px); }
 .intro-beam-one { left:19%; animation:beamReveal 3.6s ease both; }
@@ -118,10 +123,10 @@ body:has(.login-page) > main { width:100%; min-height:100vh; padding:0!important
 .intro-title > span { color:#C3D0DD; font-size:9px; font-weight:800; letter-spacing:.2em; }
 .intro-title strong { display:block; margin-top:16px; color:#F4F8FC; font-size:clamp(36px,6vw,78px); font-weight:600; letter-spacing:-.045em; line-height:.96; }
 .intro-title i { display:block; width:92px; height:2px; margin-top:20px; background:linear-gradient(90deg,#D6A84F,transparent); }
-.intro-engineer-walk,.intro-engineer-inspect { position:absolute; bottom:4%; left:21%; z-index:3; width:clamp(240px,30vw,430px); height:83%; background-position:center bottom; background-repeat:no-repeat; background-size:contain; filter:drop-shadow(0 16px 27px rgba(0,0,0,.5)); }
-.intro-engineer-walk { background-image:url("../images/login-engineer-walk.png"); animation:walkIntoScene 2.9s cubic-bezier(.2,.72,.25,1) both; }
-.intro-engineer-inspect { left:27%; opacity:0; background-image:url("../images/login-engineer-crouch.png"); animation:inspectScene 3.7s 1.65s ease both; }
-.intro-equipment { position:absolute; right:16%; bottom:8%; z-index:2; width:28%; height:30%; opacity:.75; background:linear-gradient(90deg,transparent,#B5C9D9 35%,#526F88 36%,#526F88 64%,#B5C9D9 65%,transparent) 20% 96%/100% 2px no-repeat,linear-gradient(90deg,transparent,#567692 42%,#9DB8CD 43% 46%,#567692 47%,transparent) 35% 20%/68% 72% no-repeat,linear-gradient(110deg,transparent 49%,rgba(182,204,221,.6) 50%,transparent 51%) 30% 20%/55% 78% no-repeat; animation:equipmentPulse 4s ease-in-out infinite; }
+
+
+
+
 .intro-bottom { position:absolute; right:8%; bottom:5%; left:8%; z-index:6; display:flex; justify-content:space-between; color:#91A5B9; font-size:8px; font-weight:800; letter-spacing:.16em; }
 .intro-bottom span { display:flex; align-items:center; gap:9px; }
 .intro-bottom i { background:#D6A84F; box-shadow:0 0 10px rgba(214,168,79,.6); }
@@ -132,25 +137,25 @@ body:has(.login-page) > main { width:100%; min-height:100vh; padding:0!important
 .login-page.login-intro-active .login-intro { visibility:visible; opacity:1; }
 .login-page.login-intro-active .login-panel { opacity:0; transform:translateX(42px); pointer-events:none; }
 .login-page.login-intro-active .login-visual > :not(.oilfield-scene) { opacity:0; }
-.login-page.login-intro-active .engineer { opacity:0; }
+
 .login-page.login-intro-active .login-visual { background:transparent; }
 .login-page.login-intro-active .login-intro .skip-intro { animation:brandReveal .6s .8s ease both; }
 .login-page.login-intro-complete .login-intro { visibility:hidden; opacity:0; }
 .login-page.login-intro-complete .login-panel { opacity:1; transform:translateX(0); pointer-events:auto; }
 .login-page.login-intro-complete .login-visual > :not(.oilfield-scene) { transition:opacity .7s ease .18s; opacity:1; }
-.login-page.login-intro-complete .engineer { opacity:1; }
-.login-page.login-intro-complete .intro-engineer-walk,.login-page.login-intro-complete .intro-engineer-inspect { animation-play-state:paused; }
+
+
 
 @keyframes ambientDrift { to { transform:translate(5vw,4vh) scale(1.12); } }
 @keyframes particleRise { 0%{opacity:0;transform:translateY(0)} 12%{opacity:.55} 88%{opacity:.35} 100%{opacity:0;transform:translateY(-95vh) translateX(25px)} }
 @keyframes pumpjackNod { 0%,100%{transform:rotate(0)} 45%,55%{transform:rotate(-2deg)} }
 @keyframes goldTrace { to { stroke-dashoffset:0; } }
 @keyframes scanLine { 0%{transform:translateY(0);opacity:0} 10%{opacity:.5} 90%{opacity:.2} 100%{transform:translateY(520px);opacity:0} }
-@keyframes fieldWalk { 0%,10%{transform:translateX(-22px)} 25%,45%{transform:translateX(0)} 55%,100%{transform:translateX(0)} }
-@keyframes fieldInspect { 0%,43%{opacity:0;transform:translateY(12px)} 52%,78%{opacity:1;transform:translateY(0)} 90%,100%{opacity:0;transform:translateY(5px)} }
-@keyframes walkIntoScene { 0%{opacity:0;transform:translateX(-42vw)} 12%{opacity:1} 68%{opacity:1;transform:translateX(0)} 100%{opacity:0;transform:translateX(4vw)} }
-@keyframes inspectScene { 0%,10%{opacity:0;transform:translateY(15px)} 28%,82%{opacity:1;transform:translateY(0)} 100%{opacity:0} }
-@keyframes equipmentPulse { 0%,100%{filter:brightness(.85);transform:translateY(0)} 50%{filter:brightness(1.2);transform:translateY(-3px)} }
+
+
+
+
+
 @keyframes beamReveal { 0%{opacity:0;transform:translateX(-10vw) rotate(20deg)} 30%{opacity:.65} 100%{opacity:0;transform:translateX(18vw) rotate(20deg)} }
 @keyframes brandReveal { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
@@ -159,7 +164,7 @@ body:has(.login-page) > main { width:100%; min-height:100vh; padding:0!important
     .login-visual { padding-right:32px; padding-left:34px; }
     .visual-copy { margin-top:14vh; }
     .oilfield-scene { right:-9%; width:88%; }
-    .engineer { left:25%; }
+
 }
 @media (max-width:760px) {
     html:has(.login-page),body:has(.login-page) { overflow:auto; }
@@ -171,7 +176,7 @@ body:has(.login-page) > main { width:100%; min-height:100vh; padding:0!important
     .visual-copy h1 { font-size:clamp(34px,9vw,54px); }
     .visual-copy p { max-width:350px; font-size:11px; }
     .oilfield-scene { right:-10%; width:75%; height:60%; min-height:225px; opacity:.62; }
-    .engineer { left:31%; height:48vh; max-width:44%; }
+
     .visual-footer { font-size:7px; }
     .login-panel { min-height:calc(100dvh - 360px); padding:22px 24px 17px; border-top:1px solid rgba(166,198,226,.17); border-left:0; box-shadow:0 -18px 42px rgba(0,0,0,.18); }
     .panel-content { padding:26px 0; }
@@ -180,8 +185,8 @@ body:has(.login-page) > main { width:100%; min-height:100vh; padding:0!important
     .intro-brand { top:5%; left:6%; }
     .intro-title { top:23%; left:7%; }
     .intro-title strong { font-size:clamp(36px,10vw,62px); }
-    .intro-engineer-walk,.intro-engineer-inspect { left:18%; width:52vw; height:60%; }
-    .intro-equipment { right:5%; bottom:12%; width:43%; }
+
+
 }
 @media (max-width:420px) {
     .login-visual { min-height:320px; padding-right:19px; padding-left:19px; }

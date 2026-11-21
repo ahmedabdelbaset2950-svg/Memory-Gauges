@@ -18,6 +18,8 @@ from app.extensions import db
 from app.models.document import Document, CATEGORY_CHOICES
 from app.models.memory_gauge import MemoryGauge
 from app.models.bundle_carrier import BundleCarrier
+from app.users.decorators import admin_required
+from app.utils.uploads import validate_and_save_upload, DOCUMENT_EXTENSIONS
 
 documents = Blueprint(
     "documents",
@@ -190,6 +192,7 @@ def index():
 
 @documents.route("/upload", methods=["POST"])
 @login_required
+@admin_required
 def upload():
 
     file = request.files.get("file")
@@ -208,12 +211,13 @@ def upload():
     if not title:
         title = secure_filename(file.filename).rsplit(".", 1)[0]
 
-    original_name = secure_filename(file.filename)
-    ext = original_name.rsplit(".", 1)[-1] if "." in original_name else ""
-    stored_name = f"{uuid.uuid4().hex}_{original_name}"
-
-    file.save(os.path.join(_upload_dir(), stored_name))
-
+    try:
+        stored_name, original_name, ext = validate_and_save_upload(
+            file, _upload_dir(), DOCUMENT_EXTENSIONS
+        )
+    except ValueError as error:
+        flash(str(error), "danger")
+        return redirect(url_for("documents.index"))
     expiry_date = None
 
     if expiry_date_raw:
@@ -285,6 +289,7 @@ def download(doc_id):
 
 @documents.route("/<int:doc_id>/delete", methods=["POST"])
 @login_required
+@admin_required
 def delete(doc_id):
 
     doc = Document.query.get_or_404(doc_id)
@@ -302,6 +307,7 @@ def delete(doc_id):
 
 @documents.route("/<int:doc_id>/update", methods=["POST"])
 @login_required
+@admin_required
 def update(doc_id):
 
     doc = Document.query.get_or_404(doc_id)
