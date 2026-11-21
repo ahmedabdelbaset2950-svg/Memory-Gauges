@@ -1,10 +1,12 @@
 /* MGMS global premium blue-and-white design system */
 :root {
     --mgms-navy: #173B68;
+    --mgms-navy-deep: #071F3D;
     --mgms-navy-hover: #2D5E9C;
     --mgms-blue: #2684D9;
+    --mgms-gold: #F5A623;
     --mgms-blue-soft: #EAF3FC;
-    --mgms-bg: #EEF3F9;
+    --mgms-bg: #EAF2FC;
     --mgms-surface: #FFFFFF;
     --mgms-surface-soft: #F8FAFD;
     --mgms-border: #DCE5EF;
@@ -24,8 +26,8 @@ body {
     overflow-x: hidden;
     color: var(--mgms-text) !important;
     background:
-        radial-gradient(circle at 92% 8%, rgba(38, 132, 217, .07), transparent 18rem),
-        radial-gradient(circle at 12% 88%, rgba(45, 94, 156, .06), transparent 22rem),
+        radial-gradient(circle at 92% 8%, rgba(38, 132, 217, .09), transparent 18rem),
+        radial-gradient(circle at 12% 88%, rgba(245, 166, 35, .035), transparent 22rem),
         var(--mgms-bg) !important;
     font-family: Inter, "Segoe UI", Arial, sans-serif !important;
     font-size: 14px;
@@ -285,3 +287,92 @@ button, .btn, a { transition: background-color .18s ease, color .18s ease, borde
 #mgms-floating-reports .mgms-report-card { background:#FFFFFF !important; border:1px solid #DCE5EF !important; border-left:3px solid #2684D9 !important; box-shadow:0 14px 36px rgba(31,66,105,.15) !important; }
 #mgms-floating-reports .mgms-report-title { color:#173B68 !important; }
 #mgms-floating-reports .mgms-report-message, #mgms-floating-reports .mgms-report-label, #mgms-floating-reports .mgms-report-counter { color:#64748B !important; }
+
+/* Reference-matched industrial shell refinements */
+.app-sidebar {
+    background:
+        linear-gradient(180deg, rgba(7,31,61,.98) 0%, rgba(23,59,104,.98) 70%, #071F3D 100%) !important;
+    border-right: 1px solid rgba(245,166,35,.10);
+}
+.app-sidebar::before {
+    position: absolute;
+    right: -34px;
+    bottom: 108px;
+    width: 220px;
+    height: 210px;
+    content: "";
+    opacity: .14;
+    pointer-events: none;
+    background:
+        linear-gradient(145deg, transparent 48%, #AFC9DF 49% 50%, transparent 51%) 0 0/44px 44px,
+        radial-gradient(ellipse at 50% 100%, transparent 48%, #AFC9DF 49% 51%, transparent 52%) 28px 42px/130px 78px no-repeat;
+}
+.app-sidebar::after {
+    position:absolute;
+    right:-8px;
+    bottom:8px;
+    width:260px;
+    height:82px;
+    content:"";
+    pointer-events:none;
+    opacity:.24;
+    background:
+        linear-gradient(135deg,transparent 46%,#D2E1EF 47% 48%,transparent 49%) 0 54px/82px 42px no-repeat,
+        linear-gradient(45deg,transparent 47%,#D2E1EF 48% 49%,transparent 50%) 74px 46px/92px 36px no-repeat,
+        linear-gradient(90deg,#D2E1EF,#D2E1EF) 12px 74px/236px 2px no-repeat;
+}
+.sidebar-rig-art {
+    position:absolute;
+    right:-12px;
+    bottom:38px;
+    z-index:-1;
+    width:190px;
+    height:115px;
+    opacity:.12;
+    background:
+        linear-gradient(62deg,transparent 48%,#FFFFFF 49% 50%,transparent 51%) 34px 8px/76px 92px no-repeat,
+        linear-gradient(118deg,transparent 48%,#FFFFFF 49% 50%,transparent 51%) 82px 8px/76px 92px no-repeat;
+}
+.sidebar-brand {
+    position:relative;
+    z-index:2;
+    min-height:68px;
+    margin:0 2px 8px;
+    border-bottom-color:rgba(245,166,35,.26);
+}
+.sidebar-brand-mark {
+    background:linear-gradient(145deg,#2684D9,#173B68);
+    border-color:rgba(245,166,35,.55);
+    box-shadow:0 8px 20px rgba(38,132,217,.20);
+}
+.sidebar-caption { color:#91A9C4; }
+.sidebar-link {
+    min-height:45px;
+    border-radius:7px;
+}
+.sidebar-link.active {
+    background:linear-gradient(90deg,#2684D9,#2D659F) !important;
+    box-shadow:inset 3px 0 0 #F5A623,0 8px 18px rgba(38,132,217,.14);
+}
+.sidebar-link.active::after {
+    position:absolute;
+    right:10px;
+    width:5px;
+    height:5px;
+    content:"";
+    background:#F5A623;
+    border-radius:50%;
+    box-shadow:0 0 8px rgba(245,166,35,.65);
+}
+.top-navbar {
+    background:rgba(255,255,255,.97) !important;
+    box-shadow:0 4px 20px rgba(23,59,104,.07);
+}
+.datetime-box {
+    min-width:132px;
+    padding:7px 12px;
+    background:#F5F8FC;
+    border:1px solid #DCE5EF;
+    border-radius:9px;
+}
+.search-box { background:#F5F8FC; }
