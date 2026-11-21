@@ -1,4 +1,4 @@
-/* MGMS Floating Reports - dark navy / gold theme */
+/* MGMS notifications */
 #mgms-floating-reports {
     position: fixed;
     right: 24px;
@@ -6,7 +6,6 @@
     width: min(370px, calc(100vw - 32px));
     z-index: 1050;
     color: #f8fafc;
-    font-family: 'Poppins', sans-serif;
 }
 
 #mgms-floating-reports .mgms-report-card {
@@ -15,7 +14,7 @@
     overflow: hidden;
     background: linear-gradient(135deg, #173B68 0%, #102b4c 100%);
     border: 1px solid rgba(255, 255, 255, 0.13);
-    border-left: 4px solid #E6A23C;
+    border-left: 4px solid #38BDF8;
     border-radius: 15px;
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.30);
     animation: mgmsReportIn 0.35s ease both;
@@ -34,8 +33,8 @@
     flex: 0 0 38px;
     width: 38px;
     height: 38px;
-    color: #f4b942;
-    background: rgba(230, 162, 60, 0.16);
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.16);
     border-radius: 10px;
     font-size: 18px;
 }
@@ -56,7 +55,6 @@
     color: #86efac;
     font-size: 9px;
     font-weight: 700;
-    letter-spacing: 0.5px;
 }
 
 #mgms-floating-reports .mgms-live-dot {
@@ -72,7 +70,6 @@
     color: #fff;
     font-size: 14px;
     font-weight: 700;
-    line-height: 1.5;
 }
 
 #mgms-floating-reports .mgms-report-message {
@@ -97,10 +94,7 @@
     font-variant-numeric: tabular-nums;
 }
 
-#mgms-floating-reports .mgms-report-controls {
-    display: flex;
-    gap: 7px;
-}
+#mgms-floating-reports .mgms-report-controls { display: flex; gap: 7px; }
 
 #mgms-floating-reports .mgms-report-controls button,
 #mgms-floating-reports .mgms-report-close {
@@ -117,12 +111,11 @@
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 7px;
-    transition: background 0.2s ease, color 0.2s ease;
 }
 
 #mgms-floating-reports .mgms-report-controls button:hover {
     color: #102b4c;
-    background: #E6A23C;
+    background: #38bdf8;
 }
 
 #mgms-floating-reports .mgms-report-close {
@@ -136,17 +129,34 @@
     background: transparent;
     border: 0;
     border-radius: 6px;
-    opacity: 0.8;
 }
 
 #mgms-floating-reports .mgms-report-close:hover {
     color: #fff;
     background: rgba(255, 255, 255, 0.12);
-    opacity: 1;
 }
 
-#mgms-floating-reports.mgms-report-hidden {
+#mgms-floating-reports.mgms-report-hidden { display: none; }
+
+#mgms-floating-reports.mgms-report-collapsed { width: 52px; }
+
+#mgms-floating-reports.mgms-report-collapsed .mgms-report-card {
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border-left-width: 1px;
+}
+
+#mgms-floating-reports.mgms-report-collapsed .mgms-report-card > :not(.mgms-report-close) {
     display: none;
+}
+
+#mgms-floating-reports.mgms-report-collapsed .mgms-report-close {
+    position: static;
+    width: 50px;
+    height: 50px;
+    color: #38bdf8;
+    border-radius: 11px;
 }
 
 #mgms-floating-reports .mgms-report-card.mgms-report-changing {

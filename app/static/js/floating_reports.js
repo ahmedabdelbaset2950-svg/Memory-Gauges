@@ -14,7 +14,6 @@
     const nextButton = document.getElementById('mgmsReportNext');
     const closeButton = document.getElementById('mgmsReportClose');
 
-    // Temporary sample notifications. These will be connected to live MGMS data later.
     const notifications = [
         {
             category: 'System Update',
@@ -51,7 +50,6 @@
         counterEl.textContent = `${currentIndex + 1} / ${notifications.length}`;
 
         card.classList.remove('mgms-report-changing');
-        // Restart the small transition without using external libraries.
         void card.offsetWidth;
         card.classList.add('mgms-report-changing');
     }
@@ -65,10 +63,8 @@
 
     function startRotation() {
         stopRotation();
-        if (notifications.length > 1) {
-            rotationTimer = window.setInterval(() => {
-                renderNotification(currentIndex + 1);
-            }, interval);
+        if (!root.classList.contains('mgms-report-collapsed') && notifications.length > 1) {
+            rotationTimer = window.setInterval(() => renderNotification(currentIndex + 1), interval);
         }
     }
 
@@ -85,16 +81,22 @@
     nextButton.addEventListener('click', showNext);
     prevButton.addEventListener('click', showPrevious);
 
+    closeButton.setAttribute('aria-expanded', 'true');
     closeButton.addEventListener('click', () => {
-        stopRotation();
-        root.classList.add('mgms-report-hidden');
+        const collapsed = root.classList.toggle('mgms-report-collapsed');
+        closeButton.setAttribute('aria-expanded', String(!collapsed));
+        closeButton.setAttribute('aria-label', collapsed ? 'Expand notifications' : 'Collapse notifications');
+        closeButton.innerHTML = collapsed
+            ? '<i class="bi bi-chevron-up" aria-hidden="true"></i>'
+            : '<i class="bi bi-dash-lg" aria-hidden="true"></i>';
+        if (collapsed) stopRotation();
+        else startRotation();
     });
 
-    // Pause rotation while the user is interacting with the panel.
     root.addEventListener('mouseenter', stopRotation);
     root.addEventListener('mouseleave', startRotation);
     root.addEventListener('focusin', stopRotation);
-    root.addEventListener('focusout', (event) => {
+    root.addEventListener('focusout', event => {
         if (!root.contains(event.relatedTarget)) startRotation();
     });
 
